@@ -1,4 +1,6 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%--<%@ page session="false"%>--%>
 <html>
 <head>
     <title>메인페이지</title>
@@ -197,29 +199,22 @@
 </head>
 
 <body>
-<header>
-    <div class="sidebar">
-        <ul class="headerSidebar">
-            <li><a>로그인</a></li>
-            <li><a>회원가입</a></li>
-            <li><a>주문/배송조회</a></li>
-            <li><a>1:1문의</a></li>
-            <li><a>커뮤니티</a></li>
-        </ul>
-    </div>
-</header>
+
+
+<%@ include file="/WEB-INF/views/layout/header/header.jsp" %>
 <div class="slideshow-container">
     <div class="mySlides">
-        <img src="pants.JPG" alt="Slide 1">
+        <img src="<c:url value='/resources/img/pants.JPG'/>" alt="Slide 1">
     </div>
 
     <div class="mySlides">
-        <img src="shoes.JPG" alt="Slide 2">
+        <img src="<c:url value='/resources/img/shoes.JPG'/>" alt="Slide 2">
     </div>
 
     <div class="mySlides">
-        <img src="top.JPG" alt="Slide 3">
+        <img src="<c:url value='/resources/img/top.JPG'/>" alt="Slide 3">
     </div>
+
 
     <!-- 이전 및 다음 버튼 -->
     <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
@@ -284,16 +279,8 @@
 
 </div>
 
-<footer>
-    <div class="footerSidebars">
-        <h1 class="logFooter">shoppingShop</h1>
-        <ul class="footerSidebar">
-            <li><a>이용안내</a></li>
-            <li><a>이용약관</a></li>
-            <li><a>개인정보처리방침</a></li>
-        </ul>
-    </div>
-</footer>
+<%@ include file="/WEB-INF/views/layout/footer/footer.jsp" %>
+
 <script>
     let slideIndex = 1;
     showSlides(slideIndex);
