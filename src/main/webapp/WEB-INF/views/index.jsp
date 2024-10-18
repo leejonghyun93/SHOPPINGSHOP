@@ -1,6 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%--<%@ page session="false"%>--%>
+<%@ page session="true" %> <!-- 세션 사용 설정 -->
+
+<c:set var="loginId" value="${pageContext.request.getSession(false) == null ? '' : pageContext.request.session.getAttribute('user') != null ? pageContext.request.getSession().getAttribute('user').userId : ''}"/>
+<c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : '/login/logout'}"/>
+<c:set var="logout" value="${loginId == '' ? 'Login' : loginId }"/>
 <html>
 <head>
     <title>메인페이지</title>
@@ -109,92 +114,6 @@
             color: #bbb;
             margin-bottom: 50px;
         }
-
-        /*---------------header-----------*/
-
-        .headerSidebar {
-            list-style-type: none;
-            height: 50px;
-            background-color: #dedede;
-            display: flex;
-            justify-content: flex-end;
-            padding-left: 0px;
-            margin-top: 0;
-        }
-
-        .headerSidebar > li {
-            color: black;
-            height: 100%;
-            width: 110px;
-            display: flex;
-            align-items: center;
-        }
-
-        .headerSidebar > li > a {
-            color: black;
-            margin: auto;
-            padding: 10px;
-            font-size: 15px;
-            text-align: center;
-        }
-
-        .headerSidebar > li > a:hover {
-            color: white;
-            border-bottom: 3px solid rgb(209, 209, 209);
-        }
-
-        .sidebar {
-            width: 100%;
-            text-align: right; /* 리스트를 오른쪽으로 정렬 */
-        }
-
-        /*---------------footer-----------*/
-        .footerSidebar {
-            list-style-type: none;
-            width: 100%;
-            height: 50px;
-            background-color: #dedede;
-            display: flex;
-            padding-left: 0px; /* 항목을 오른쪽으로 정렬 */
-
-        }
-
-        .footerSidebar > li {
-            color: black;
-            height: 100%;
-            width: 150px;
-            display: flex;
-            align-items: center;
-        }
-
-        .footerSidebar > li > a {
-            color: black;
-            margin: auto;
-            padding: 10px;
-            font-size: 15px;
-            text-align: center;
-        }
-
-        .footerSidebar > li > a:hover {
-            color: white;
-            border-bottom: 3px solid rgb(209, 209, 209);
-        }
-
-        .footerSidebars {
-            width: 100%;
-            height: 100px;
-            background-color: #dedede; /* 부모 요소에 배경색 설정 */
-            text-align: left; /* 리스트를 왼쪽으로 정렬 */
-            display: flex;
-            flex-direction: column; /* 세로 정렬 */
-            justify-content: center;
-        }
-
-        .logFooter {
-            margin-left: 47px;
-            margin-top: 45px;
-        }
-
     </style>
 </head>
 
