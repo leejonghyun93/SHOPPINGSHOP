@@ -6,14 +6,16 @@
     <meta charset="UTF-8">
     <style>
         /*---------------footer-----------*/
+        /* 푸터 스타일 */
         .footerSidebar {
             list-style-type: none;
             width: 100%;
             height: 50px;
             background-color: #dedede;
             display: flex;
-            padding-left: 0px; /* 항목을 오른쪽으로 정렬 */
-
+            justify-content: center;
+            padding-left: 0px;
+            margin: 0;
         }
 
         .footerSidebar > li {
@@ -38,13 +40,11 @@
         }
 
         .footerSidebars {
-            position: fixed; /* 푸터를 화면 하단에 고정 */
-            bottom: 0; /* 하단에 위치시킴 */
-            width: 100%; /* 화면의 전체 너비 */
-            background-color: #dedede; /* 부모 요소에 배경색 설정 */
-            text-align: left; /* 리스트를 왼쪽으로 정렬 */
+            width: 100%;
+            background-color: #dedede;
+            text-align: left;
             display: flex;
-            flex-direction: column; /* 세로 정렬 */
+            flex-direction: column;
             justify-content: center;
         }
 
