@@ -14,12 +14,14 @@
 
         .headerSidebar {
             list-style-type: none;
-            height: 50px;
-            background-color: #dedede;
+            height: 30px;
+            background-color: white;
+            border-bottom: 1px solid #f3f3f3;
             display: flex;
             justify-content: flex-end;
             padding-left: 0px;
             margin-top: 0;
+            margin-bottom: 0;
         }
 
         .headerSidebar > li {
@@ -33,9 +35,9 @@
         .headerSidebar > li > a {
             color: black;
             margin: auto;
-            padding: 10px;
             font-size: 15px;
             text-align: center;
+            text-decoration: none;
         }
 
         .headerSidebar > li > a:hover {

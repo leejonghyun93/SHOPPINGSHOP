@@ -28,7 +28,7 @@
         }
 
         .sub-category-list {
-            display: flex; /* 가로로 나열 */
+            display: none; /* 기본적으로 숨김 */
             flex-wrap: nowrap; /* 줄 바꿈 방지 */
             list-style-type: none;
             position: absolute; /* 절대 위치 */
@@ -48,13 +48,9 @@
             white-space: nowrap; /* 텍스트 줄바꿈 방지 */
         }
 
-        .sub-category-list.active {
-            display: block; /* 보일 때 스타일 */
-        }
-
         /* 대분류 마우스 오버 시 중분류 보이도록 */
         .main-category-item:hover .sub-category-list {
-            display: block; /* 마우스가 올라갔을 때 보이기 */
+            display: flex; /* 마우스가 올라갔을 때 가로로 나열하여 보이기 */
         }
     </style>
 </head>
@@ -66,7 +62,7 @@
                     ${category.categoryName}
                 <ul class="sub-category-list">
                     <c:forEach var="subCategory" items="${category.subCategories}">
-                        <li class="sub-category-item" onclick="location.href='productList.jsp?subCategoryId=${subCategory.subCategoryId}'">
+                        <li class="sub-category-item" onclick="location.href='/subCategoryId/${subCategory.subCategoryId}'">
                                 ${subCategory.subCategoryName}
                         </li>
                     </c:forEach>

@@ -13,6 +13,13 @@
         body {
             margin: 0 auto;
         }
+        .title{
+            font-size: 30px;
+            text-align: center;
+            border-bottom: 1px solid #f3f3f3;
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
 
         /* 슬라이드 컨테이너 스타일 */
         .slideshow-container {
@@ -121,6 +128,8 @@
 
 
 <%@ include file="/WEB-INF/views/layout/header/header.jsp" %>
+<h1 class="title">shoppingShop</h1>
+<%@ include file="/WEB-INF/views/layout/categoryBar/categoryBar.jsp" %>
 <div class="slideshow-container">
     <div class="mySlides">
         <img src="<c:url value='/resources/img/pants.JPG'/>" alt="Slide 1">
