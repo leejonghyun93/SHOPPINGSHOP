@@ -25,10 +25,9 @@ public class CategoryController {
     @GetMapping("/subCategoryId/{subCategoryId}")
     public String subCategoryList(@PathVariable int subCategoryId, Model m) throws Exception{
 
-        List<ProductDto> list = productService.getList();
-        m.addAttribute("list",list);
+        List<ProductDto> list = productService.getList(subCategoryId);
+        m.addAttribute("productList", list); //
 
         return "product/productList";
-
     }
 }

@@ -49,6 +49,13 @@
             width: 100%;
             text-align: right; /* 리스트를 오른쪽으로 정렬 */
         }
+        .title{
+            font-size: 30px;
+            text-align: center;
+            border-bottom: 1px solid #f3f3f3;
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
     </style>
 
     <div class="sidebar">
@@ -60,5 +67,6 @@
             <li><a>커뮤니티</a></li>
         </ul>
     </div>
+    <h1 class="title">shoppingShop</h1>
 </head>
 </html>

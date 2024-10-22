@@ -105,6 +105,7 @@
 </head>
 <body>
 <%@ include file="/WEB-INF/views/layout/header/header.jsp" %>
+<%@ include file="/WEB-INF/views/layout/categoryBar/categoryBar.jsp" %>
 <div class="content">
     <div class="login-container">
         <h1 class="login-h1">로그인</h1>
