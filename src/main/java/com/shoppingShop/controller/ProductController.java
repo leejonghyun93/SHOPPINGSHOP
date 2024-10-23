@@ -14,5 +14,7 @@ public class ProductController {
     public String productDetail(@PathVariable ProductDto productId){
 
 
+        return "product/productDetail";
+
     }
 }
