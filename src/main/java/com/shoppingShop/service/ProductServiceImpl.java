@@ -17,4 +17,9 @@ public class ProductServiceImpl implements ProductService{
     public List<ProductDto> getList(int subCategoryId) throws Exception{
         return productDao.selectProductAll(subCategoryId);
     }
+
+    @Override
+    public String getProductDetail(int productId) throws Exception{
+        return productDao.selectProductDetail(productId);
+    }
 }

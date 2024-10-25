@@ -1,7 +1,10 @@
 package com.shoppingShop.controller;
 
 import com.shoppingShop.domain.ProductDto;
+import com.shoppingShop.service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,9 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/product")
 public class ProductController {
 
-    @GetMapping("/detail/{productId}")
-    public String productDetail(@PathVariable ProductDto productId){
+    @Autowired
+    private ProductService productService;
 
+    @GetMapping("/detail/{productId}")
+    public String productDetail(@PathVariable int productId, Model m) throws Exception {
+
+        String detail = productService.getProductDetail(productId);
+        m.addAttribute("detail",detail);
 
         return "product/productDetail";
 
