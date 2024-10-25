@@ -19,4 +19,9 @@ public class ProductDaoImpl implements ProductDao{
         return session.selectList(namespace + "selectProductAll", subCategoryId); // 파라미터 이름 수정
     }
 
+    @Override
+    public String selectProductDetail(int productId) throws Exception{
+        return session.selectOne(namespace + "selectProductDetail" , productId);
+    }
+
 }

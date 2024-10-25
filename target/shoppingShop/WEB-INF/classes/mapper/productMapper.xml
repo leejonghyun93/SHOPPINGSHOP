@@ -7,4 +7,10 @@
                  JOIN sub_category sc ON sc.category_id = p.category_id
         WHERE sc.sub_category_id = #{subCategoryId};
     </select>
+
+    <select id="selectProductDetail" resultType="com.shoppingShop.domain.ProductDto">
+        SELECT *
+          FROM product p
+         WHERE p.product_id = #{productId};
+    </select>
 </mapper>

@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ProductDao {
     List<ProductDto> selectProductAll(int subCategoryId) throws Exception;
+
+    String selectProductDetail(int productId) throws Exception;
 }
