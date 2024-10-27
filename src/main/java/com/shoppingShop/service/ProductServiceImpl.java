@@ -19,7 +19,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public String getProductDetail(int productId) throws Exception{
-        return productDao.selectProductDetail(productId);
+    public ProductDto getProductDetail(int proId) throws Exception{
+        return productDao.selectProductDetail(proId);
     }
 }

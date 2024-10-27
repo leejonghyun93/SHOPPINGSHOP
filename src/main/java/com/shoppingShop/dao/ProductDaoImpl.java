@@ -20,8 +20,8 @@ public class ProductDaoImpl implements ProductDao{
     }
 
     @Override
-    public String selectProductDetail(int productId) throws Exception{
-        return session.selectOne(namespace + "selectProductDetail" , productId);
+    public ProductDto selectProductDetail(int proId) throws Exception{
+        return session.selectOne(namespace + "selectProductDetail" , proId);
     }
 
 }
