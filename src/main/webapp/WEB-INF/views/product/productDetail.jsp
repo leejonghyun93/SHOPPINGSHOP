@@ -13,15 +13,18 @@
     <title>상품 상세보기</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            height: 100%;
             margin: 0;
-            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .content {
+            flex: 1;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            height: 100vh;
+            align-items: flex-start; /* 컨텐츠가 푸터와 겹치지 않도록 수정 */
+            padding-bottom: 50px; /* 푸터와 겹치지 않도록 하단에 공간 추가 */
         }
-
         .container {
             display: flex;
             max-width: 1200px;
@@ -47,12 +50,13 @@
             flex: 2;
             display: flex;
             flex-direction: column;
-            border-top: 1px solid #ddd;
             border-bottom: 1px solid #ddd;
-            padding: 20px;
+            padding: 0px 0px 20px 0px;
         }
 
         .productTitle {
+            margin-top: 0px;
+            margin-bottom: 0px;
             font-size: 28px;
             margin-bottom: 10px;
         }
@@ -152,7 +156,7 @@
 
 <%@ include file="/WEB-INF/views/layout/header/header.jsp" %>
 <%@ include file="/WEB-INF/views/layout/categoryBar/categoryBar.jsp" %>
-
+<div class="content">
 <div class="container">
     <!-- 상품 이미지 -->
     <div class="product-image">
@@ -202,7 +206,7 @@
         <a href="#" class="buy-button">구매하기</a>
     </div>
 </div>
-
+</div>
 <%@ include file="/WEB-INF/views/layout/footer/footer.jsp" %>
 
 <script>

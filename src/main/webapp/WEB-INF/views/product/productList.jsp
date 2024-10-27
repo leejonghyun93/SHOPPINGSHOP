@@ -138,7 +138,7 @@
             <div class="product-item">
                 <!-- productId에 따라 이미지 경로를 동적으로 설정 -->
                 <img src="<c:url value='/resources/img/${product.imageUrl}'/>" alt="${product.proName} 이미지"/>
-                <h3><a href="<c:url value='/product/detail?proId=${product.proId}'/>">${product.proName}</a></h3>
+                <h3><a href="<c:url value='/product/detail/${product.proId}'/>">${product.proName}</a></h3>
                 <p>가격: ${product.proPrice}원</p>
             </div>
         </c:forEach>
