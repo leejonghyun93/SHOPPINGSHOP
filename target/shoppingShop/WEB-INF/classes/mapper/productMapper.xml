@@ -11,6 +11,6 @@
     <select id="selectProductDetail" resultType="com.shoppingShop.domain.ProductDto">
         SELECT *
           FROM product p
-         WHERE p.product_id = #{productId};
+         WHERE p.pro_id = #{proId};
     </select>
 </mapper>
