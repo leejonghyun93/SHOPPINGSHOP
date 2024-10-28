@@ -19,6 +19,32 @@ public class ProductDto {
     private int shippingFee;
     private int totalPrice;
 
+    private int quantity;
+
+    public ProductDto(){
+
+    }
+    public ProductDto(int proId, int categoryId, String proName, String proDescription, String proColor, String proSize, int proPrice, int proStock, String createdAt, String updatedAt, boolean featured, Integer subCategoryId, String imagePath, Integer cartCount, String imageUrl, int shippingFee, int totalPrice, int quantity) {
+        this.proId = proId;
+        this.categoryId = categoryId;
+        this.proName = proName;
+        this.proDescription = proDescription;
+        this.proColor = proColor;
+        this.proSize = proSize;
+        this.proPrice = proPrice;
+        this.proStock = proStock;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.featured = featured;
+        this.subCategoryId = subCategoryId;
+        this.imagePath = imagePath;
+        this.cartCount = cartCount;
+        this.imageUrl = imageUrl;
+        this.shippingFee = shippingFee;
+        this.totalPrice = totalPrice;
+        this.quantity = quantity;
+    }
+
     public int getProId() {
         return proId;
     }
@@ -155,24 +181,12 @@ public class ProductDto {
         this.totalPrice = totalPrice;
     }
 
-    public ProductDto(int proId, int categoryId, String proName, String proDescription, String proColor, String proSize, int proPrice, int proStock, String createdAt, String updatedAt, boolean featured, Integer subCategoryId, String imagePath, Integer cartCount, String imageUrl, int shippingFee, int totalPrice) {
-        this.proId = proId;
-        this.categoryId = categoryId;
-        this.proName = proName;
-        this.proDescription = proDescription;
-        this.proColor = proColor;
-        this.proSize = proSize;
-        this.proPrice = proPrice;
-        this.proStock = proStock;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.featured = featured;
-        this.subCategoryId = subCategoryId;
-        this.imagePath = imagePath;
-        this.cartCount = cartCount;
-        this.imageUrl = imageUrl;
-        this.shippingFee = shippingFee;
-        this.totalPrice = totalPrice;
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     @Override
@@ -195,6 +209,7 @@ public class ProductDto {
                 ", imageUrl='" + imageUrl + '\'' +
                 ", shippingFee=" + shippingFee +
                 ", totalPrice=" + totalPrice +
+                ", quantity=" + quantity +
                 '}';
     }
 }
