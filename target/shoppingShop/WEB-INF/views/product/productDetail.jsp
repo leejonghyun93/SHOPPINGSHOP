@@ -215,34 +215,24 @@
                 </div>
             </div>
 
-            <!-- 선택한 옵션 표시 -->
             <div id="selectedProductInfo">
                 <h3>선택한 상품 정보</h3>
-                <div id="selectedItemsContainer"></div> <!-- 여러 상품 정보를 담을 컨테이너 -->
+                <div id="selectedItemsContainer"></div>
 
                 <div style="display: flex; align-items: center;">
                     <p>색상: <span id="selectedColor"></span></p>
                     <p>사이즈: <span id="selectedSize"></span></p>
 
-                    <!-- 수량 조절 버튼 -->
                     <div style="margin-left: 20px;">
                         <button id="decreaseQuantity" style="width: 30px;">-</button>
                         <span id="quantity" style="margin: 0 10px;">1</span>
                         <button id="increaseQuantity" style="width: 30px;">+</button>
                     </div>
 
-                    <!-- 선택한 상품의 총 가격 -->
                     <p style="margin-left: 20px;">총 가격: <span id="totalPrice"></span>원</p>
 
-                    <!-- 추가하기 버튼 -->
-                    <button id="addProduct">상품 추가</button>
+                    <button id="removeProduct" style="margin-left: 20px; color: red; background: none; border: none; font-size: 18px; cursor: pointer;">X</button>
                 </div>
-
-                <!-- 삭제 버튼 -->
-                <button id="removeProduct"
-                        style="margin-left: 20px; color: red; background: none; border: none; font-size: 18px; cursor: pointer;">
-                    X
-                </button>
             </div>
 
             <a href="#" class="buy-button">구매하기</a>
@@ -251,18 +241,16 @@
 </div>
 <%@ include file="/WEB-INF/views/layout/footer/footer.jsp" %>
 
-
 <script>
-    let selectedColor = '';
-    let selectedSize = '';
-    let quantity = 1;
-    let selectedItems = []; // 선택한 상품 정보를 저장할 배열
-
     const colorButtons = document.querySelectorAll('#colorOptions .option-button');
     const sizeButtons = document.querySelectorAll('#sizeOptions .option-button');
-    const selectedItemsContainer = document.getElementById('selectedItemsContainer');
+    const sizeOptions = document.getElementById('sizeOptions');
+    const selectedProductInfo = document.getElementById('selectedProductInfo');
     const selectedColorElement = document.getElementById('selectedColor');
     const selectedSizeElement = document.getElementById('selectedSize');
+
+    let selectedColor = '';
+    let selectedSize = '';
 
     colorButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -270,8 +258,14 @@
             colorButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
             selectedColorElement.textContent = selectedColor;
+
             sizeOptions.classList.remove('disabled');
-            updateTotalPrice();
+            sizeButtons.forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.pointerEvents = 'auto';
+            });
+
+            selectedProductInfo.style.display = 'block';
         });
     });
 
@@ -281,90 +275,99 @@
             sizeButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
             selectedSizeElement.textContent = selectedSize;
+
             updateTotalPrice();
         });
     });
 
+    document.getElementById('toggleButton').addEventListener('click', () => {
+        const info = document.getElementById('additionalInfo');
+        if (info.style.display === 'block') {
+            info.style.display = 'none';
+            document.getElementById('toggleButton').textContent = '+';
+        } else {
+            info.style.display = 'block';
+            document.getElementById('toggleButton').textContent = '-';
+        }
+    });
+
+    let quantity = 1;
+    const quantityDisplay = document.getElementById('quantity');
+
     document.getElementById('increaseQuantity').addEventListener('click', () => {
-        quantity++;
-        document.getElementById('quantity').textContent = quantity;
-        updateTotalPrice();
+        if (quantity < 10) {
+            quantity++;
+            quantityDisplay.textContent = quantity;
+            updateTotalPrice();
+        } else {
+            alert('최대 10개까지 담을 수 있습니다.');
+        }
     });
 
     document.getElementById('decreaseQuantity').addEventListener('click', () => {
         if (quantity > 1) {
             quantity--;
-            document.getElementById('quantity').textContent = quantity;
+            quantityDisplay.textContent = quantity;
             updateTotalPrice();
         }
     });
 
     function updateTotalPrice() {
-        const productPrice = ${productDetail.proPrice};
-        const totalPrice = productPrice * quantity;
-        document.getElementById('totalPrice').textContent = totalPrice;
+        const price = ${productDetail.proPrice};
+        const totalPrice = price * quantity;
+        document.getElementById('totalPrice').textContent = totalPrice.toLocaleString();
     }
 
+    let selectedItems = []; // 선택된 상품을 저장할 배열
+
     document.getElementById('addProduct').addEventListener('click', () => {
-        if (selectedColor && selectedSize) {
-            if (selectedItems.length < 10) { // 최대 10개까지만 추가
-                const itemInfo = {
-                    color: selectedColor,
-                    size: selectedSize,
-                    quantity: quantity
-                };
-                selectedItems.push(itemInfo);
-                renderSelectedItems();
-                clearSelections();
-            } else {
-                alert('최대 10개까지 추가할 수 있습니다.');
-            }
-        } else {
-            alert('색상과 사이즈를 선택해 주세요.');
+        if (!selectedColor || !selectedSize) {
+            alert('색상과 사이즈를 선택하세요.');
+            return;
         }
+        const cartCount = document.getElementById('cartCount').value;
+        const newTotalCount = parseInt(cartCount) + quantity;
+
+        if (newTotalCount > 10) {
+            alert('최대 10개까지 담을 수 있습니다.');
+            return;
+        }
+
+        // 선택한 상품 정보 추가
+        const selectedItem = {
+            color: selectedColor,
+            size: selectedSize,
+            quantity: quantity,
+            totalPrice: (parseFloat(${productDetail.proPrice}) * quantity).toLocaleString()
+        };
+        selectedItems.push(selectedItem);
+        updateSelectedItemsDisplay();
+
+        alert(`"${selectedSize}" 사이즈의 "${selectedColor}" 색상의 상품이 ${quantity}개 추가되었습니다.`);
     });
 
-    function renderSelectedItems() {
-        selectedItemsContainer.innerHTML = '';
+    function updateSelectedItemsDisplay() {
+        const container = document.getElementById('selectedItemsContainer');
+        container.innerHTML = ''; // 기존 내용을 지우고 새로운 내용으로 업데이트
+
         selectedItems.forEach(item => {
-            const itemInfo = document.createElement('div');
-            itemInfo.textContent = `색상: ${item.color}, 사이즈: ${item.size}, 수량: ${item.quantity}`;
-            selectedItemsContainer.appendChild(itemInfo);
+            const itemDiv = document.createElement('div');
+            itemDiv.innerHTML = `${item.size} 사이즈의 ${item.color} 색상: ${item.quantity}개 - 총 가격: ${item.totalPrice}원`;
+            container.appendChild(itemDiv);
         });
     }
 
     document.getElementById('removeProduct').addEventListener('click', () => {
-        selectedItemsContainer.innerHTML = '';
-        selectedItems = []; // 배열 초기화
         selectedColor = '';
         selectedSize = '';
-        quantity = 1;
-        document.getElementById('quantity').textContent = quantity;
-        document.getElementById('totalPrice').textContent = '';
         selectedColorElement.textContent = '';
         selectedSizeElement.textContent = '';
-        clearSelections();
-    });
-
-    function clearSelections() {
+        quantity = 1;
+        quantityDisplay.textContent = quantity;
         colorButtons.forEach(btn => btn.classList.remove('active'));
         sizeButtons.forEach(btn => btn.classList.remove('active'));
-    }
-
-    const toggleButton = document.getElementById('toggleButton');
-    const additionalInfo = document.getElementById('additionalInfo');
-
-    toggleButton.addEventListener('click', () => {
-        if (additionalInfo.style.display === 'block') {
-            additionalInfo.style.display = 'none';
-            toggleButton.textContent = '+';
-        } else {
-            additionalInfo.style.display = 'block';
-            toggleButton.textContent = '-';
-        }
+        selectedProductInfo.style.display = 'none';
     });
 </script>
-
-
 </body>
 </html>
