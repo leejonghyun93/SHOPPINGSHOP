@@ -3,12 +3,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="true" %>
 
-<c:set var="loginId"
-       value="${pageContext.request.getSession(false) == null ? '' : pageContext.request.session.getAttribute('user') != null ? pageContext.request.getSession().getAttribute('user').userId : ''}"/>
+<c:set var="loginId" value="${pageContext.request.getSession(false) == null ? '' : pageContext.request.session.getAttribute('user') != null ? pageContext.request.getSession().getAttribute('user').userId : ''}"/>
 <c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : '/login/logout'}"/>
 <c:set var="logout" value="${loginId == '' ? 'Login' : loginId }"/>
 
-<html lang="en">
+<html lang="ko">
 <head>
     <title>상품 상세보기</title>
     <style>
@@ -134,24 +133,6 @@
             background-color: #0056b3;
         }
 
-        .additional-info {
-            display: none;
-            list-style-type: none;
-            margin-top: 0px;
-            padding: 0;
-            border-bottom: 1px solid gray;
-        }
-
-        .additional-info li {
-            padding: 8px 0;
-        }
-
-        .productTitleImg {
-            width: 300px;
-            height: 400px;
-            object-fit: cover;
-        }
-
         #selectedProductInfo {
             display: none;
             margin-top: 20px;
@@ -159,6 +140,7 @@
             background-color: #f9f9f9;
             border: 1px solid #ddd;
             border-radius: 5px;
+            margin-bottom: 10px;
         }
 
         #selectedProductInfo h3 {
@@ -217,20 +199,15 @@
 
             <div id="selectedProductInfo">
                 <h3>선택한 상품 정보</h3>
-                <div id="selectedItemsContainer"></div>
-
                 <div style="display: flex; align-items: center;">
                     <p>색상: <span id="selectedColor"></span></p>
                     <p>사이즈: <span id="selectedSize"></span></p>
-
                     <div style="margin-left: 20px;">
                         <button id="decreaseQuantity" style="width: 30px;">-</button>
                         <span id="quantity" style="margin: 0 10px;">1</span>
                         <button id="increaseQuantity" style="width: 30px;">+</button>
                     </div>
-
                     <p style="margin-left: 20px;">총 가격: <span id="totalPrice"></span>원</p>
-
                     <button id="removeProduct" style="margin-left: 20px; color: red; background: none; border: none; font-size: 18px; cursor: pointer;">X</button>
                 </div>
             </div>
@@ -251,123 +228,79 @@
 
     let selectedColor = '';
     let selectedSize = '';
+    let selectedProducts = [];
 
     colorButtons.forEach(button => {
         button.addEventListener('click', () => {
             selectedColor = button.getAttribute('data-value');
-            colorButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
             selectedColorElement.textContent = selectedColor;
-
-            sizeOptions.classList.remove('disabled');
-            sizeButtons.forEach(btn => {
-                btn.classList.remove('active');
-                btn.style.pointerEvents = 'auto';
+            button.classList.add('active');
+            colorButtons.forEach(btn => {
+                if (btn !== button) btn.classList.remove('active');
             });
-
-            selectedProductInfo.style.display = 'block';
+            sizeOptions.classList.remove('disabled');
         });
     });
 
     sizeButtons.forEach(button => {
         button.addEventListener('click', () => {
             selectedSize = button.getAttribute('data-value');
-            sizeButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
             selectedSizeElement.textContent = selectedSize;
-
+            button.classList.add('active');
+            sizeButtons.forEach(btn => {
+                if (btn !== button) btn.classList.remove('active');
+            });
             updateTotalPrice();
+            selectedProductInfo.style.display = 'block';
         });
     });
 
-    document.getElementById('toggleButton').addEventListener('click', () => {
-        const info = document.getElementById('additionalInfo');
-        if (info.style.display === 'block') {
-            info.style.display = 'none';
-            document.getElementById('toggleButton').textContent = '+';
-        } else {
-            info.style.display = 'block';
-            document.getElementById('toggleButton').textContent = '-';
-        }
-    });
-
-    let quantity = 1;
-    const quantityDisplay = document.getElementById('quantity');
+    function updateTotalPrice() {
+        const price = ${productDetail.proPrice}; // 상품 가격
+        const quantity = parseInt(document.getElementById('quantity').textContent);
+        const totalPrice = price * quantity;
+        document.getElementById('totalPrice').textContent = totalPrice;
+    }
 
     document.getElementById('increaseQuantity').addEventListener('click', () => {
+        let quantity = parseInt(document.getElementById('quantity').textContent);
         if (quantity < 10) {
             quantity++;
-            quantityDisplay.textContent = quantity;
+            document.getElementById('quantity').textContent = quantity;
             updateTotalPrice();
         } else {
-            alert('최대 10개까지 담을 수 있습니다.');
+            alert('최대 10개까지 선택할 수 있습니다.');
         }
     });
 
     document.getElementById('decreaseQuantity').addEventListener('click', () => {
+        let quantity = parseInt(document.getElementById('quantity').textContent);
         if (quantity > 1) {
             quantity--;
-            quantityDisplay.textContent = quantity;
+            document.getElementById('quantity').textContent = quantity;
             updateTotalPrice();
         }
     });
-
-    function updateTotalPrice() {
-        const price = ${productDetail.proPrice};
-        const totalPrice = price * quantity;
-        document.getElementById('totalPrice').textContent = totalPrice.toLocaleString();
-    }
-
-    let selectedItems = []; // 선택된 상품을 저장할 배열
-
-    document.getElementById('addProduct').addEventListener('click', () => {
-        if (!selectedColor || !selectedSize) {
-            alert('색상과 사이즈를 선택하세요.');
-            return;
-        }
-        const cartCount = document.getElementById('cartCount').value;
-        const newTotalCount = parseInt(cartCount) + quantity;
-
-        if (newTotalCount > 10) {
-            alert('최대 10개까지 담을 수 있습니다.');
-            return;
-        }
-
-        // 선택한 상품 정보 추가
-        const selectedItem = {
-            color: selectedColor,
-            size: selectedSize,
-            quantity: quantity,
-            totalPrice: (parseFloat(${productDetail.proPrice}) * quantity).toLocaleString()
-        };
-        selectedItems.push(selectedItem);
-        updateSelectedItemsDisplay();
-
-        alert(`"${selectedSize}" 사이즈의 "${selectedColor}" 색상의 상품이 ${quantity}개 추가되었습니다.`);
-    });
-
-    function updateSelectedItemsDisplay() {
-        const container = document.getElementById('selectedItemsContainer');
-        container.innerHTML = ''; // 기존 내용을 지우고 새로운 내용으로 업데이트
-
-        selectedItems.forEach(item => {
-            const itemDiv = document.createElement('div');
-            itemDiv.innerHTML = `${item.size} 사이즈의 ${item.color} 색상: ${item.quantity}개 - 총 가격: ${item.totalPrice}원`;
-            container.appendChild(itemDiv);
-        });
-    }
 
     document.getElementById('removeProduct').addEventListener('click', () => {
         selectedColor = '';
         selectedSize = '';
         selectedColorElement.textContent = '';
         selectedSizeElement.textContent = '';
-        quantity = 1;
-        quantityDisplay.textContent = quantity;
+        document.getElementById('quantity').textContent = '1';
+        selectedProductInfo.style.display = 'none';
         colorButtons.forEach(btn => btn.classList.remove('active'));
         sizeButtons.forEach(btn => btn.classList.remove('active'));
-        selectedProductInfo.style.display = 'none';
+        sizeOptions.classList.add('disabled');
     });
+
+    document.getElementById('toggleButton').addEventListener('click', () => {
+        const additionalInfo = document.getElementById('additionalInfo');
+        additionalInfo.style.display = additionalInfo.style.display === 'none' ? 'block' : 'none';
+        document.getElementById('toggleButton').textContent = additionalInfo.style.display === 'block' ? '-' : '+';
+    });
+
+    document.getElementById('additionalInfo').style.display = 'none'; // 초기에는 추가 정보 숨김
 </script>
 </body>
 </html>
