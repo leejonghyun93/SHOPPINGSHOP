@@ -12,15 +12,27 @@
     <context:component-scan base-package="com.shoppingShop.controller"/>
     <context:component-scan base-package="com.shoppingShop.service" />
     <context:component-scan base-package="com.shoppingShop.dao" />
+    <context:component-scan base-package="com.shoppingShop.interceptor" />
 
     <mvc:annotation-driven/>
 
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
+    <!-- View Resolver 설정 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/views/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
 
+    <!-- 인터셉터 설정 -->
+    <mvc:interceptors>
+        <!-- CategoryInterceptor bean 설정 -->
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <ref bean="categoryInterceptor"/> <!-- ref 사용 -->
+        </mvc:interceptor>
+    </mvc:interceptors>
 
+    <!-- CategoryInterceptor 빈 등록 -->
+    <bean id="categoryInterceptor" class="com.shoppingShop.interceptor.CategoryInterceptor"/>
 </beans>
