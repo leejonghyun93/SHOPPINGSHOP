@@ -238,7 +238,7 @@
                 <ul id="productList" style="list-style-type: none; padding: 0;"></ul>
             </div>
 
-            <a href="#" class="buy-button">구매하기</a>
+            <a href="#" class="buy-button" onclick="moveToCart()">구매하기</a>
         </div>
     </div>
 </div>
@@ -326,6 +326,10 @@
         additionalInfo.style.display = additionalInfo.style.display === 'none' ? 'block' : 'none';
         document.getElementById('toggleButton').innerText = additionalInfo.style.display === 'none' ? '+' : '-';
     });
+    function moveToCart() {
+        // 장바구니로 이동
+        window.location.href = "/cart";
+    }
 </script>
 </body>
 </html>
