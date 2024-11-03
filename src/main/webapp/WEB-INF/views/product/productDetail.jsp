@@ -330,6 +330,8 @@
         // 장바구니로 이동
         window.location.href = "/cart";
     }
+
+    //IIJIJI
 </script>
 </body>
 </html>
