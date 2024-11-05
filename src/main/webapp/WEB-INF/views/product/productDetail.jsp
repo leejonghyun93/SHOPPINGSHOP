@@ -233,11 +233,6 @@
                 </div>
             </div>
 
-            <div id="selectedProductsList">
-                <h3>선택한 상품 목록</h3>
-                <ul id="productList" style="list-style-type: none; padding: 0;"></ul>
-            </div>
-
             <a href="#" class="buy-button" onclick="moveToCart()">구매하기</a>
         </div>
     </div>
@@ -250,7 +245,6 @@
     const selectedColorElement = document.getElementById('selectedColor');
     const selectedSizeElement = document.getElementById('selectedSize');
     const selectedProductInfo = document.getElementById('selectedProductInfo');
-    const productList = document.getElementById('productList');
     let selectedColor = '';
     let selectedSize = '';
     let quantity = 1;
@@ -312,13 +306,12 @@
         quantity = 1;
         selectedColorElement.innerText = '';
         selectedSizeElement.innerText = '';
-        document.getElementById('productList').innerHTML = ''; // 목록 비우기
+
     });
 
     function addProductToList(color, size, quantity, price) {
         const listItem = document.createElement('li');
         listItem.innerText = `색상: ${color} 사이즈: ${size} - ${quantity}개 총가격 ${price * quantity}원`;
-        productList.appendChild(listItem);
     }
 
     document.getElementById('toggleButton').addEventListener('click', () => {
@@ -330,8 +323,6 @@
         // 장바구니로 이동
         window.location.href = "/cart";
     }
-
-    //IIJIJI
 </script>
 </body>
 </html>
