@@ -320,8 +320,15 @@
         document.getElementById('toggleButton').innerText = additionalInfo.style.display === 'none' ? '+' : '-';
     });
     function moveToCart() {
-        // 장바구니로 이동
-        window.location.href = "/cart";
+        if (selectedColor && selectedSize) {
+            const confirmed = confirm("장바구니에 등록하였습니다. 장바구니로 이동하시겠습니까?");
+            if (confirmed) {
+                // URL에 파라미터로 색상과 사이즈를 전달
+                window.location.href = "/cart";
+            }
+        } else {
+            alert("색상과 사이즈를 선택해주세요.");
+        }
     }
 </script>
 </body>
