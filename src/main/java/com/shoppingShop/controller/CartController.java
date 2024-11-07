@@ -19,18 +19,26 @@ public class CartController {
 
     // 장바구니 아이템 보기 및 추가 기능
     @GetMapping
-    public String viewCart(HttpSession session, @RequestParam("userId") String userId, Model model) {
+    public String viewCart(HttpSession session, Model model) {
+        // 세션에서 userId를 가져옵니다.
+        String userId = (String) session.getAttribute("userId");
 
-        // 세션에서 색상과 사이즈 정보 가져오기
+        if (userId == null) {
+            // userId가 없으면 로그인 페이지로 리다이렉트
+            return "redirect:/login";
+        }
+
+        // 세션에서 선택한 색상과 사이즈 정보 가져오기
         String color = (String) session.getAttribute("selectedColor");
         String size = (String) session.getAttribute("selectedSize");
 
         // 색상과 사이즈가 있을 경우 장바구니에 추가
         if (color != null && size != null) {
             CartDto cart = new CartDto();
+            cart.setUserId(userId); // 장바구니에 사용자 ID 설정
 
             cartService.addCart(cart);
-            session.removeAttribute("selectedColor");  // 세션에서 색상과 사이즈 삭제
+            session.removeAttribute("selectedColor");
             session.removeAttribute("selectedSize");
         }
 
@@ -38,7 +46,6 @@ public class CartController {
         List<CartDto> cartItems = cartService.getCartByUserId(userId);
         model.addAttribute("cartItems", cartItems);
 
-        // 장바구니 페이지 반환
         return "user/cart";
     }
 

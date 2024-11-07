@@ -23,7 +23,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public String showLoginPage() {
-        return "login/login"; //
+        return "login/login"; // 로그인 페이지 표시
     }
 
     @PostMapping("/login")
@@ -31,15 +31,19 @@ public class LoginController {
         try {
             UserDto user = userService.login(userId, userPwd);
             if (user != null) {
-                // 세션에 로그인정보 저장
-                httpSession.setAttribute("user",user);
+                // 세션에 로그인 정보 저장
+                httpSession.setAttribute("user", user);
+                System.out.println("세션에 저장된 user: " + httpSession.getAttribute("user")); // 세션 확인
 
-                Cookie cookie = new Cookie("userId",user.getUserId());
+                // 쿠키 설정
+                Cookie cookie = new Cookie("userId", user.getUserId());
                 cookie.setMaxAge(60 * 60 * 24);
                 cookie.setPath("/");
                 response.addCookie(cookie);
 
-                return "redirect:/"; // 로그인 성공 시 홈 페이지로 리다이렉트
+                // 로그인 성공 시, user 정보를 모델에 추가하여 JSP에서 사용할 수 있게 전달
+                model.addAttribute("userId", user.getUserId());
+                return "redirect:/"; // 홈 페이지로 리다이렉트
             } else {
                 model.addAttribute("error", "아이디 또는 비밀번호가 잘못되었습니다.");
                 return "login/login"; // 로그인 실패 시 로그인 페이지로 다시 이동

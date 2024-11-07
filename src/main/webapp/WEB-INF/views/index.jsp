@@ -3,9 +3,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="true" %> <!-- 세션 사용 설정 -->
 
-<c:set var="loginId" value="${pageContext.request.getSession(false) == null ? '' : pageContext.request.session.getAttribute('user') != null ? pageContext.request.getSession().getAttribute('user').userId : ''}"/>
-<c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : '/login/logout'}"/>
-<c:set var="logout" value="${loginId == '' ? 'Login' : loginId }"/>
+<!-- 로그인 정보 설정 -->
+<c:set var="loginId" value="${pageContext.request.getSession(false) == null || pageContext.request.session.getAttribute('user') == null ? '' : pageContext.request.getSession().getAttribute('user').userId}" />
+<!-- 로그인 상태에 따라 링크 변경 -->
+<c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : '/login/logout'}" />
+<!-- 로그인 상태에 따라 버튼 텍스트 변경 -->
+<c:set var="logout" value="${loginId == '' ? 'Login' : loginId}" />
 <html>
 <head>
     <title>메인페이지</title>
