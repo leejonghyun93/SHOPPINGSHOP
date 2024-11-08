@@ -1,11 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%@ page pageEncoding="UTF-8" %>
+<%@ page session="false"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page session="true" %>
 
-<c:set var="loginId" value="${pageContext.session != null && pageContext.session.getAttribute('user') != null ? pageContext.session.getAttribute('user').userId : ''}" />
+<c:set var="loginId" value="${pageContext.request.getSession(false)==null ? '' : pageContext.request.session.getAttribute('userId')}"/>
 <c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : '/login/logout'}" />
-<c:set var="logout" value="${loginId == '' ? 'Login' : loginId }" />
+<c:set var="logout" value="${loginId == '' ? 'Login' : loginId}" />
 
 <html>
 <head>

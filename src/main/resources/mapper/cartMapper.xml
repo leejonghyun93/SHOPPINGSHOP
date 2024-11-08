@@ -3,17 +3,25 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.shoppingShop.mapper.CartMapper">
+<mapper namespace="com.shoppingShop.dao.CartMapper">
+
+    <!-- Cart 추가 -->
     <insert id="addCart" parameterType="com.shoppingShop.domain.CartDto">
-        INSERT INTO cart (user_id, pro_id, cart_count, image_url, product_info, quantity, shipping_fee, total_price, unit_price)
-        VALUES (#{userId}, #{proId}, #{cartCount}, #{imageUrl}, #{productInfo}, #{quantity}, #{shippingFee}, #{totalPrice}, #{unitPrice})
+        INSERT INTO cart (user_id, product_id, quantity)
+        VALUES (#{userId}, #{productId}, #{quantity})
     </insert>
 
-    <select id="getCartByUserId" parameterType="String" resultType="com.shoppingShop.domain.CartDto">
-        SELECT * FROM cart WHERE user_id = #{userId}
+    <!-- 특정 유저의 Cart 가져오기 -->
+    <select id="getCartByUserId" parameterType="string" resultType="com.shoppingShop.domain.CartDto">
+        SELECT *
+        FROM cart
+        WHERE user_id = #{userId}
     </select>
 
-    <delete id="deleteCart" parameterType="Long">
-        DELETE FROM cart WHERE cart_id = #{cartId}
+    <!-- Cart 삭제 -->
+    <delete id="deleteCart" parameterType="long">
+        DELETE FROM cart
+        WHERE cart_id = #{cartId}
     </delete>
+
 </mapper>

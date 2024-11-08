@@ -12,7 +12,7 @@ public class CartDaoImpl implements CartDao {
 
     @Autowired
     private SqlSession sqlSession;
-    private static final String NAMESPACE = "com.shoppingShop.dao.CartDao.";
+    private static final String NAMESPACE = "com.shoppingShop.dao.CartMapper.";
 
     @Override
     public void addCart(CartDto cart) {

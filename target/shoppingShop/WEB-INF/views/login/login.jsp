@@ -1,7 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%@ page pageEncoding="UTF-8" %>
+<%@ page session="false"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+<c:set var="loginId" value="${pageContext.request.getSession(false)==null ? '' : pageContext.request.session.getAttribute('userId')}"/>
+<c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : '/login/logout'}" />
+<c:set var="logout" value="${loginId == '' ? 'Login' : loginId}" />
 <html>
 <head>
     <title>로그인</title>
@@ -13,23 +16,23 @@
             flex-direction: column;
         }
 
-        /* 메인 컨텐츠 영역 */
         .content {
-            flex: 1; /* 남은 공간을 채워 화면 하단에 푸터를 위치시킴 */
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
         }
+
         .login-container {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
-            flex-direction: column; /* 요소를 수직으로 배치 */
-            align-items: center; /* 수평 중앙 정렬 */
-            width: 300px; /* 로그인 박스 너비 설정 */
-            background: white; /* 배경색 */
+            flex-direction: column;
+            align-items: center;
+            width: 300px;
+            background: white;
             padding: 30px;
             border-radius: 10px;
         }
@@ -49,12 +52,12 @@
 
         .loginId, .loginPwd {
             width: 100%;
-            margin-bottom: 15px; /* 입력 필드 간격 */
+            margin-bottom: 15px;
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            box-sizing: border-box; /* 패딩과 너비 포함 설정 */
+            box-sizing: border-box;
         }
 
         .loginButton {
@@ -75,31 +78,31 @@
 
         .membership {
             border-top: 1px solid rgb(162, 162, 162);
-            list-style-type: none; /* 점 제거 */
-            display: flex; /* 가로로 나열 */
-            justify-content: center; /* 가운데 정렬 */
-            padding: 0; /* 기본 패딩 제거 */
-            margin: 0; /* 기본 마진 제거 */
+            list-style-type: none;
+            display: flex;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
         }
 
         .membership li {
-            margin: 0 5px; /* 링크 사이 간격 */
+            margin: 0 5px;
             padding-top: 20px;
         }
 
         .membership li:not(:last-child)::after {
-            content: "|"; /* 링크 사이에 막대 추가 */
-            margin-left: 5px; /* 막대와 글자 사이 간격 */
-            color: #333; /* 막대 색상 */
+            content: "|";
+            margin-left: 5px;
+            color: #333;
         }
 
         .membership li a {
             color: #333;
-            text-decoration: none; /* 밑줄 제거 */
+            text-decoration: none;
         }
 
         .membership li a:hover {
-            text-decoration: underline; /* 마우스 오버 시 밑줄 추가 */
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -130,6 +133,18 @@
     </div>
 </div>
 <%@ include file="/WEB-INF/views/layout/footer/footer.jsp" %>
-</body>
 
+<script>
+    window.onload = function() {
+        let userId = "${userId}"; // 서버에서 전달된 userId를 JSP 표현식으로 받아옴
+        if (userId) {
+            sessionStorage.setItem('userId', userId); // sessionStorage에 userId 저장
+            console.log('Logged in as:', userId); // 콘솔에 로그인된 아이디 출력
+        } else {
+            console.log('Not logged in');
+        }
+    };
+</script>
+
+</body>
 </html>

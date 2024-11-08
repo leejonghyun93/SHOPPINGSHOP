@@ -21,7 +21,9 @@
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
-
+  <session-config>
+    <session-timeout>30</session-timeout> <!-- 세션 타임아웃 30분 -->
+  </session-config>
   <!-- URL Mapping for DispatcherServlet -->
   <servlet-mapping>
     <servlet-name>appServlet</servlet-name>

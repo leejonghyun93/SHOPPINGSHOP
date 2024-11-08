@@ -1,8 +1,10 @@
-<%@ page import="com.shoppingShop.domain.UserDto" %>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%@ page pageEncoding="UTF-8" %>
+<%@ page session="false"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+<c:set var="loginId" value="${pageContext.request.getSession(false)==null ? '' : pageContext.request.session.getAttribute('userId')}"/>
+<c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : '/login/logout'}" />
+<c:set var="logout" value="${loginId == '' ? 'Login' : loginId}" />
 <html>
 <head>
     <title>로그인</title>
@@ -134,19 +136,14 @@
 
 <script>
     window.onload = function() {
-        <%
-            UserDto user = (UserDto) session.getAttribute("user");
-            if (user != null) {
-                String userId = user.getUserId();
-                // 세션 저장소에 userId 저장
-                out.print("sessionStorage.setItem('userId', '" + userId + "');");
-                // 저장된 값을 콘솔에 출력 (디버깅용)
-                out.print("console.log('userId:', sessionStorage.getItem('userId'));");
-            } else {
-                out.print("console.log('No user found in session');");
-            }
-        %>
-    }
+        let userId = "${userId}"; // 서버에서 전달된 userId를 JSP 표현식으로 받아옴
+        if (userId) {
+            sessionStorage.setItem('userId', userId); // sessionStorage에 userId 저장
+            console.log('Logged in as:', userId); // 콘솔에 로그인된 아이디 출력
+        } else {
+            console.log('Not logged in');
+        }
+    };
 </script>
 
 </body>

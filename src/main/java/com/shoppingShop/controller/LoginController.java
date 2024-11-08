@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -27,22 +28,21 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(String userId, String userPwd, Model model, HttpSession httpSession, HttpServletResponse response) {
+    public String login(String userId, String userPwd, Model model, HttpServletRequest request, HttpServletResponse response) {
         try {
-            UserDto user = userService.login(userId, userPwd);
-            if (user != null) {
-                // 세션에 로그인 정보 저장
-                httpSession.setAttribute("user", user);
-                System.out.println("세션에 저장된 user: " + httpSession.getAttribute("user")); // 세션 확인
 
+            if (userId != null) {
+                // 세션에 로그인 정보 저장
+                HttpSession session = request.getSession();
+                session.setAttribute("userId", userId);
                 // 쿠키 설정
-                Cookie cookie = new Cookie("userId", user.getUserId());
+                Cookie cookie = new Cookie("userId", userId);
                 cookie.setMaxAge(60 * 60 * 24);
                 cookie.setPath("/");
                 response.addCookie(cookie);
 
                 // 로그인 성공 시, user 정보를 모델에 추가하여 JSP에서 사용할 수 있게 전달
-                model.addAttribute("userId", user.getUserId());
+                model.addAttribute("userId", userId); // userId를 모델에 추가
                 return "redirect:/"; // 홈 페이지로 리다이렉트
             } else {
                 model.addAttribute("error", "아이디 또는 비밀번호가 잘못되었습니다.");
