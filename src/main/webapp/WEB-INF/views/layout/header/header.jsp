@@ -111,7 +111,7 @@
             <li><a href="<c:url value='/membership/register'/>">회원가입</a></li>
             <li><a>주문/배송조회</a></li>
             <li><a>1:1문의</a></li>
-            <li><a>커뮤니티</a></li>
+            <li><a href="<c:url value='/board/list'/>">게시판</a></li>
         </ul>
     </div>
     <h1 class="title">shoppingShop</h1>
