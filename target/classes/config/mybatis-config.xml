@@ -11,6 +11,7 @@
         <typeAlias alias="SubCategoryDto" type="com.shoppingShop.domain.SubCategoryDto"/>
         <typeAlias alias="ProductDto" type="com.shoppingShop.domain.ProductDto"/>
         <typeAlias alias="CartDto" type="com.shoppingShop.domain.CartDto"/>
+        <typeAlias alias="BoardDto" type="com.shoppingShop.domain.BoardDto"/>
     </typeAliases>
 
 </configuration>

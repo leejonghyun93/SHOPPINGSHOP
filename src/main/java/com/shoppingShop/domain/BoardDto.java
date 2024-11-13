@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class BoardDto {
-    private int noticeId;
+    private Integer noticeId;
     private String userId;
     private String title;
     private String content;

@@ -3,9 +3,11 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.shoppingShop.dao.BoardMapper">
+<mapper namespace="com.shoppingShop.dao.BoardDao">
 
-    <!-- Cart 추가 -->
-
+   <select id="selectBoardListAll" resultType="com.shoppingShop.domain.BoardDto">
+      SELECT notice_id, title, user_id, content, created_at, updated_at
+      FROM notice
+   </select>
 
 </mapper>
