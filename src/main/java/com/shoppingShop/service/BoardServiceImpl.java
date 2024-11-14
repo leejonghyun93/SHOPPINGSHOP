@@ -14,7 +14,13 @@ public class BoardServiceImpl implements BoardService{
     private BoardDao boardDao;
 
     @Override
-    public List<BoardDto> getBoardList() throws Exception {  // 파라미터 제거
-        return boardDao.selectBoardListAll();
+    public List<BoardDto> getBoardList(int pageNum, int pageSize) throws Exception {
+        int offset = (pageNum - 1) * pageSize; // 페이지 오프셋 계산
+        return boardDao.selectBoardListAll(offset, pageSize); // 페이징 적용
+    }
+
+    @Override
+    public int getBoardCount() throws Exception {
+        return boardDao.countAllBoards(); // 총 게시글 수 반환
     }
 }

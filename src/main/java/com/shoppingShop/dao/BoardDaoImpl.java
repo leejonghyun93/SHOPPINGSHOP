@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class BoardDaoImpl implements BoardDao{
@@ -15,7 +16,13 @@ public class BoardDaoImpl implements BoardDao{
     private static String namespace = "com.shoppingShop.dao.BoardDao.";
 
     @Override
-    public List<BoardDto> selectBoardListAll() throws Exception {  // 파라미터 제거
-        return session.selectList(namespace + "selectBoardListAll");
+    public List<BoardDto> selectBoardListAll(int offset, int pageSize) throws Exception {
+        // offset과 pageSize를 사용하여 페이징 처리
+        return session.selectList(namespace + "selectBoardListAll", Map.of("offset", offset, "pageSize", pageSize));
+    }
+
+    @Override
+    public int countAllBoards() throws Exception {
+        return session.selectOne(namespace + "countAllBoards"); // 총 게시글 수 반환
     }
 }
