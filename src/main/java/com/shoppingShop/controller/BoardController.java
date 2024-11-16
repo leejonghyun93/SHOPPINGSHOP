@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -33,5 +34,11 @@ public class BoardController {
         m.addAttribute("pageSize", pageSize);
 
         return "board/list";
+    }
+    @GetMapping("/view/{noticeId}")
+    public String viewNotice(@PathVariable("noticeId") int noticeId, Model model)throws Exception {
+        BoardDto notice = boardService.getNoticeById(noticeId);
+        model.addAttribute("notice", notice);
+        return "board/view";
     }
 }

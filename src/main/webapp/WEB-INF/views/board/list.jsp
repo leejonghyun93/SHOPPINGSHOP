@@ -94,7 +94,7 @@
         <c:forEach var="board" items="${boardList}">
             <tr>
                 <td>${board.noticeId}</td>
-                <td><a href="/notice/view/${board.noticeId}">${board.title}</a></td>
+                <td><a href="/board/view/${board.noticeId}">${board.title}</a></td>
                 <td>${board.userId}</td>
                 <td>${board.createdAt}</td>
                 <td>${board.updatedAt}</td>

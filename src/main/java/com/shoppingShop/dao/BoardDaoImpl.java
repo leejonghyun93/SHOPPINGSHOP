@@ -25,4 +25,9 @@ public class BoardDaoImpl implements BoardDao{
     public int countAllBoards() throws Exception {
         return session.selectOne(namespace + "countAllBoards"); // 총 게시글 수 반환
     }
+
+    @Override
+    public BoardDto selectNoticeById(int noticeId) throws Exception {
+        return session.selectOne(namespace + "selectNoticeById", noticeId); // 불필요한 "." 제거
+    }
 }

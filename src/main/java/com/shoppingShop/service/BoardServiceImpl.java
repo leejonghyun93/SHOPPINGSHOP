@@ -23,4 +23,9 @@ public class BoardServiceImpl implements BoardService{
     public int getBoardCount() throws Exception {
         return boardDao.countAllBoards(); // 총 게시글 수 반환
     }
+
+    @Override
+    public BoardDto getNoticeById(int noticeId)throws Exception {
+        return boardDao.selectNoticeById(noticeId);
+    }
 }
