@@ -30,4 +30,14 @@ public class BoardDaoImpl implements BoardDao{
     public BoardDto selectNoticeById(int noticeId) throws Exception {
         return session.selectOne(namespace + "selectNoticeById", noticeId); // 불필요한 "." 제거
     }
+
+    @Override
+    public BoardDto selectPreviousNotice(int noticeId) throws Exception {
+        return session.selectOne(namespace + "selectPreviousNotice", noticeId);
+    }
+
+    @Override
+    public BoardDto selectNextNotice(int noticeId) throws Exception {
+        return session.selectOne(namespace + "selectNextNotice", noticeId);
+    }
 }

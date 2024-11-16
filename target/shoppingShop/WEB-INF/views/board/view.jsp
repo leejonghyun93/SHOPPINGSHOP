@@ -72,22 +72,6 @@
   <div class="content-body">
     <p>${notice.content}</p>
   </div>
-  <!-- 이전글, 다음글 링크 -->
-  <div class="navigation">
-    <c:if test="${previousNotice != null}">
-      <a href="/notice/view/${previousNotice.noticeId}">이전글: ${previousNotice.title}</a>
-    </c:if>
-    <c:if test="${previousNotice == null}">
-      <span>이전글 없음</span>
-    </c:if>
-
-    <c:if test="${nextNotice != null}">
-      <a href="/notice/view/${nextNotice.noticeId}">다음글: ${nextNotice.title}</a>
-    </c:if>
-    <c:if test="${nextNotice == null}">
-      <span>다음글 없음</span>
-    </c:if>
-  </div>
   <a href="/board/list" class="back-button">목록으로 돌아가기</a>
 </div>
 

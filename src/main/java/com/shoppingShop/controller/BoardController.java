@@ -36,9 +36,14 @@ public class BoardController {
         return "board/list";
     }
     @GetMapping("/view/{noticeId}")
-    public String viewNotice(@PathVariable("noticeId") int noticeId, Model model)throws Exception {
+    public String viewNotice(@PathVariable("noticeId") int noticeId, Model model) throws Exception {
         BoardDto notice = boardService.getNoticeById(noticeId);
+        BoardDto previousNotice = boardService.getPreviousNotice(noticeId);
+        BoardDto nextNotice = boardService.getNextNotice(noticeId);
+
         model.addAttribute("notice", notice);
+        model.addAttribute("previousNotice", previousNotice);
+        model.addAttribute("nextNotice", nextNotice);
         return "board/view";
     }
 }

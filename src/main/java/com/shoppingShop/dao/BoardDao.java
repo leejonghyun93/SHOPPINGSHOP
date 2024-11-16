@@ -10,4 +10,8 @@ public interface BoardDao {
     int countAllBoards() throws Exception;
 
     BoardDto selectNoticeById(int noticeId)throws Exception;
+
+    BoardDto selectPreviousNotice(int noticeId) throws Exception;
+
+    BoardDto selectNextNotice(int noticeId) throws Exception;
 }

@@ -28,4 +28,14 @@ public class BoardServiceImpl implements BoardService{
     public BoardDto getNoticeById(int noticeId)throws Exception {
         return boardDao.selectNoticeById(noticeId);
     }
+
+    @Override
+    public BoardDto getPreviousNotice(int noticeId) throws Exception {
+        return boardDao.selectPreviousNotice(noticeId);
+    }
+
+    @Override
+    public BoardDto getNextNotice(int noticeId) throws Exception {
+        return boardDao.selectNextNotice(noticeId);
+    }
 }
