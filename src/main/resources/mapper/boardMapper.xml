@@ -28,7 +28,7 @@
     <select id="selectPreviousNotice" resultType="com.shoppingShop.domain.BoardDto">
         SELECT notice_id, title
         FROM notice
-        WHERE notice_id < #{noticeId}
+        WHERE notice_id <![CDATA[<]]> #{noticeId}
         ORDER BY notice_id DESC
         LIMIT 1
     </select>
@@ -37,7 +37,7 @@
     <select id="selectNextNotice" resultType="com.shoppingShop.domain.BoardDto">
         SELECT notice_id, title
         FROM notice
-        WHERE notice_id > #{noticeId}
+        WHERE notice_id <![CDATA[>]]> #{noticeId}
         ORDER BY notice_id ASC
             LIMIT 1
     </select>
