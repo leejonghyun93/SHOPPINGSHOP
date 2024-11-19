@@ -87,7 +87,6 @@
             <th>제목</th>
             <th>작성자</th>
             <th>작성일</th>
-            <th>수정일</th>
         </tr>
         </thead>
         <tbody>
@@ -97,7 +96,6 @@
                 <td><a href="/board/view/${board.noticeId}">${board.title}</a></td>
                 <td>${board.userId}</td>
                 <td>${board.createdAt}</td>
-                <td>${board.updatedAt}</td>
             </tr>
         </c:forEach>
         </tbody>

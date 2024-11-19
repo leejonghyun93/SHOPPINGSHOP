@@ -1,7 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page session="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%--<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>--%>
 
 <c:set var="loginId"
        value="${pageContext.request.getSession(false) == null ? '' : pageContext.request.session.getAttribute('userId')}"/>
@@ -27,18 +26,50 @@
       padding-bottom: 50px;
     }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
+    .notice-table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      font-family: Arial, sans-serif;
+    }
+
+    .notice-title {
+      background-color: #f4f4f4;
+      font-size: 24px;
+      text-align: left;
+      padding: 15px;
       color: #333;
+      border: 1px solid #ddd;
     }
 
-    .info {
-      margin-bottom: 20px;
+    .notice-table th, .notice-table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      color: #333;
+      vertical-align: top;
     }
 
-    .info div {
-      margin-bottom: 10px;
+    .notice-table th:first-child {
+      width: 10%;
+      text-align: left;
+      background-color: #007bff;
+      color: white;
+    }
+
+    .notice-table th[colspan="2"] {
+      width: 90%;
+      text-align: left;
+    }
+
+    .notice-table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      width: 80%;
+      margin: 20px auto;
     }
 
     .back-button {
@@ -55,6 +86,10 @@
     .back-button:hover {
       background-color: #0056b3;
     }
+    .notice-content {
+      height: 200px; /* 원하는 세로 크기 */
+      vertical-align: top; /* 내용 정렬 설정 */
+    }
   </style>
 </head>
 <body>
@@ -63,15 +98,38 @@
 <jsp:include page="/WEB-INF/views/layout/categoryBar/categoryBar.jsp" />
 
 <div class="content">
-  <h1>${notice.title}</h1>
-  <div class="info">
-    <div><strong>작성자:</strong> ${notice.userId}</div>
-    <div><strong>작성일:</strong> ${notice.createdAt}</div>
-    <div><strong>수정일:</strong> ${notice.updatedAt}</div>
+  <!-- 공지사항 테이블 -->
+  <table class="notice-table">
+    <thead>
+    <tr>
+      <th>제목</th>
+      <th colspan="2" class="notice-title">${notice.title}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td colspan="3" class="notice-content">${notice.content}</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- 이전글, 다음글 링크 -->
+  <div class="navigation">
+    <c:if test="${previousNotice != null}">
+      <a href="/board/view/${previousNotice.noticeId}">이전글: ${previousNotice.title}</a>
+    </c:if>
+    <c:if test="${previousNotice == null}">
+      <span>이전글 없음</span>
+    </c:if>
+
+    <c:if test="${nextNotice != null}">
+      <a href="/board/view/${nextNotice.noticeId}">다음글: ${nextNotice.title}</a>
+    </c:if>
+    <c:if test="${nextNotice == null}">
+      <span>다음글 없음</span>
+    </c:if>
   </div>
-  <div class="content-body">
-    <p>${notice.content}</p>
-  </div>
+
   <a href="/board/list" class="back-button">목록으로 돌아가기</a>
 </div>
 
