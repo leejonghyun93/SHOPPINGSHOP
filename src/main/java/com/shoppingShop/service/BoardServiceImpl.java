@@ -8,15 +8,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class BoardServiceImpl implements BoardService{
+public class BoardServiceImpl implements BoardService {
 
     @Autowired
     private BoardDao boardDao;
 
     @Override
-    public List<BoardDto> getBoardList(int pageNum, int pageSize) throws Exception {
+    public List<BoardDto> getBoardList(int pageNum, int pageSize, String sort) throws Exception {
         int offset = (pageNum - 1) * pageSize; // 페이지 오프셋 계산
-        return boardDao.selectBoardListAll(offset, pageSize); // 페이징 적용
+        return boardDao.selectBoardListAll(offset, pageSize, sort); // 페이징 및 정렬 기준 적용
     }
 
     @Override
@@ -25,7 +25,7 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
-    public BoardDto getNoticeById(int noticeId)throws Exception {
+    public BoardDto getNoticeById(int noticeId) throws Exception {
         return boardDao.selectNoticeById(noticeId);
     }
 

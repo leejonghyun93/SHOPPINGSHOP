@@ -9,26 +9,31 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class BoardDaoImpl implements BoardDao{
+public class BoardDaoImpl implements BoardDao {
 
     @Autowired
     private SqlSession session;
-    private static String namespace = "com.shoppingShop.dao.BoardDao.";
+    private static final String namespace = "com.shoppingShop.dao.BoardDao.";
 
     @Override
-    public List<BoardDto> selectBoardListAll(int offset, int pageSize) throws Exception {
-        // offset과 pageSize를 사용하여 페이징 처리
-        return session.selectList(namespace + "selectBoardListAll", Map.of("offset", offset, "pageSize", pageSize));
+    public List<BoardDto> selectBoardListAll(int offset, int pageSize, String sort) throws Exception {
+        // offset, pageSize, sort를 사용하여 페이징 및 정렬 처리
+        Map<String, Object> params = Map.of(
+                "offset", offset,
+                "pageSize", pageSize,
+                "sort", sort
+        );
+        return session.selectList(namespace + "selectBoardListAll", params);
     }
 
     @Override
     public int countAllBoards() throws Exception {
-        return session.selectOne(namespace + "countAllBoards"); // 총 게시글 수 반환
+        return session.selectOne(namespace + "countAllBoards");
     }
 
     @Override
     public BoardDto selectNoticeById(int noticeId) throws Exception {
-        return session.selectOne(namespace + "selectNoticeById", noticeId); // 불필요한 "." 제거
+        return session.selectOne(namespace + "selectNoticeById", noticeId);
     }
 
     @Override

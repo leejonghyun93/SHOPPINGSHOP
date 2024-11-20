@@ -71,6 +71,29 @@
             pointer-events: none;
             text-decoration: none;
         }
+        .pagination a, .pagination strong {
+            padding: 5px 10px;
+            margin: 0 3px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .pagination a:hover {
+            background-color: #f4f4f4;
+        }
+
+        .pagination strong {
+            background-color: #ddd;
+            color: #000;
+        }
+
+        .pagination .disabled {
+            color: #ccc;
+            border-color: #ccc;
+        }
     </style>
 </head>
 <body>
@@ -80,6 +103,15 @@
 
 <div class="content">
     <h1>공지사항</h1>
+    <form method="get" action="/board/list">
+        <label for="sort">정렬:</label>
+        <select name="sort" id="sort" onchange="this.form.submit()">
+            <option value="latest" ${param.sort == 'latest' ? 'selected' : ''}>최신순</option>
+            <option value="oldest" ${param.sort == 'oldest' ? 'selected' : ''}>오래된순</option>
+        </select>
+        <input type="hidden" name="pageNum" value="${pageNum}" />
+        <input type="hidden" name="pageSize" value="${pageSize}" />
+    </form>
     <table class="board-table">
         <thead>
         <tr>
@@ -87,7 +119,6 @@
             <th>제목</th>
             <th>작성자</th>
             <th>작성일</th>
-            <th>수정일</th>
         </tr>
         </thead>
         <tbody>
@@ -97,7 +128,6 @@
                 <td><a href="/board/view/${board.noticeId}">${board.title}</a></td>
                 <td>${board.userId}</td>
                 <td>${board.createdAt}</td>
-                <td>${board.updatedAt}</td>
             </tr>
         </c:forEach>
         </tbody>

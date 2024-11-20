@@ -5,10 +5,12 @@ import com.shoppingShop.domain.BoardDto;
 import java.util.List;
 
 public interface BoardService {
-    List<BoardDto> getBoardList(int pageNum, int pageSize) throws Exception;
-    int getBoardCount() throws Exception; // 총 게시글 수 반환 메서드
+    // 정렬 기준 추가
+    List<BoardDto> getBoardList(int pageNum, int pageSize, String sort) throws Exception;
 
-    BoardDto getNoticeById(int noticeId)throws Exception;
+    int getBoardCount() throws Exception;
+
+    BoardDto getNoticeById(int noticeId) throws Exception;
 
     BoardDto getPreviousNotice(int noticeId) throws Exception;
 
