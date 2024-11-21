@@ -21,20 +21,21 @@ public class BoardController {
 
     @GetMapping("/list")
     public String getBoardList(
-            @RequestParam(defaultValue = "1") int pageNum,             // 현재 페이지 번호
-            @RequestParam(defaultValue = "10") int pageSize,           // 페이지당 게시글 수
-            @RequestParam(defaultValue = "latest") String sort,        // 정렬 기준
-            Model model) throws Exception {
+            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,  // 현재 페이지
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize, // 페이지당 게시글 수
+            @RequestParam(value = "search", required = false) String search, // 검색어
+            @RequestParam(value = "sort", defaultValue = "latest") String sort, // 정렬 기준
+            Model model) {
 
-        // 게시글 리스트 가져오기
-        List<BoardDto> boardList = boardService.getBoardList(pageNum, pageSize, sort);
-        int totalRecords = boardService.getBoardCount(); // 총 게시글 수
+        List<BoardDto> boardList = boardService.getBoardList(pageNum, pageSize, search, sort);
+        int totalRecords = boardService.getBoardCount(search);
 
         model.addAttribute("boardList", boardList);
         model.addAttribute("totalRecords", totalRecords);
         model.addAttribute("pageNum", pageNum);
         model.addAttribute("pageSize", pageSize);
-        model.addAttribute("sort", sort); // 현재 정렬 기준 전달
+        model.addAttribute("search", search);
+        model.addAttribute("sort", sort);
 
         return "board/list";
     }

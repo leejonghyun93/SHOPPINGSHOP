@@ -5,6 +5,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,37 +13,37 @@ import java.util.Map;
 public class BoardDaoImpl implements BoardDao {
 
     @Autowired
-    private SqlSession session;
-    private static final String namespace = "com.shoppingShop.dao.BoardDao.";
+    private SqlSession sqlSession;
+
+    private static final String NAMESPACE = "com.shoppingShop.mapper.BoardMapper";
 
     @Override
-    public List<BoardDto> selectBoardListAll(int offset, int pageSize, String sort) throws Exception {
-        // offset, pageSize, sort를 사용하여 페이징 및 정렬 처리
-        Map<String, Object> params = Map.of(
-                "offset", offset,
-                "pageSize", pageSize,
-                "sort", sort
-        );
-        return session.selectList(namespace + "selectBoardListAll", params);
+    public List<BoardDto> getBoardList(int offset, int limit, String search, String sort) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("offset", offset);
+        params.put("limit", limit);
+        params.put("search", search);  // 검색어 파라미터 추가
+        params.put("sort", sort);
+        return sqlSession.selectList(NAMESPACE + ".selectBoardListAll", params); // XML에서 정의한 selectBoardListAll 메서드 호출
     }
 
     @Override
-    public int countAllBoards() throws Exception {
-        return session.selectOne(namespace + "countAllBoards");
+    public int getBoardCount(String search) {
+        return sqlSession.selectOne(NAMESPACE + ".getBoardCount", search);
     }
 
     @Override
-    public BoardDto selectNoticeById(int noticeId) throws Exception {
-        return session.selectOne(namespace + "selectNoticeById", noticeId);
+    public BoardDto getNoticeById(int noticeId) {
+        return sqlSession.selectOne(NAMESPACE + ".getNoticeById", noticeId);
     }
 
     @Override
-    public BoardDto selectPreviousNotice(int noticeId) throws Exception {
-        return session.selectOne(namespace + "selectPreviousNotice", noticeId);
+    public BoardDto getPreviousNotice(int noticeId) {
+        return sqlSession.selectOne(NAMESPACE + ".getPreviousNotice", noticeId);
     }
 
     @Override
-    public BoardDto selectNextNotice(int noticeId) throws Exception {
-        return session.selectOne(namespace + "selectNextNotice", noticeId);
+    public BoardDto getNextNotice(int noticeId) {
+        return sqlSession.selectOne(NAMESPACE + ".getNextNotice", noticeId);
     }
 }

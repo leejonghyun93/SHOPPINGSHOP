@@ -1,10 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page session="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%--<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>--%>
 
-<c:set var="loginId"
-       value="${pageContext.request.getSession(false) == null ? '' : pageContext.request.session.getAttribute('userId')}"/>
+<c:set var="loginId" value="${pageContext.request.getSession(false) == null ? '' : pageContext.request.session.getAttribute('userId')}"/>
 <c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : '/login/logout'}"/>
 <c:set var="logout" value="${loginId == '' ? 'Login' : loginId}"/>
 
@@ -34,6 +32,44 @@
             color: #333;
         }
 
+        /* 검색 및 정렬 */
+        .search-sort-form {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            width: 80%;
+            margin-bottom: 20px;
+        }
+
+        .search-sort-form label {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .search-sort-form select, .search-sort-form input {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+
+        .search-sort-form button {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            background-color: #f4f4f4;
+            font-size: 14px;
+            cursor: pointer;
+            color: #333;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-sort-form button:hover {
+            background-color: #ddd;
+        }
+
+        /* 테이블 */
         .board-table {
             width: 80%;
             border-collapse: collapse;
@@ -50,27 +86,12 @@
             background-color: #f4f4f4;
         }
 
+        /* 페이징 */
         .pagination {
             text-align: center;
             margin-top: 10px;
         }
 
-        .pagination a {
-            margin: 0 5px;
-            text-decoration: none;
-            color: #333;
-        }
-
-        .pagination strong {
-            margin: 0 5px;
-            font-weight: bold;
-        }
-
-        .pagination .disabled {
-            color: #ccc;
-            pointer-events: none;
-            text-decoration: none;
-        }
         .pagination a, .pagination strong {
             padding: 5px 10px;
             margin: 0 3px;
@@ -93,6 +114,7 @@
         .pagination .disabled {
             color: #ccc;
             border-color: #ccc;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -103,15 +125,26 @@
 
 <div class="content">
     <h1>공지사항</h1>
-    <form method="get" action="/board/list">
-        <label for="sort">정렬:</label>
-        <select name="sort" id="sort" onchange="this.form.submit()">
-            <option value="latest" ${param.sort == 'latest' ? 'selected' : ''}>최신순</option>
-            <option value="oldest" ${param.sort == 'oldest' ? 'selected' : ''}>오래된순</option>
-        </select>
+
+    <!-- 검색 및 정렬 -->
+    <form method="get" action="/board/list" class="search-sort-form">
+        <div>
+            <label for="sort">정렬:</label>
+            <select name="sort" id="sort" onchange="this.form.submit()">
+                <option value="latest" ${param.sort == 'latest' ? 'selected' : ''}>최신순</option>
+                <option value="oldest" ${param.sort == 'oldest' ? 'selected' : ''}>오래된순</option>
+            </select>
+        </div>
+        <div>
+            <label for="search">검색:</label>
+            <input type="text" name="search" id="search" value="${param.search}" placeholder="제목 검색">
+            <button type="submit">검색</button>
+        </div>
         <input type="hidden" name="pageNum" value="${pageNum}" />
         <input type="hidden" name="pageSize" value="${pageSize}" />
     </form>
+
+    <!-- 게시판 테이블 -->
     <table class="board-table">
         <thead>
         <tr>
@@ -133,12 +166,10 @@
         </tbody>
     </table>
 
-    <!-- 페이징 네비게이션 -->
+    <!-- 페이징 -->
     <div class="pagination">
-        <!-- 총 페이지 계산 -->
         <c:set var="totalPages" value="${(totalRecords + pageSize - 1) / pageSize}" />
 
-        <!-- 이전 버튼 -->
         <c:if test="${pageNum > 1}">
             <a href="?pageNum=${pageNum - 1}&pageSize=${pageSize}">이전</a>
         </c:if>
@@ -146,7 +177,6 @@
             <span class="disabled">이전</span>
         </c:if>
 
-        <!-- 페이지 번호 -->
         <c:forEach var="i" begin="1" end="${totalPages}">
             <c:choose>
                 <c:when test="${i == pageNum}">
@@ -158,7 +188,6 @@
             </c:choose>
         </c:forEach>
 
-        <!-- 다음 버튼 -->
         <c:if test="${pageNum < totalPages}">
             <a href="?pageNum=${pageNum + 1}&pageSize=${pageSize}">다음</a>
         </c:if>

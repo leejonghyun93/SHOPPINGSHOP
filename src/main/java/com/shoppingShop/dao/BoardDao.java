@@ -4,13 +4,9 @@ import com.shoppingShop.domain.BoardDto;
 import java.util.List;
 
 public interface BoardDao {
-    List<BoardDto> selectBoardListAll(int offset, int pageSize, String sort) throws Exception;
-
-    int countAllBoards() throws Exception;
-
-    BoardDto selectNoticeById(int noticeId) throws Exception;
-
-    BoardDto selectPreviousNotice(int noticeId) throws Exception;
-
-    BoardDto selectNextNotice(int noticeId) throws Exception;
+    List<BoardDto> getBoardList(int offset, int limit, String search, String sort);
+    int getBoardCount(String search);
+    BoardDto getNoticeById(int noticeId);
+    BoardDto getPreviousNotice(int noticeId);
+    BoardDto getNextNotice(int noticeId);
 }

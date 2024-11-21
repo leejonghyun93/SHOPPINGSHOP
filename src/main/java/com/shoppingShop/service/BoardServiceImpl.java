@@ -14,28 +14,28 @@ public class BoardServiceImpl implements BoardService {
     private BoardDao boardDao;
 
     @Override
-    public List<BoardDto> getBoardList(int pageNum, int pageSize, String sort) throws Exception {
-        int offset = (pageNum - 1) * pageSize; // 페이지 오프셋 계산
-        return boardDao.selectBoardListAll(offset, pageSize, sort); // 페이징 및 정렬 기준 적용
+    public List<BoardDto> getBoardList(int pageNum, int pageSize, String search, String sort) {
+        int offset = (pageNum - 1) * pageSize;
+        return boardDao.getBoardList(offset, pageSize, search, sort);
     }
 
     @Override
-    public int getBoardCount() throws Exception {
-        return boardDao.countAllBoards(); // 총 게시글 수 반환
+    public int getBoardCount(String search) {
+        return boardDao.getBoardCount(search);
     }
 
     @Override
-    public BoardDto getNoticeById(int noticeId) throws Exception {
-        return boardDao.selectNoticeById(noticeId);
+    public BoardDto getNoticeById(int noticeId) {
+        return boardDao.getNoticeById(noticeId);
     }
 
     @Override
-    public BoardDto getPreviousNotice(int noticeId) throws Exception {
-        return boardDao.selectPreviousNotice(noticeId);
+    public BoardDto getPreviousNotice(int noticeId) {
+        return boardDao.getPreviousNotice(noticeId);
     }
 
     @Override
-    public BoardDto getNextNotice(int noticeId) throws Exception {
-        return boardDao.selectNextNotice(noticeId);
+    public BoardDto getNextNotice(int noticeId) {
+        return boardDao.getNextNotice(noticeId);
     }
 }

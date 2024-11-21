@@ -6,13 +6,9 @@ import java.util.List;
 
 public interface BoardService {
     // 정렬 기준 추가
-    List<BoardDto> getBoardList(int pageNum, int pageSize, String sort) throws Exception;
-
-    int getBoardCount() throws Exception;
-
-    BoardDto getNoticeById(int noticeId) throws Exception;
-
-    BoardDto getPreviousNotice(int noticeId) throws Exception;
-
-    BoardDto getNextNotice(int noticeId) throws Exception;
+    List<BoardDto> getBoardList(int pageNum, int pageSize, String search, String sort);
+    int getBoardCount(String search);
+    BoardDto getNoticeById(int noticeId);
+    BoardDto getPreviousNotice(int noticeId);
+    BoardDto getNextNotice(int noticeId);
 }
