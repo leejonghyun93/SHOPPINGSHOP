@@ -21,15 +21,16 @@ public class BoardController {
 
     @GetMapping("/list")
     public String getBoardList(
-            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,  // 현재 페이지
-            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize, // 페이지당 게시글 수
-            @RequestParam(value = "search", required = false) String search, // 검색어
-            @RequestParam(value = "sort", defaultValue = "latest") String sort, // 정렬 기준
+            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "sort", defaultValue = "latest") String sort,
             Model model) {
 
         List<BoardDto> boardList = boardService.getBoardList(pageNum, pageSize, search, sort);
         int totalRecords = boardService.getBoardCount(search);
 
+        // 페이지 정보 및 게시글 총 건수 추가
         model.addAttribute("boardList", boardList);
         model.addAttribute("totalRecords", totalRecords);
         model.addAttribute("pageNum", pageNum);
@@ -39,6 +40,7 @@ public class BoardController {
 
         return "board/list";
     }
+
 
     @GetMapping("/view/{noticeId}")
     public String viewNotice(

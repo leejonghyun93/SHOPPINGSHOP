@@ -32,7 +32,6 @@
             color: #333;
         }
 
-        /* 검색 및 정렬 */
         .search-sort-form {
             display: flex;
             justify-content: space-between;
@@ -69,7 +68,6 @@
             background-color: #ddd;
         }
 
-        /* 테이블 */
         .board-table {
             width: 80%;
             border-collapse: collapse;
@@ -86,7 +84,6 @@
             background-color: #f4f4f4;
         }
 
-        /* 페이징 */
         .pagination {
             text-align: center;
             margin-top: 10px;
@@ -119,14 +116,12 @@
     </style>
 </head>
 <body>
-<!-- 공통 헤더와 카테고리 바 포함 -->
 <jsp:include page="/WEB-INF/views/layout/header/header.jsp" />
 <jsp:include page="/WEB-INF/views/layout/categoryBar/categoryBar.jsp" />
 
 <div class="content">
     <h1>공지사항</h1>
 
-    <!-- 검색 및 정렬 -->
     <form method="get" action="/board/list" class="search-sort-form">
         <div>
             <label for="sort">정렬:</label>
@@ -143,8 +138,10 @@
         <input type="hidden" name="pageNum" value="${pageNum}" />
         <input type="hidden" name="pageSize" value="${pageSize}" />
     </form>
-
-    <!-- 게시판 테이블 -->
+    <!-- 총 건수 표시 -->
+    <div class="total-count">
+        <p>게시글 총 건수: ${totalRecords}</p>
+    </div>
     <table class="board-table">
         <thead>
         <tr>
@@ -166,7 +163,6 @@
         </tbody>
     </table>
 
-    <!-- 페이징 -->
     <div class="pagination">
         <c:set var="totalPages" value="${(totalRecords + pageSize - 1) / pageSize}" />
 
@@ -194,10 +190,12 @@
         <c:if test="${pageNum >= totalPages}">
             <span class="disabled">다음</span>
         </c:if>
+        <c:if test="${empty boardList}">
+            <p>게시글이 없습니다.</p>
+        </c:if>
     </div>
 </div>
 
-<!-- 공통 푸터 포함 -->
 <jsp:include page="/WEB-INF/views/layout/footer/footer.jsp" />
 </body>
 </html>
