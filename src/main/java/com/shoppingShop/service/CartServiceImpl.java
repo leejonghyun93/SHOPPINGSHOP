@@ -14,8 +14,14 @@ public class CartServiceImpl implements CartService {
     private CartDao cartDao;
 
     @Override
-    public void addCart(CartDto cart) {
-        cartDao.addCart(cart);
+    public boolean addCart(CartDto cart) {
+        try {
+            cartDao.addCart(cart);
+            return true; // 성공하면 true 반환
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // 예외가 발생하면 false 반환
+        }
     }
 
     @Override

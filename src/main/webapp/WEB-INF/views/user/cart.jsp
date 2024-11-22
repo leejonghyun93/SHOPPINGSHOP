@@ -2,7 +2,7 @@
 <%@ page session="false"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<c:set var="loginId" value="${pageContext.request.getSession(false)==null ? '' : pageContext.request.session.getAttribute('userId')}"/>
+<c:set var="loginId" value="${pageContext.request.getSession(false) == null ? '' : pageContext.request.session.getAttribute('userId')}"/>
 <c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : '/login/logout'}" />
 <c:set var="logout" value="${loginId == '' ? 'Login' : loginId}" />
 
@@ -154,23 +154,27 @@
             <th>총금액</th>
             <th>선택</th>
         </tr>
-        <tr>
-            <td><input type="checkbox" class="choice"></td>
-            <td><img src="/resources/img/sample.jpg" alt="상품 이미지" width="50"></td>
-            <td class="leftProduct">상품명</td>
-            <td class="rightPrice">10000원</td>
-            <td>레드</td>
-            <td>M</td>
-            <td>
-                <div class="quantity-container">
-                    <button onclick="decreaseQuantity(this)">-</button>
-                    <input type="number" class="quantity-input" value="1" min="1" onchange="updateTotalPrice(this)">
-                    <button onclick="increaseQuantity(this)">+</button>
-                </div>
-            </td>
-            <td class="rightAllPrice">10000원</td>
-            <td><button class="remove-button" onclick="deleteRow(this)">삭제</button></td>
-        </tr>
+
+        <!-- 장바구니 항목을 동적으로 출력 -->
+        <c:forEach var="item" items="${cartItems}">
+            <tr>
+                <td><input type="checkbox" class="choice"></td>
+                <td><img src="${item.imagePath}" alt="상품 이미지" width="50"></td>
+                <td class="leftProduct">${item.productName}</td>
+                <td class="rightPrice">${item.price}원</td>
+                <td>${item.color}</td>
+                <td>${item.size}</td>
+                <td>
+                    <div class="quantity-container">
+                        <button onclick="decreaseQuantity(this)">-</button>
+                        <input type="number" class="quantity-input" value="${item.quantity}" min="1" onchange="updateTotalPrice(this)">
+                        <button onclick="increaseQuantity(this)">+</button>
+                    </div>
+                </td>
+                <td class="rightAllPrice">${item.totalPrice}원</td>
+                <td><button class="remove-button" onclick="deleteRow(this)">삭제</button></td>
+            </tr>
+        </c:forEach>
     </table>
     <div class="selectProduct">
         <h4>선택상품을</h4>
