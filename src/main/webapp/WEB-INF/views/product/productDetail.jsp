@@ -318,16 +318,38 @@
         document.getElementById('toggleButton').innerText = additionalInfo.style.display === 'none' ? '+' : '-';
     });
     function moveToCart() {
-        if (selectedColor && selectedSize) {
-            const confirmed = confirm("장바구니에 등록하였습니다. 장바구니로 이동하시겠습니까?");
-            if (confirmed) {
-                // URL에 파라미터로 색상과 사이즈를 전달
-                window.location.href = "/cart";
-            }
-        } else {
-            alert("색상과 사이즈를 선택해주세요.");
+        const proId = ${productDetail.proId}; // 상품 ID
+        if (!proId) {
+            alert("상품 정보가 올바르지 않습니다.");
+            return;
         }
+
+        const userId = "${loginId}"; // 로그인한 사용자 ID
+        const quantity = parseInt(document.getElementById('quantity').innerText); // 수량
+
+        // 서버로 장바구니 추가 요청
+        fetch("/cart/add", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ proId, userId, quantity })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("장바구니에 추가되었습니다.");
+                    window.location.href = "/cart"; // 장바구니 페이지로 이동
+                } else {
+                    alert("이미 장바구니에 있는 상품입니다.");
+                }
+            })
+            .catch(error => {
+                console.error("장바구니 추가 중 오류 발생:", error);
+                alert("장바구니 추가에 실패했습니다.");
+            });
     }
+
 </script>
 </body>
 </html>

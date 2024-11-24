@@ -48,13 +48,18 @@ public class CartController {
         // 장바구니에 상품 추가
         cartService.addCart(cartDto);
 
-        return "redirect:/user/cart";  // 장바구니 페이지로 리다이렉트
+        return "redirect:/cart";  // 장바구니 페이지로 리다이렉트
     }
     // 장바구니 삭제
     @DeleteMapping("/delete/{cartId}")
     @ResponseBody
-    public String deleteCart(@PathVariable Long cartId) {
-        cartService.deleteCart(cartId);
-        return "장바구니에서 제거되었습니다.";
+    public ResponseEntity<String> deleteCart(@PathVariable Long cartId) {
+        try {
+            cartService.deleteCart(cartId);
+            return ResponseEntity.ok("장바구니에서 제거되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("장바구니에서 제거 중 오류가 발생했습니다.");
+        }
     }
 }
