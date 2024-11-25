@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%@ page session="false"%>
+<%@ page session="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <c:set var="loginId" value="${pageContext.request.getSession(false)==null ? '' : pageContext.request.session.getAttribute('userId')}"/>
@@ -246,26 +246,27 @@
     let selectedColor = '';
     let selectedSize = '';
     let quantity = 1;
+    const pricePerItem = 58000; // 상품 기본 가격
 
+    // 색상 선택 로직
     colorButtons.forEach(button => {
         button.addEventListener('click', () => {
-            // 색상 선택
             selectedColor = button.getAttribute('data-value');
             selectedColorElement.innerText = selectedColor;
+
             // 사이즈 버튼 활성화
             document.getElementById('sizeOptions').classList.remove('disabled');
-            sizeButtons.forEach(sizeButton => {
-                sizeButton.classList.remove('disabled');
-            });
+            sizeButtons.forEach(sizeButton => sizeButton.classList.remove('disabled'));
+
             // 선택한 색상 강조
             colorButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
         });
     });
 
+    // 사이즈 선택 로직
     sizeButtons.forEach(button => {
         button.addEventListener('click', () => {
-            // 사이즈 선택
             selectedSize = button.getAttribute('data-value');
             selectedSizeElement.innerText = selectedSize;
 
@@ -276,80 +277,106 @@
             // 상품 정보 표시
             if (selectedColor && selectedSize) {
                 selectedProductInfo.style.display = 'block';
-                const totalPrice = 58000; // 총 가격 설정
-                document.getElementById('totalPrice').innerText = totalPrice;
-
-                // 선택한 상품 목록에 추가
-                addProductToList(selectedColor, selectedSize, quantity, totalPrice);
+                updateTotalPrice();
+            } else {
+                alert('색상과 사이즈를 모두 선택해 주세요.');
             }
         });
     });
 
+    // 수량 조정
     document.getElementById('increaseQuantity').addEventListener('click', () => {
         quantity++;
-        document.getElementById('quantity').innerText = quantity;
+        updateTotalPrice();
     });
 
     document.getElementById('decreaseQuantity').addEventListener('click', () => {
         if (quantity > 1) {
             quantity--;
-            document.getElementById('quantity').innerText = quantity;
+            updateTotalPrice();
         }
     });
 
+    // 상품 제거
     document.getElementById('removeProduct').addEventListener('click', () => {
+        resetSelection();
+    });
+
+    function updateTotalPrice() {
+        document.getElementById('quantity').innerText = quantity;
+        document.getElementById('totalPrice').innerText = pricePerItem * quantity;
+    }
+
+    function resetSelection() {
         selectedProductInfo.style.display = 'none';
         selectedColor = '';
         selectedSize = '';
         quantity = 1;
         selectedColorElement.innerText = '';
         selectedSizeElement.innerText = '';
-
-    });
-
-    function addProductToList(color, size, quantity, price) {
-        const listItem = document.createElement('li');
-        listItem.innerText = `색상: ${color} 사이즈: ${size} - ${quantity}개 총가격 ${price * quantity}원`;
+        document.getElementById('quantity').innerText = 1;
+        document.getElementById('totalPrice').innerText = pricePerItem;
+        colorButtons.forEach(btn => btn.classList.remove('active'));
+        sizeButtons.forEach(btn => btn.classList.remove('active'));
     }
 
+    // 상세정보 토글
     document.getElementById('toggleButton').addEventListener('click', () => {
         const additionalInfo = document.getElementById('additionalInfo');
-        additionalInfo.style.display = additionalInfo.style.display === 'none' ? 'block' : 'none';
-        document.getElementById('toggleButton').innerText = additionalInfo.style.display === 'none' ? '+' : '-';
+        const isVisible = additionalInfo.style.display === 'block';
+        additionalInfo.style.display = isVisible ? 'none' : 'block';
+        document.getElementById('toggleButton').innerText = isVisible ? '+' : '-';
     });
-    function moveToCart() {
-        const proId = ${productDetail.proId}; // 상품 ID
-        if (!proId) {
-            alert("상품 정보가 올바르지 않습니다.");
+
+    // 장바구니 추가
+    function addToCart(productId) {
+        if (!selectedColor || !selectedSize) {
+            alert('색상과 사이즈를 모두 선택해주세요.');
             return;
         }
 
-        const userId = "${loginId}"; // 로그인한 사용자 ID
-        const quantity = parseInt(document.getElementById('quantity').innerText); // 수량
+        const cartDto = {
+            userId: "${sessionScope.userId}",
+            proId: productId,
+            cartCount: quantity,
+            totalPrice: pricePerItem * quantity,
+            color: selectedColor,
+            size: selectedSize
+        };
 
-        // 서버로 장바구니 추가 요청
-        fetch("/cart/add", {
-            method: "POST",
+        fetch('/cart/add', {
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json"
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ proId, userId, quantity })
+            body: JSON.stringify(cartDto)
         })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert("장바구니에 추가되었습니다.");
-                    window.location.href = "/cart"; // 장바구니 페이지로 이동
+                    alert('상품이 장바구니에 추가되었습니다.');
+                    window.location.href = '/cart';
                 } else {
-                    alert("이미 장바구니에 있는 상품입니다.");
+                    alert('장바구니 추가 실패: ' + data.message);
                 }
             })
             .catch(error => {
-                console.error("장바구니 추가 중 오류 발생:", error);
-                alert("장바구니 추가에 실패했습니다.");
+                console.error('Error:', error);
+                alert('서버 오류가 발생했습니다.');
             });
     }
 
+    // 장바구니 페이지로 이동
+    function moveToCart() {
+        if (!selectedColor || !selectedSize) {
+            alert('상품 옵션(색상, 사이즈)을 먼저 선택해주세요!');
+            return;
+        }
+        alert("장바구니로 이동합니다.");
+        window.location.href = '/cart';
+    }
 </script>
+
+
 </body>
 </html>

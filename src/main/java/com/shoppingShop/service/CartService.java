@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface CartService {
 
-    boolean addCart(CartDto cart);
     List<CartDto> getCartByUserId(String userId);
+
+    void addCart(CartDto cartDto);
+
     void deleteCart(Long cartId);
 }

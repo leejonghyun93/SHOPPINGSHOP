@@ -14,23 +14,17 @@ public class CartServiceImpl implements CartService {
     private CartDao cartDao;
 
     @Override
-    public boolean addCart(CartDto cart) {
-        try {
-            cartDao.addCart(cart);
-            return true; // 성공하면 true 반환
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false; // 예외가 발생하면 false 반환
-        }
+    public List<CartDto> getCartByUserId(String userId) {
+        return cartDao.findByUserId(userId);
     }
 
     @Override
-    public List<CartDto> getCartByUserId(String userId) {
-        return cartDao.getCartByUserId(userId);
+    public void addCart(CartDto cartDto) {
+        cartDao.insertCart(cartDto);
     }
 
     @Override
     public void deleteCart(Long cartId) {
-        cartDao.deleteCart(cartId);
+        cartDao.deleteCartById(cartId);
     }
 }
