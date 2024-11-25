@@ -1,5 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%@ page session="false"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <c:set var="loginId" value="${pageContext.request.getSession(false)==null ? '' : pageContext.request.session.getAttribute('userId')}"/>
@@ -206,7 +205,7 @@
 
             <div class="option-section">
                 <span class="option-label">사이즈</span>
-                <div class="option-buttons disabled" id="sizeOptions">
+                <div class="option-buttons" id="sizeOptions">
                     <c:forEach var="size" items="${productDetail.proSize.split(',')}">
                         <div class="option-button size-button" data-value="${size}">${size}</div>
                     </c:forEach>
@@ -215,141 +214,75 @@
 
             <div id="selectedProductInfo">
                 <h3>선택한 상품 정보</h3>
-                <div style="display: flex; align-items: center;">
-                    <p>색상: <span id="selectedColor"></span></p>
-                    <p>사이즈: <span id="selectedSize"></span></p>
-                    <div style="margin-left: 20px;">
-                        <button id="decreaseQuantity" style="width: 30px;">-</button>
-                        <span id="quantity" style="margin: 0 10px;">1</span>
-                        <button id="increaseQuantity" style="width: 30px;">+</button>
-                    </div>
-                    <p style="margin-left: 20px;">총 가격: <span id="totalPrice"></span>원</p>
-                    <button id="removeProduct"
-                            style="margin-left: 20px; color: red; background: none; border: none; font-size: 18px; cursor: pointer;">
-                        X
-                    </button>
-                </div>
+                <p id="selectedColor"></p>
+                <p id="selectedSize"></p>
+                <button id="addToCartButton">장바구니에 추가</button>
             </div>
-
-            <a href="#" class="buy-button" onclick="moveToCart()">구매하기</a>
         </div>
     </div>
 </div>
-<%@ include file="/WEB-INF/views/layout/footer/footer.jsp" %>
 
 <script>
-    const colorButtons = document.querySelectorAll('.color-button');
-    const sizeButtons = document.querySelectorAll('.size-button');
-    const selectedColorElement = document.getElementById('selectedColor');
-    const selectedSizeElement = document.getElementById('selectedSize');
-    const selectedProductInfo = document.getElementById('selectedProductInfo');
-    let selectedColor = '';
-    let selectedSize = '';
-    let quantity = 1;
+    document.addEventListener("DOMContentLoaded", function() {
+        let selectedColor = "";
+        let selectedSize = "";
 
-    colorButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // 색상 선택
-            selectedColor = button.getAttribute('data-value');
-            selectedColorElement.innerText = selectedColor;
-            // 사이즈 버튼 활성화
-            document.getElementById('sizeOptions').classList.remove('disabled');
-            sizeButtons.forEach(sizeButton => {
-                sizeButton.classList.remove('disabled');
+        // 색상 버튼 클릭 이벤트
+        const colorButtons = document.querySelectorAll(".color-button");
+        colorButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                selectedColor = this.getAttribute("data-value");
+                document.getElementById("selectedColor").textContent = "색상: " + selectedColor;
             });
-            // 선택한 색상 강조
-            colorButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
         });
-    });
 
-    sizeButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // 사이즈 선택
-            selectedSize = button.getAttribute('data-value');
-            selectedSizeElement.innerText = selectedSize;
+        // 사이즈 버튼 클릭 이벤트
+        const sizeButtons = document.querySelectorAll(".size-button");
+        sizeButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                selectedSize = this.getAttribute("data-value");
+                document.getElementById("selectedSize").textContent = "사이즈: " + selectedSize;
+            });
+        });
 
-            // 선택한 사이즈 강조
-            sizeButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-
-            // 상품 정보 표시
-            if (selectedColor && selectedSize) {
-                selectedProductInfo.style.display = 'block';
-                const totalPrice = 58000; // 총 가격 설정
-                document.getElementById('totalPrice').innerText = totalPrice;
-
-                // 선택한 상품 목록에 추가
-                addProductToList(selectedColor, selectedSize, quantity, totalPrice);
+        // 장바구니 추가 버튼 클릭 이벤트
+        const addToCartButton = document.getElementById("addToCartButton");
+        addToCartButton.addEventListener("click", function() {
+            if (!selectedColor || !selectedSize) {
+                alert("색상과 사이즈를 선택해주세요.");
+                return;
             }
+
+            // 장바구니에 추가 요청
+            const cartDto = {
+                proId: ${productDetail.proId},
+                color: selectedColor,
+                size: selectedSize,
+                quantity: 1  // 기본값은 1
+            };
+
+            fetch('/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(cartDto)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("장바구니에 추가되었습니다.");
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    alert("장바구니에 추가하는 중 오류가 발생했습니다.");
+                });
         });
     });
-
-    document.getElementById('increaseQuantity').addEventListener('click', () => {
-        quantity++;
-        document.getElementById('quantity').innerText = quantity;
-    });
-
-    document.getElementById('decreaseQuantity').addEventListener('click', () => {
-        if (quantity > 1) {
-            quantity--;
-            document.getElementById('quantity').innerText = quantity;
-        }
-    });
-
-    document.getElementById('removeProduct').addEventListener('click', () => {
-        selectedProductInfo.style.display = 'none';
-        selectedColor = '';
-        selectedSize = '';
-        quantity = 1;
-        selectedColorElement.innerText = '';
-        selectedSizeElement.innerText = '';
-
-    });
-
-    function addProductToList(color, size, quantity, price) {
-        const listItem = document.createElement('li');
-        listItem.innerText = `색상: ${color} 사이즈: ${size} - ${quantity}개 총가격 ${price * quantity}원`;
-    }
-
-    document.getElementById('toggleButton').addEventListener('click', () => {
-        const additionalInfo = document.getElementById('additionalInfo');
-        additionalInfo.style.display = additionalInfo.style.display === 'none' ? 'block' : 'none';
-        document.getElementById('toggleButton').innerText = additionalInfo.style.display === 'none' ? '+' : '-';
-    });
-    function moveToCart() {
-        const proId = ${productDetail.proId}; // 상품 ID
-        if (!proId) {
-            alert("상품 정보가 올바르지 않습니다.");
-            return;
-        }
-
-        const userId = "${loginId}"; // 로그인한 사용자 ID
-        const quantity = parseInt(document.getElementById('quantity').innerText); // 수량
-
-        // 서버로 장바구니 추가 요청
-        fetch("/cart/add", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ proId, userId, quantity })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert("장바구니에 추가되었습니다.");
-                    window.location.href = "/cart"; // 장바구니 페이지로 이동
-                } else {
-                    alert("이미 장바구니에 있는 상품입니다.");
-                }
-            })
-            .catch(error => {
-                console.error("장바구니 추가 중 오류 발생:", error);
-                alert("장바구니 추가에 실패했습니다.");
-            });
-    }
-
 </script>
+
+
 </body>
 </html>

@@ -2,10 +2,6 @@
 <%@ page session="false"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<c:set var="loginId" value="${pageContext.request.getSession(false) == null ? '' : pageContext.request.session.getAttribute('userId')}"/>
-<c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : '/login/logout'}" />
-<c:set var="logout" value="${loginId == '' ? 'Login' : loginId}" />
-
 <html lang="ko">
 <head>
     <title>장바구니</title>
@@ -20,7 +16,6 @@
 
         .basketDetail {
             border-collapse: collapse;
-            border: 1px solid #000;
             width: 80%;
             margin-bottom: 20px;
         }
@@ -30,30 +25,15 @@
             padding: 10px;
             border: 1px solid #000;
             text-align: center;
-            vertical-align: middle;
         }
 
         .basketDetail th {
-            background-color: #e3e3e3;
-        }
-
-        .action-buttons {
-            display: flex;
-            justify-content: space-around;
+            background-color: #f2f2f2;
         }
 
         .action-buttons button {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 5px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .action-buttons button:hover {
-            background-color: #0056b3;
+            padding: 10px 20px;
+            margin: 5px;
         }
     </style>
 </head>
@@ -63,23 +43,20 @@
     <table class="basketDetail">
         <thead>
         <tr>
-            <th>상품 이미지</th>
-            <th>상품 이름</th>
+            <th>이미지</th>
+            <th>상품명</th>
             <th>색상</th>
             <th>사이즈</th>
             <th>수량</th>
-            <th>총 가격</th>
+            <th>가격</th>
             <th>삭제</th>
         </tr>
         </thead>
-        <tbody id="cartItems">
-        <!-- 장바구니 항목은 JavaScript로 동적으로 추가 -->
-        </tbody>
+        <tbody id="cartItems"></tbody>
     </table>
-
     <div class="action-buttons">
         <button id="clearCart">장바구니 비우기</button>
-        <button id="proceedToCheckout">결제하기</button>
+        <button id="checkout">결제하기</button>
     </div>
 </div>
 
@@ -88,20 +65,17 @@
     const cartItemsContainer = document.getElementById('cartItems');
 
     function renderCartItems() {
-        cartItemsContainer.innerHTML = '';
-        cartItems.forEach((item, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><img src="${item.image}" alt="상품 이미지" style="width: 80px; height: 80px; object-fit: cover;"></td>
+        cartItemsContainer.innerHTML = cartItems.map((item, index) => `
+            <tr>
+                <td><img src="${item.image}" alt="상품 이미지" style="width: 80px;"></td>
                 <td>${item.name}</td>
                 <td>${item.color}</td>
                 <td>${item.size}</td>
                 <td>${item.quantity}</td>
-                <td>${item.totalPrice.toLocaleString()}원</td>
-                <td><button onclick="removeItem(${index})" style="color: red; border: none; background: none; cursor: pointer;">X</button></td>
-            `;
-            cartItemsContainer.appendChild(row);
-        });
+                <td>${(item.quantity * item.price).toLocaleString()}원</td>
+                <td><button onclick="removeItem(${index})">X</button></td>
+            </tr>
+        `).join('');
     }
 
     function removeItem(index) {
@@ -111,18 +85,18 @@
     }
 
     document.getElementById('clearCart').addEventListener('click', () => {
-        if (confirm('장바구니를 비우시겠습니까?')) {
+        if (confirm('정말로 장바구니를 비우시겠습니까?')) {
             localStorage.removeItem('cartItems');
             renderCartItems();
         }
     });
 
-    document.getElementById('proceedToCheckout').addEventListener('click', () => {
-        if (cartItems.length > 0) {
+    document.getElementById('checkout').addEventListener('click', () => {
+        if (cartItems.length === 0) {
+            alert('장바구니에 상품이 없습니다.');
+        } else {
             alert('결제 페이지로 이동합니다.');
             window.location.href = '/checkout';
-        } else {
-            alert('장바구니에 상품이 없습니다.');
         }
     });
 
