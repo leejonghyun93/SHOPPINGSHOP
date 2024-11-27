@@ -1,5 +1,7 @@
 package com.shoppingShop.domain;
 
+import java.math.BigDecimal;
+
 public class CartDto {
     private Long cartId;
     private String userId;
@@ -8,11 +10,16 @@ public class CartDto {
     private String imageUrl;
     private String productInfo;
     private Integer quantity;
-    private Double shippingFee;
-    private Double totalPrice;
-    private Double unitPrice;
+    private String proName;
+    private String proDescription;
+    private String proColor;
+    private String proSize;
+    private BigDecimal shippingFee; // 변경
+    private BigDecimal totalPrice;  // 변경
+    private BigDecimal unitPrice;
+    private String totalPriceFormatted;
 
-    public CartDto(Long cartId, String userId, Integer proId, Integer cartCount, String imageUrl, String productInfo, Integer quantity, Double shippingFee, Double totalPrice, Double unitPrice) {
+    public CartDto(Long cartId, String userId, Integer proId, Integer cartCount, String imageUrl, String productInfo, Integer quantity, String proName, String proDescription, String proColor, String proSize, BigDecimal shippingFee, BigDecimal totalPrice, BigDecimal unitPrice, String totalPriceFormatted) {
         this.cartId = cartId;
         this.userId = userId;
         this.proId = proId;
@@ -20,12 +27,14 @@ public class CartDto {
         this.imageUrl = imageUrl;
         this.productInfo = productInfo;
         this.quantity = quantity;
+        this.proName = proName;
+        this.proDescription = proDescription;
+        this.proColor = proColor;
+        this.proSize = proSize;
         this.shippingFee = shippingFee;
         this.totalPrice = totalPrice;
         this.unitPrice = unitPrice;
-    }
-
-    public CartDto(){
+        this.totalPriceFormatted = totalPriceFormatted;
     }
 
     public Long getCartId() {
@@ -84,43 +93,67 @@ public class CartDto {
         this.quantity = quantity;
     }
 
-    public Double getShippingFee() {
+    public String getProName() {
+        return proName;
+    }
+
+    public void setProName(String proName) {
+        this.proName = proName;
+    }
+
+    public String getProDescription() {
+        return proDescription;
+    }
+
+    public void setProDescription(String proDescription) {
+        this.proDescription = proDescription;
+    }
+
+    public String getProColor() {
+        return proColor;
+    }
+
+    public void setProColor(String proColor) {
+        this.proColor = proColor;
+    }
+
+    public String getProSize() {
+        return proSize;
+    }
+
+    public void setProSize(String proSize) {
+        this.proSize = proSize;
+    }
+
+    public BigDecimal getShippingFee() {
         return shippingFee;
     }
 
-    public void setShippingFee(Double shippingFee) {
+    public void setShippingFee(BigDecimal shippingFee) {
         this.shippingFee = shippingFee;
     }
 
-    public Double getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(Double totalPrice) {
+    public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
 
-    public Double getUnitPrice() {
+    public BigDecimal getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(Double unitPrice) {
+    public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
     }
 
-    @Override
-    public String toString() {
-        return "CartDto{" +
-                "cartId=" + cartId +
-                ", userId='" + userId + '\'' +
-                ", proId=" + proId +
-                ", cartCount=" + cartCount +
-                ", imageUrl='" + imageUrl + '\'' +
-                ", productInfo='" + productInfo + '\'' +
-                ", quantity=" + quantity +
-                ", shippingFee=" + shippingFee +
-                ", totalPrice=" + totalPrice +
-                ", unitPrice=" + unitPrice +
-                '}';
+    public String getTotalPriceFormatted() {
+        return totalPriceFormatted;
+    }
+
+    public void setTotalPriceFormatted(String totalPriceFormatted) {
+        this.totalPriceFormatted = totalPriceFormatted;
     }
 }

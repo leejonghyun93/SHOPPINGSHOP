@@ -1,106 +1,156 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%@ page session="false"%>
+<%@ page session="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <html lang="ko">
 <head>
     <title>장바구니</title>
     <style>
-        .center-container {
+        /* 스타일링 */
+        body {
+            height: 100%;
+            margin: 0;
             display: flex;
             flex-direction: column;
-            align-items: center;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
             justify-content: center;
-            min-height: 100vh;
+            align-items: flex-start;
+            padding-bottom: 50px;
         }
 
-        .basketDetail {
-            border-collapse: collapse;
-            width: 80%;
-            margin-bottom: 20px;
+        .product-container, .cart-container {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .basketDetail th,
-        .basketDetail td {
-            padding: 10px;
-            border: 1px solid #000;
+        .product-image {
             text-align: center;
         }
 
-        .basketDetail th {
+        .product-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .product-details, .cart-details {
+            margin-top: 20px;
+        }
+
+        .option-section {
+            margin-top: 20px;
+        }
+
+        .option-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .option-button {
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s;
+        }
+
+        .option-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .option-button.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .buy-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .cart-table th, .cart-table td {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .cart-table th {
             background-color: #f2f2f2;
+        }
+
+        .action-buttons {
+            margin-top: 20px;
         }
 
         .action-buttons button {
             padding: 10px 20px;
             margin: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .action-buttons button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-<div class="center-container">
+<%@ include file="/WEB-INF/views/layout/header/header.jsp" %>
+<%@ include file="/WEB-INF/views/layout/categoryBar/categoryBar.jsp" %>
+<div class="content">
+    <!-- 상품 상세 -->
     <h1>장바구니</h1>
-    <table class="basketDetail">
+    <table border="1">
         <thead>
         <tr>
-            <th>이미지</th>
             <th>상품명</th>
             <th>색상</th>
             <th>사이즈</th>
             <th>수량</th>
             <th>가격</th>
-            <th>삭제</th>
         </tr>
         </thead>
-        <tbody id="cartItems"></tbody>
-    </table>
-    <div class="action-buttons">
-        <button id="clearCart">장바구니 비우기</button>
-        <button id="checkout">결제하기</button>
-    </div>
-</div>
-
-<script>
-    const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-    const cartItemsContainer = document.getElementById('cartItems');
-
-    function renderCartItems() {
-        cartItemsContainer.innerHTML = cartItems.map((item, index) => `
+        <tbody>
+        <c:forEach var="item" items="${cartItems}">
             <tr>
-                <td><img src="${item.image}" alt="상품 이미지" style="width: 80px;"></td>
-                <td>${item.name}</td>
+<%--                <td>${item.pro_name}</td>--%>
                 <td>${item.color}</td>
                 <td>${item.size}</td>
                 <td>${item.quantity}</td>
-                <td>${(item.quantity * item.price).toLocaleString()}원</td>
-                <td><button onclick="removeItem(${index})">X</button></td>
+                <td>${item.total_price}</td>
             </tr>
-        `).join('');
-    }
-
-    function removeItem(index) {
-        cartItems.splice(index, 1);
-        localStorage.setItem('cartItems', JSON.stringify(cartItems));
-        renderCartItems();
-    }
-
-    document.getElementById('clearCart').addEventListener('click', () => {
-        if (confirm('정말로 장바구니를 비우시겠습니까?')) {
-            localStorage.removeItem('cartItems');
-            renderCartItems();
-        }
-    });
-
-    document.getElementById('checkout').addEventListener('click', () => {
-        if (cartItems.length === 0) {
-            alert('장바구니에 상품이 없습니다.');
-        } else {
-            alert('결제 페이지로 이동합니다.');
-            window.location.href = '/checkout';
-        }
-    });
-
-    renderCartItems();
-</script>
+        </c:forEach>
+        </tbody>
+    </table>
+    <form action="/clearCart" method="post">
+        <button type="submit">장바구니 비우기</button>
+    </form>
+    <form action="/checkout" method="post">
+        <button type="submit">결제하기</button>
+    </form>
+</div>
+<%@ include file="/WEB-INF/views/layout/footer/footer.jsp" %>
 </body>
 </html>

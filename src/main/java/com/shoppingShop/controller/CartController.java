@@ -21,20 +21,20 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
-    // 장바구니 조회
     @GetMapping
     public String viewCart(HttpSession session, Model model) {
         String userId = (String) session.getAttribute("userId");
+
         if (userId == null) {
-            return "redirect:/login";
+            return "redirect:/login"; // 로그인 페이지로 리다이렉트
         }
 
+        // 사용자 ID로 장바구니 항목 가져오기
         List<CartDto> cartItems = cartService.getCartByUserId(userId);
         model.addAttribute("cartItems", cartItems);
-        return "user/cart";  // JSP 파일 경로
+        return "user/cart";  // JSP 파일 경로 (장바구니 페이지)
     }
 
-    // 장바구니 추가
     @PostMapping("/add")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> addToCart(@RequestBody CartDto cartDto, HttpSession session) {
@@ -47,12 +47,13 @@ public class CartController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
 
-            // 세션에서 userId 추가
+            // 세션에서 가져온 사용자 ID 설정
             cartDto.setUserId(userId);
 
-            // 장바구니에 상품 추가
+            // 장바구니 서비스 호출
             cartService.addCart(cartDto);
             response.put("success", true);
+            response.put("message", "장바구니에 추가되었습니다.");
         } catch (Exception e) {
             response.put("success", false);
             response.put("message", "장바구니에 추가하는 중 오류가 발생했습니다.");
@@ -60,17 +61,28 @@ public class CartController {
         return ResponseEntity.ok(response);
     }
 
-    // 장바구니 삭제
     @DeleteMapping("/delete/{cartId}")
     @ResponseBody
-    public ResponseEntity<String> deleteCart(@PathVariable Long cartId) {
+    public ResponseEntity<Map<String, Object>> deleteCart(@PathVariable Long cartId, HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
         try {
+            String userId = (String) session.getAttribute("userId");
+            if (userId == null) {
+                response.put("success", false);
+                response.put("message", "로그인이 필요합니다.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+
+            // 장바구니 항목 삭제
             cartService.deleteCart(cartId);
-            return ResponseEntity.ok("장바구니에서 제거되었습니다.");
+            response.put("success", true);
+            response.put("message", "장바구니에서 삭제되었습니다.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("장바구니에서 제거 중 오류가 발생했습니다.");
+            response.put("success", false);
+            response.put("message", "장바구니 항목 삭제 중 오류가 발생했습니다.");
         }
+        return ResponseEntity.ok(response);
     }
 }
+
 

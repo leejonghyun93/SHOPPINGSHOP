@@ -17,9 +17,11 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/detail/{proId}")
-    public String productDetail(@PathVariable int proId, Model m) throws Exception {
+    public String productDetail(@PathVariable int proId, Model model) throws Exception {
         ProductDto detail = productService.getProductDetail(proId);
-        m.addAttribute("productDetail", detail);
+        model.addAttribute("productDetail", detail);
         return "product/productDetail";
     }
+
+
 }
