@@ -23,66 +23,58 @@
             align-items: flex-start;
             padding-bottom: 50px;
         }
-
         .container {
             display: flex;
             max-width: 1200px;
             width: 100%;
-            margin-top: 50px;
-            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .product-image {
             flex: 1;
-            padding-right: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-right: 1px solid #ddd;
         }
 
         .product-image img {
-            width: 100%;
-            max-width: 400px;
+            max-width: 100%;
+            max-height: 400px;
             border-radius: 8px;
         }
 
         .product-details {
             flex: 2;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            border-bottom: 1px solid #ddd;
-            padding: 0px 0px 20px 0px;
+            gap: 20px;
         }
 
         .productTitle {
-            margin-top: 0px;
-            margin-bottom: 10px;
             font-size: 28px;
+            font-weight: bold;
         }
 
         .productPrice {
             font-size: 24px;
             color: #ff5733;
-            margin-bottom: 20px;
-        }
-
-        .productDetail {
-            font-size: 18px;
-            margin-bottom: 5px;
-            border-top: 1px solid gray;
-            border-bottom: 1px solid gray;
-            padding-top: 15px;
-            padding-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .option-section {
-            margin-bottom: 20px;
+            margin-top: 20px;
         }
 
         .option-label {
             font-weight: bold;
-            margin-bottom: 8px;
             display: block;
+            margin-bottom: 10px;
         }
 
         .option-buttons {
@@ -92,38 +84,30 @@
 
         .option-button {
             padding: 10px 20px;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s, border-color 0.3s;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s;
         }
 
         .option-button:hover {
             background-color: #e0e0e0;
-            border-color: #999;
         }
 
         .active {
             background-color: #007bff;
             color: white;
-            border-color: #0056b3;
-        }
-
-        .disabled {
-            pointer-events: none;
-            opacity: 0.6;
         }
 
         .buy-button {
-            display: inline-block;
             padding: 15px 30px;
             background-color: #007bff;
             color: white;
             text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
             text-align: center;
+            border-radius: 5px;
+            display: inline-block;
             transition: background-color 0.3s;
         }
 
@@ -131,41 +115,33 @@
             background-color: #0056b3;
         }
 
-        .additional-info {
-            display: none;
-            list-style-type: none;
-            margin-top: 0px;
-            padding: 0;
-            border-bottom: 1px solid gray;
-        }
-
-        .additional-info li {
-            padding: 8px 0;
-        }
-
-        .productTitleImg {
-            width: 300px;
-            height: 400px;
-            object-fit: cover;
-        }
-
         #selectedProductInfo {
             display: none;
-            margin-top: 20px;
             padding: 10px;
             background-color: #f9f9f9;
             border: 1px solid #ddd;
             border-radius: 5px;
-            margin-bottom: 10px;
-        }
-
-        #selectedProductInfo h3 {
-            margin: 0;
-            font-size: 20px;
         }
 
         #selectedProductInfo p {
             margin: 5px 0;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            color: #007bff;
+        }
+
+        .additional-info {
+            display: none;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
         }
     </style>
 </head>
@@ -176,23 +152,12 @@
 <div class="content">
     <div class="container">
         <div class="product-image">
-            <img src="${pageContext.request.contextPath}/resources/img/shoes.JPG" class="productTitleImg" alt="상품 이미지">
+            <img src="${pageContext.request.contextPath}/resources/img/shoes.JPG" alt="상품 이미지">
         </div>
 
         <div class="product-details">
-            <h1 class="productTitle">상품 이름 : ${productDetail.proName}</h1>
-            <span class="productPrice">상품 가격 : ${productDetail.proPrice}원</span>
-
-            <h5 class="productDetail">
-                상품 정보
-                <button id="toggleButton" class="toggle-btn">+</button>
-            </h5>
-
-            <ul class="additional-info" id="additionalInfo">
-                <li>판매가: ${productDetail.totalPrice}원</li>
-                <li>할인가: ${productDetail.proPrice}원</li>
-                <li>배송비: ${productDetail.shippingFee}원</li>
-            </ul>
+            <h1 class="productTitle">상품 이름: ${productDetail.proName}</h1>
+            <span class="productPrice">상품 가격: ${productDetail.proPrice}원</span>
 
             <div class="option-section">
                 <span class="option-label">색상</span>
@@ -214,75 +179,62 @@
 
             <div id="selectedProductInfo">
                 <h3>선택한 상품 정보</h3>
-                <p id="selectedColor"></p>
-                <p id="selectedSize"></p>
-                <button id="addToCartButton">장바구니에 추가</button>
+                <p>색상: <span id="selectedColor"></span></p>
+                <p>사이즈: <span id="selectedSize"></span></p>
+                <p>총 가격: <span id="totalPrice"></span>원</p>
             </div>
+
+            <a href="#" class="buy-button" onclick="moveToCart()">구매하기</a>
         </div>
     </div>
 </div>
+<%@ include file="/WEB-INF/views/layout/footer/footer.jsp" %>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        let selectedColor = "";
-        let selectedSize = "";
+    const colorButtons = document.querySelectorAll('.color-button');
+    const sizeButtons = document.querySelectorAll('.size-button');
+    const selectedColorElement = document.getElementById('selectedColor');
+    const selectedSizeElement = document.getElementById('selectedSize');
+    const selectedProductInfo = document.getElementById('selectedProductInfo');
+    const totalPriceElement = document.getElementById('totalPrice');
+    const pricePerItem = 58000;
 
-        // 색상 버튼 클릭 이벤트
-        const colorButtons = document.querySelectorAll(".color-button");
-        colorButtons.forEach(button => {
-            button.addEventListener("click", function() {
-                selectedColor = this.getAttribute("data-value");
-                document.getElementById("selectedColor").textContent = "색상: " + selectedColor;
-            });
-        });
+    let selectedColor = '';
+    let selectedSize = '';
 
-        // 사이즈 버튼 클릭 이벤트
-        const sizeButtons = document.querySelectorAll(".size-button");
-        sizeButtons.forEach(button => {
-            button.addEventListener("click", function() {
-                selectedSize = this.getAttribute("data-value");
-                document.getElementById("selectedSize").textContent = "사이즈: " + selectedSize;
-            });
-        });
+    colorButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            selectedColor = button.dataset.value;
+            selectedColorElement.textContent = selectedColor;
 
-        // 장바구니 추가 버튼 클릭 이벤트
-        const addToCartButton = document.getElementById("addToCartButton");
-        addToCartButton.addEventListener("click", function() {
-            if (!selectedColor || !selectedSize) {
-                alert("색상과 사이즈를 선택해주세요.");
-                return;
-            }
-
-            // 장바구니에 추가 요청
-            const cartDto = {
-                proId: ${productDetail.proId},
-                color: selectedColor,
-                size: selectedSize,
-                quantity: 1  // 기본값은 1
-            };
-
-            fetch('/cart/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(cartDto)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert("장바구니에 추가되었습니다.");
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(error => {
-                    alert("장바구니에 추가하는 중 오류가 발생했습니다.");
-                });
+            colorButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
         });
     });
+
+    sizeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            selectedSize = button.dataset.value;
+            selectedSizeElement.textContent = selectedSize;
+
+            sizeButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            if (selectedColor && selectedSize) {
+                selectedProductInfo.style.display = 'block';
+                totalPriceElement.textContent = pricePerItem;
+            }
+        });
+    });
+
+    function moveToCart() {
+        if (!selectedColor || !selectedSize) {
+            alert('색상과 사이즈를 선택해주세요!');
+            return;
+        }
+        alert('장바구니로 이동합니다.');
+        window.location.href = '/cart';
+    }
 </script>
-
-
 </body>
 </html>

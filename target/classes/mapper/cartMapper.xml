@@ -18,7 +18,7 @@
                total_price  AS totalPrice,
                unit_price   AS unitPrice
         FROM cart
-        WHERE user_id = #{userId}
+        WHERE user_id = 'asdf'
     </select>
 
     <!-- 장바구니에 항목 추가 -->
