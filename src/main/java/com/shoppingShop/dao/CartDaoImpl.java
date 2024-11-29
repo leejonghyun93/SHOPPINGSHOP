@@ -10,26 +10,23 @@ import java.util.List;
 @Repository
 public class CartDaoImpl implements CartDao {
 
-    private static final String NAMESPACE = "com.shoppingShop.dao.CartDao.";
+    private static final String NAMESPACE = "com.shoppingShop.mapper.CartMapper.";
 
     @Autowired
     private SqlSession sqlSession;
 
-    // 사용자 ID로 장바구니 조회
     @Override
-    public List<CartDto> findByUserId(String userId) {
-        return sqlSession.selectList(NAMESPACE + "findByUserId", userId);
+    public List<CartDto> selectCartByUserId(String userId) {
+        return sqlSession.selectList(NAMESPACE + "selectCartByUserId", userId);
     }
 
-    // 장바구니에 항목 추가
     @Override
-    public void insertCart(CartDto cartDto) {
-        sqlSession.insert(NAMESPACE + "insertCart", cartDto);
+    public int insertCart(CartDto cartDto) {
+        return sqlSession.insert(NAMESPACE + "insertCart", cartDto);
     }
 
-    // 특정 장바구니 항목 삭제
     @Override
-    public void deleteCartById(Long cartId) {
-        sqlSession.delete(NAMESPACE + "deleteCartById", cartId);
+    public int deleteCart(Long cartId) {
+        return sqlSession.delete(NAMESPACE + "deleteCart", cartId);
     }
 }

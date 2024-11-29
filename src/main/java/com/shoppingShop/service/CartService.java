@@ -5,8 +5,8 @@ import com.shoppingShop.domain.CartDto;
 import java.util.List;
 
 public interface CartService {
-
-    List<CartDto> getCartByUserId(String userId);
+    // 사용자 ID로 장바구니 조회
+    List<CartDto> selectCartByUserId(String userId);
 
     // 장바구니 항목 추가
     void addCart(CartDto cartDto);

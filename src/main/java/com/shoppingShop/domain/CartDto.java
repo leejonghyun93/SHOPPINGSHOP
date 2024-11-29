@@ -14,10 +14,6 @@ public class CartDto {
     private String proDescription;
     private String proColor;
     private String proSize;
-    private BigDecimal shippingFee; // 변경
-    private BigDecimal totalPrice;  // 변경
-    private BigDecimal unitPrice;
-    private String totalPriceFormatted;
 
     public CartDto(Long cartId, String userId, Integer proId, Integer cartCount, String imageUrl, String productInfo, Integer quantity, String proName, String proDescription, String proColor, String proSize, BigDecimal shippingFee, BigDecimal totalPrice, BigDecimal unitPrice, String totalPriceFormatted) {
         this.cartId = cartId;
@@ -31,10 +27,6 @@ public class CartDto {
         this.proDescription = proDescription;
         this.proColor = proColor;
         this.proSize = proSize;
-        this.shippingFee = shippingFee;
-        this.totalPrice = totalPrice;
-        this.unitPrice = unitPrice;
-        this.totalPriceFormatted = totalPriceFormatted;
     }
 
     public Long getCartId() {
@@ -125,35 +117,35 @@ public class CartDto {
         this.proSize = proSize;
     }
 
-    public BigDecimal getShippingFee() {
-        return shippingFee;
-    }
+//    public BigDecimal getShippingFee() {
+//        return shippingFee;
+//    }
 
-    public void setShippingFee(BigDecimal shippingFee) {
-        this.shippingFee = shippingFee;
-    }
-
-    public BigDecimal getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    public BigDecimal getUnitPrice() {
-        return unitPrice;
-    }
-
-    public void setUnitPrice(BigDecimal unitPrice) {
-        this.unitPrice = unitPrice;
-    }
-
-    public String getTotalPriceFormatted() {
-        return totalPriceFormatted;
-    }
-
-    public void setTotalPriceFormatted(String totalPriceFormatted) {
-        this.totalPriceFormatted = totalPriceFormatted;
-    }
+//    public void setShippingFee(BigDecimal shippingFee) {
+//        this.shippingFee = shippingFee;
+//    }
+//
+//    public BigDecimal getTotalPrice() {
+//        return totalPrice;
+//    }
+//
+//    public void setTotalPrice(BigDecimal totalPrice) {
+//        this.totalPrice = totalPrice;
+//    }
+//
+//    public BigDecimal getUnitPrice() {
+//        return unitPrice;
+//    }
+//
+//    public void setUnitPrice(BigDecimal unitPrice) {
+//        this.unitPrice = unitPrice;
+//    }
+//
+//    public String getTotalPriceFormatted() {
+//        return totalPriceFormatted;
+//    }
+//
+//    public void setTotalPriceFormatted(String totalPriceFormatted) {
+//        this.totalPriceFormatted = totalPriceFormatted;
+//    }
 }

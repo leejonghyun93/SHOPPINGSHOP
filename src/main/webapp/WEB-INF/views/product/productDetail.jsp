@@ -201,6 +201,7 @@
 
     let selectedColor = '';
     let selectedSize = '';
+    const proId = ${productDetail.proId};  // 상품 ID를 JSP에서 전달받은 값으로 설정
 
     colorButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -232,9 +233,40 @@
             alert('색상과 사이즈를 선택해주세요!');
             return;
         }
-        alert('장바구니로 이동합니다.');
-        window.location.href = '/cart';
+
+        // 선택한 상품 정보를 CartDto에 맞게 포맷
+        const cartDto = {
+            proId: proId,  // 상품 ID를 productDetail.proId로 설정
+            color: selectedColor,
+            size: selectedSize,
+            price: pricePerItem,
+            quantity: 1
+        };
+
+        // POST 요청 보내기
+        fetch('/cart/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',  // JSON 타입으로 설정
+            },
+            body: JSON.stringify(cartDto),  // CartDto 객체를 JSON으로 변환하여 전송
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('장바구니에 추가되었습니다.');
+                    window.location.href = '/cart';
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('에러가 발생했습니다.');
+            });
     }
 </script>
+
+
 </body>
 </html>
