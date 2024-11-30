@@ -184,7 +184,7 @@
                 <p>총 가격: <span id="totalPrice"></span>원</p>
             </div>
 
-            <a href="#" class="buy-button" onclick="moveToCart()">구매하기</a>
+            <a href="#" class="buy-button" onclick="addToCart()">구매하기</a>
         </div>
     </div>
 </div>
@@ -201,7 +201,7 @@
 
     let selectedColor = '';
     let selectedSize = '';
-    const proId = ${productDetail.proId};  // 상품 ID를 JSP에서 전달받은 값으로 설정
+    const proId = "${productDetail.proId}";  // JSP에서 전달받은 값
 
     colorButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -228,41 +228,37 @@
         });
     });
 
-    function moveToCart() {
-        if (!selectedColor || !selectedSize) {
-            alert('색상과 사이즈를 선택해주세요!');
-            return;
-        }
-
-        // 선택한 상품 정보를 CartDto에 맞게 포맷
-        const cartDto = {
-            proId: proId,  // 상품 ID를 productDetail.proId로 설정
-            color: selectedColor,
-            size: selectedSize,
-            price: pricePerItem,
+    function addToCart() {
+        const cartData = {
+            proId: proId,
+            proColor: selectedColor,
+            proSize: selectedSize,
             quantity: 1
         };
 
-        // POST 요청 보내기
-        fetch('/cart/add', {
-            method: 'POST',
+        fetch("/cart/add", {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',  // JSON 타입으로 설정
+                "Content-Type": "application/json"
             },
-            body: JSON.stringify(cartDto),  // CartDto 객체를 JSON으로 변환하여 전송
+            body: JSON.stringify(cartData)
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json(); // JSON으로 파싱
+            })
             .then(data => {
                 if (data.success) {
-                    alert('장바구니에 추가되었습니다.');
-                    window.location.href = '/cart';
+                    alert("장바구니에 추가되었습니다!");
                 } else {
-                    alert(data.message);
+                    alert(data.message || "장바구니 추가에 실패했습니다.");
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('에러가 발생했습니다.');
+                console.error("Error:", error);
+                alert("서버 오류가 발생했습니다.");
             });
     }
 </script>

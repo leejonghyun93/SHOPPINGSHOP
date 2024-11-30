@@ -1,10 +1,13 @@
 package com.shoppingShop.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
 public class CartDto {
     private Long cartId;
     private String userId;
+
     private Integer proId;
     private Integer cartCount;
     private String imageUrl;

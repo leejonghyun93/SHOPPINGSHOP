@@ -122,7 +122,7 @@
 <div class="content">
     <!-- 상품 상세 -->
     <h1>장바구니</h1>
-    <table border="1">
+    <table class="cart-table">
         <thead>
         <tr>
             <th>상품명</th>
@@ -130,20 +130,27 @@
             <th>사이즈</th>
             <th>수량</th>
             <th>가격</th>
+            <th>삭제</th>
         </tr>
         </thead>
         <tbody>
         <c:forEach var="item" items="${cartItems}">
             <tr>
-<%--                <td>${item.pro_name}</td>--%>
-                <td>${item.color}</td>
-                <td>${item.size}</td>
+                <td>${item.proName}</td>
+                <td>${item.proColor}</td>
+                <td>${item.proSize}</td>
                 <td>${item.quantity}</td>
-                <td>${item.total_price}</td>
+                <td>${item.totalPrice}</td>
+                <td>
+                    <form action="/cart/delete/${item.cartId}" method="post">
+                        <button type="submit">삭제</button>
+                    </form>
+                </td>
             </tr>
         </c:forEach>
         </tbody>
     </table>
+
     <form action="/clearCart" method="post">
         <button type="submit">장바구니 비우기</button>
     </form>

@@ -3,37 +3,22 @@
 
 
 <!-- 사용자 ID로 장바구니 조회 -->
-<mapper namespace="com.shoppingShop.dao.CartDao">
+<mapper namespace="com.shoppingShop.mapper.CartMapper">
 
-    <!-- 사용자 ID로 장바구니 항목 조회 -->
-    <select id="findByUserId" parameterType="string" resultType="com.shoppingShop.domain.CartDto">
-        SELECT cart_id      AS cartId,
-               user_id      AS userId,
-               pro_id       AS proId,
-               cart_count   AS cartCount,
-               image_url    AS imageUrl,
-               product_info AS productInfo,
-               quantity,
-               shipping_fee AS shippingFee,
-               total_price  AS totalPrice,
-               unit_price   AS unitPrice
+    <select id="selectCartByUserId" resultType="com.shoppingShop.domain.CartDto">
+        SELECT *
         FROM cart
-        WHERE user_id = 'asdf'
+        WHERE user_id = #{userId}
     </select>
 
-    <!-- 장바구니에 항목 추가 -->
     <insert id="insertCart" parameterType="com.shoppingShop.domain.CartDto">
-        INSERT INTO cart (user_id, pro_id, cart_count, image_url, product_info, quantity, shipping_fee, total_price,
-                          unit_price)
-        VALUES (#{userId}, #{proId}, #{cartCount}, #{imageUrl}, #{productInfo}, #{quantity}, #{shippingFee},
-                #{totalPrice}, #{unitPrice})
+        INSERT INTO cart (user_id, product_id, quantity, created_at)
+        VALUES (#{userId}, #{productId}, #{quantity}, NOW())
     </insert>
 
-    <!-- 특정 장바구니 항목 삭제 -->
-    <delete id="deleteCartById" parameterType="long">
-        DELETE
-        FROM cart
+    <delete id="deleteCart" parameterType="long">
+        DELETE FROM cart
         WHERE cart_id = #{cartId}
     </delete>
-
 </mapper>
+
