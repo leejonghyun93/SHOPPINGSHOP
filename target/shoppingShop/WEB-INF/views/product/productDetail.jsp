@@ -149,12 +149,13 @@
 <body>
 <%@ include file="/WEB-INF/views/layout/header/header.jsp" %>
 <%@ include file="/WEB-INF/views/layout/categoryBar/categoryBar.jsp" %>
+
 <div class="content">
     <div class="container">
         <div class="product-image">
-            <img src="${pageContext.request.contextPath}/resources/img/shoes.JPG" alt="상품 이미지">
+            <img src="resources/img/shoes.JPG" alt="상품 이미지">
         </div>
-
+        s
         <div class="product-details">
             <h1 class="productTitle">상품 이름: ${productDetail.proName}</h1>
             <span class="productPrice">상품 가격: ${productDetail.proPrice}원</span>
@@ -188,6 +189,7 @@
         </div>
     </div>
 </div>
+
 <%@ include file="/WEB-INF/views/layout/footer/footer.jsp" %>
 
 <script>
@@ -197,11 +199,10 @@
     const selectedSizeElement = document.getElementById('selectedSize');
     const selectedProductInfo = document.getElementById('selectedProductInfo');
     const totalPriceElement = document.getElementById('totalPrice');
-    const pricePerItem = 58000;
+    const pricePerItem = ${productDetail.proPrice};
 
     let selectedColor = '';
     let selectedSize = '';
-    const proId = "${productDetail.proId}";  // JSP에서 전달받은 값
 
     colorButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -229,40 +230,43 @@
     });
 
     function addToCart() {
+        if (!selectedColor || !selectedSize) {
+            alert("색상과 사이즈를 모두 선택해주세요.");
+            return;
+        }
+
         const cartData = {
-            proId: proId,
+            proId: "${productDetail.proId}",
             proColor: selectedColor,
             proSize: selectedSize,
             quantity: 1
         };
 
-        fetch("/cart/add", {
-            method: "POST",
+        fetch('/cart/add', {
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json"
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(cartData)
+            body: JSON.stringify(cartData),
         })
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return response.json(); // JSON으로 파싱
+                return response.json();
             })
             .then(data => {
-                if (data.success) {
-                    alert("장바구니에 추가되었습니다!");
-                } else {
-                    alert(data.message || "장바구니 추가에 실패했습니다.");
-                }
+                console.log('Success:', data);
+                alert(data.message);
+
+                // 상품 페이지로 이동
+                window.location.href = `/product/${cartData.proId}`;
             })
             .catch(error => {
-                console.error("Error:", error);
-                alert("서버 오류가 발생했습니다.");
+                console.error('Error:', error);
             });
     }
+
 </script>
-
-
 </body>
 </html>

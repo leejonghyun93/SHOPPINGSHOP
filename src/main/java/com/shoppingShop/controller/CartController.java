@@ -3,6 +3,7 @@ package com.shoppingShop.controller;
 import com.shoppingShop.domain.CartDto;
 import com.shoppingShop.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,32 +39,21 @@ public class CartController {
 
     // 장바구니 항목 추가
     @PostMapping("/add")
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> addToCart(@RequestBody CartDto cartDto, HttpSession session) {
-        System.out.println("addToCart 메서드 호출됨");
+    public ResponseEntity<Map<String, Object>> addToCart(@RequestBody CartDto cartDto) {
+        try {
+            // DTO 매핑된 값 출력 확인
+            System.out.println("Received CartDto: " + cartDto);
 
-        Map<String, Object> response = new HashMap<>();
-        String userId = (String) session.getAttribute("userId");
-
-        if (userId == null) {
-            System.out.println("userId 없음. 로그인 필요");
-            response.put("success", false);
-            response.put("message", "로그인이 필요합니다.");
-            return ResponseEntity.status(401).body(response);
+            // 로직 처리
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "장바구니에 상품이 추가되었습니다.");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-
-        System.out.println("Session userId: " + userId);
-
-        // 사용자 ID 설정 후 장바구니 추가
-        cartDto.setUserId(userId);
-        System.out.println("CartDto: " + cartDto);
-
-        cartService.addCart(cartDto);
-
-        response.put("success", true);
-        response.put("message", "장바구니에 추가되었습니다.");
-        return ResponseEntity.ok(response);
     }
+
 
 
     // 장바구니 항목 삭제

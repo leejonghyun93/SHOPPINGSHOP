@@ -8,7 +8,7 @@ public class CartDto {
     private Long cartId;
     private String userId;
 
-    private Integer proId;
+    private Long proId;
     private Integer cartCount;
     private String imageUrl;
     private String productInfo;
@@ -18,7 +18,7 @@ public class CartDto {
     private String proColor;
     private String proSize;
 
-    public CartDto(Long cartId, String userId, Integer proId, Integer cartCount, String imageUrl, String productInfo, Integer quantity, String proName, String proDescription, String proColor, String proSize, BigDecimal shippingFee, BigDecimal totalPrice, BigDecimal unitPrice, String totalPriceFormatted) {
+    public CartDto(Long cartId, String userId, Long proId, Integer cartCount, String imageUrl, String productInfo, Integer quantity, String proName, String proDescription, String proColor, String proSize) {
         this.cartId = cartId;
         this.userId = userId;
         this.proId = proId;
@@ -48,11 +48,11 @@ public class CartDto {
         this.userId = userId;
     }
 
-    public Integer getProId() {
+    public Long getProId() {
         return proId;
     }
 
-    public void setProId(Integer proId) {
+    public void setProId(Long proId) {
         this.proId = proId;
     }
 
@@ -120,35 +120,20 @@ public class CartDto {
         this.proSize = proSize;
     }
 
-//    public BigDecimal getShippingFee() {
-//        return shippingFee;
-//    }
-
-//    public void setShippingFee(BigDecimal shippingFee) {
-//        this.shippingFee = shippingFee;
-//    }
-//
-//    public BigDecimal getTotalPrice() {
-//        return totalPrice;
-//    }
-//
-//    public void setTotalPrice(BigDecimal totalPrice) {
-//        this.totalPrice = totalPrice;
-//    }
-//
-//    public BigDecimal getUnitPrice() {
-//        return unitPrice;
-//    }
-//
-//    public void setUnitPrice(BigDecimal unitPrice) {
-//        this.unitPrice = unitPrice;
-//    }
-//
-//    public String getTotalPriceFormatted() {
-//        return totalPriceFormatted;
-//    }
-//
-//    public void setTotalPriceFormatted(String totalPriceFormatted) {
-//        this.totalPriceFormatted = totalPriceFormatted;
-//    }
+    @Override
+    public String toString() {
+        return "CartDto{" +
+                "cartId=" + cartId +
+                ", userId='" + userId + '\'' +
+                ", proId=" + proId +
+                ", cartCount=" + cartCount +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", productInfo='" + productInfo + '\'' +
+                ", quantity=" + quantity +
+                ", proName='" + proName + '\'' +
+                ", proDescription='" + proDescription + '\'' +
+                ", proColor='" + proColor + '\'' +
+                ", proSize='" + proSize + '\'' +
+                '}';
+    }
 }
