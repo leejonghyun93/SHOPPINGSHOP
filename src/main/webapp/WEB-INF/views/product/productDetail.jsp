@@ -257,6 +257,7 @@
             })
             .then(data => {
                 console.log('Success:', data);
+                console.log(cartData);
                 alert(data.message);
 
                 // 상품 페이지로 이동

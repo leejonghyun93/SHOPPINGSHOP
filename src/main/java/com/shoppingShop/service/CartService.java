@@ -6,11 +6,9 @@ import java.util.List;
 
 public interface CartService {
     // 사용자 ID로 장바구니 조회
-    List<CartDto> selectCartByUserId(String userId);
+    List<CartDto> getCartByUserId(String userId); // 사용자별 장바구니 조회
 
-    // 장바구니 항목 추가
-    void addCart(CartDto cartDto);
+    void addCart(CartDto cartDto);               // 장바구니에 상품 추가
 
-    // 장바구니 항목 삭제
-    void deleteCart(Long cartId);
+    void removeCart(Long cartId);
 }

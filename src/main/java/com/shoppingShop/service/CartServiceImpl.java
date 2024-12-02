@@ -14,7 +14,7 @@ public class CartServiceImpl implements CartService {
     private CartDao cartDao;
 
     @Override
-    public List<CartDto> selectCartByUserId(String userId) {
+    public List<CartDto> getCartByUserId(String userId) {
         return cartDao.selectCartByUserId(userId);
     }
 
@@ -24,7 +24,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void deleteCart(Long cartId) {
+    public void removeCart(Long cartId) {
         cartDao.deleteCart(cartId);
     }
 }
