@@ -20,16 +20,15 @@ public class CartController {
 
     @PostMapping("/add")
     public ResponseEntity<Map<String, Object>> addToCart(@RequestBody CartDto cartDto, HttpSession session) {
-        System.out.println("Cart Data: " + cartDto);
         String userId = (String) session.getAttribute("userId");
+        System.out.println("유저 ID: " + userId);
+        System.out.println("카트 DTO: " + cartDto);
         if (userId == null) {
             return ResponseEntity.status(401).body(Map.of("message", "로그인이 필요합니다."));
         }
 
         cartDto.setUserId(userId);
         cartService.addCart(cartDto);
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "장바구니에 추가되었습니다.");
         return ResponseEntity.ok(Map.of("message", "장바구니에 상품이 추가되었습니다."));
     }
 

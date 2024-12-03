@@ -242,29 +242,16 @@
             quantity: 1
         };
 
-        fetch('/cart/add', {
+        fetch('/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(cartData),
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Success:', data);
-                alert(data.message);
-
-                // 상품 페이지로 이동
-                window.location.href = `/product/${cartData.proId}`;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+            .then(response => response.json())
+            .then(data => console.log('Success:', data))
+            .catch(error => console.error('Error:', error));
     }
 
 </script>
