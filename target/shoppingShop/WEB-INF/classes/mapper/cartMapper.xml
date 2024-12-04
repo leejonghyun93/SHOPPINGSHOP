@@ -12,8 +12,8 @@
     </select>
 
     <insert id="insertCart">
-        INSERT INTO cart (user_id, pro_id, cart_count, image_url, product_info, pro_name, pro_color, pro_size, total_price)
-        VALUES (#{userId}, #{proId}, #{cartCount}, #{imageUrl}, #{productInfo}, #{proName}, #{proColor}, #{proSize}, #{totalPrice})
+        INSERT INTO cart (user_id, pro_id, cart_count,  product_info, pro_name, pro_color, pro_size, total_price)
+        VALUES (#{userId}, #{proId}, #{cartCount},  #{productInfo}, #{proName}, #{proColor}, #{proSize}, #{totalPrice})
     </insert>
 
     <delete id="deleteCart">

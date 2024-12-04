@@ -1,5 +1,6 @@
 package com.shoppingShop.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
@@ -14,10 +15,26 @@ public class CartDto {
     private String productInfo;
     private Integer quantity;
     private String proName;
+
     private String proDescription;
     private String proColor;
     private String proSize;
-
+    private Integer totalPrice;
+    public CartDto() {}
+    @JsonCreator
+    public CartDto(
+            @JsonProperty("proId") Long proId,
+            @JsonProperty("proColor") String proColor,
+            @JsonProperty("proSize") String proSize,
+            @JsonProperty("quantity") int quantity,
+            @JsonProperty("proName") String proName
+    ) {
+        this.proId = proId;
+        this.proColor = proColor;
+        this.proSize = proSize;
+        this.quantity = quantity;
+        this.proName = proName;
+    }
     public CartDto(Long cartId, String userId, Long proId, Integer cartCount, String imageUrl, String productInfo, Integer quantity, String proName, String proDescription, String proColor, String proSize) {
         this.cartId = cartId;
         this.userId = userId;
@@ -57,6 +74,9 @@ public class CartDto {
     }
 
     public Integer getCartCount() {
+        if (cartCount == null) {
+            return 0; // 기본값 0 반환
+        }
         return cartCount;
     }
 
@@ -120,6 +140,14 @@ public class CartDto {
         this.proSize = proSize;
     }
 
+    public Integer getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Integer totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
     @Override
     public String toString() {
         return "CartDto{" +
@@ -134,6 +162,7 @@ public class CartDto {
                 ", proDescription='" + proDescription + '\'' +
                 ", proColor='" + proColor + '\'' +
                 ", proSize='" + proSize + '\'' +
+                ", totalPrice=" + totalPrice +
                 '}';
     }
 }

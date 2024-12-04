@@ -157,8 +157,10 @@
         </div>
         s
         <div class="product-details">
-            <h1 class="productTitle">상품 이름: ${productDetail.proName}</h1>
-            <span class="productPrice">상품 가격: ${productDetail.proPrice}원</span>
+            <c:if test="${not empty productDetail}">
+                <h1 class="productTitle">${productDetail.proName}</h1>
+                <span class="productPrice">${productDetail.proPrice}원</span>
+            </c:if>
 
             <div class="option-section">
                 <span class="option-label">색상</span>
@@ -239,19 +241,31 @@
             proId: "${productDetail.proId}",
             proColor: selectedColor,
             proSize: selectedSize,
+            proName: "${productDetail.proName}",
             quantity: 1
         };
 
-        fetch('/add', {
+        fetch('/cart/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(cartData),
+            body: JSON.stringify(cartData), // JSON 형식으로 변환
         })
-            .then(response => response.json())
-            .then(data => console.log('Success:', data))
-            .catch(error => console.error('Error:', error));
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+                return response.json(); // JSON으로 응답 처리
+            })
+            .then(data => {
+                console.log('서버 응답:', data);
+                alert(data.message); // 서버가 반환한 메시지 표시
+            })
+            .catch(error => {
+                console.error('오류:', error.message);
+                alert('오류 발생: ' + error.message);
+            });
     }
 
 </script>
