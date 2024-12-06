@@ -2,7 +2,10 @@
 <%@ page session="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<html lang="ko">
+<c:set var="loginId" value="${pageContext.request.getSession(false) == null ? '' : pageContext.request.session.getAttribute('userId')}"/>
+<c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : '/login/logout'}"/>
+<c:set var="logout" value="${loginId == '' ? 'Login' : loginId}"/>
+<html>
 <head>
     <title>장바구니</title>
     <style>
@@ -117,8 +120,8 @@
     </style>
 </head>
 <body>
-<%@ include file="/WEB-INF/views/layout/header/header.jsp" %>
-<%@ include file="/WEB-INF/views/layout/categoryBar/categoryBar.jsp" %>
+<jsp:include page="/WEB-INF/views/layout/header/header.jsp" />
+<jsp:include page="/WEB-INF/views/layout/categoryBar/categoryBar.jsp" />
 <div class="content">
     <!-- 상품 상세 -->
     <h1>장바구니</h1>
@@ -134,15 +137,15 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach var="item" items="${cartItems}">
+        <c:forEach var="cartItem" items="${cartItems}">
             <tr>
-                <td>${item.proName}</td>
-                <td>${item.proColor}</td>
-                <td>${item.proSize}</td>
-                <td>${item.quantity}</td>
-                <td>${item.totalPrice}</td>
+                <td>${cartItem.proName}</td>
+                <td>${cartItem.proColor}</td>
+                <td>${cartItem.proSize}</td>
+                <td>${cartItem.quantity}</td>
+                <td>${cartItem.totalPrice}</td>
                 <td>
-                    <form action="/cart/delete/${item.cartId}" method="post">
+                    <form action="/cart/delete/${cartItem.cartId}" method="post">
                         <button type="submit">삭제</button>
                     </form>
                 </td>
@@ -158,6 +161,6 @@
         <button type="submit">결제하기</button>
     </form>
 </div>
-<%@ include file="/WEB-INF/views/layout/footer/footer.jsp" %>
+<jsp:include page="/WEB-INF/views/layout/footer/footer.jsp" />
 </body>
 </html>

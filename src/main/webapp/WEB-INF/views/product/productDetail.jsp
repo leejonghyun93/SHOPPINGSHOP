@@ -155,7 +155,7 @@
         <div class="product-image">
             <img src="resources/img/shoes.JPG" alt="상품 이미지">
         </div>
-        s
+
         <div class="product-details">
             <c:if test="${not empty productDetail}">
                 <h1 class="productTitle">${productDetail.proName}</h1>
@@ -261,6 +261,7 @@
             .then(data => {
                 console.log('서버 응답:', data);
                 alert(data.message); // 서버가 반환한 메시지 표시
+                window.location.assign('/cart/cart'); // cart.jsp로 이동
             })
             .catch(error => {
                 console.error('오류:', error.message);

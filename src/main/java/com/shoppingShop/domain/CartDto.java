@@ -20,6 +20,7 @@ public class CartDto {
     private String proColor;
     private String proSize;
     private Integer totalPrice;
+    private ProductDto productDto;
     public CartDto() {}
     @JsonCreator
     public CartDto(
@@ -34,19 +35,6 @@ public class CartDto {
         this.proSize = proSize;
         this.quantity = quantity;
         this.proName = proName;
-    }
-    public CartDto(Long cartId, String userId, Long proId, Integer cartCount, String imageUrl, String productInfo, Integer quantity, String proName, String proDescription, String proColor, String proSize) {
-        this.cartId = cartId;
-        this.userId = userId;
-        this.proId = proId;
-        this.cartCount = cartCount;
-        this.imageUrl = imageUrl;
-        this.productInfo = productInfo;
-        this.quantity = quantity;
-        this.proName = proName;
-        this.proDescription = proDescription;
-        this.proColor = proColor;
-        this.proSize = proSize;
     }
 
     public Long getCartId() {
@@ -74,9 +62,6 @@ public class CartDto {
     }
 
     public Integer getCartCount() {
-        if (cartCount == null) {
-            return 0; // 기본값 0 반환
-        }
         return cartCount;
     }
 
@@ -148,6 +133,14 @@ public class CartDto {
         this.totalPrice = totalPrice;
     }
 
+    public ProductDto getProductDto() {
+        return productDto;
+    }
+
+    public void setProductDto(ProductDto productDto) {
+        this.productDto = productDto;
+    }
+
     @Override
     public String toString() {
         return "CartDto{" +
@@ -163,6 +156,7 @@ public class CartDto {
                 ", proColor='" + proColor + '\'' +
                 ", proSize='" + proSize + '\'' +
                 ", totalPrice=" + totalPrice +
+                ", productDto=" + productDto +
                 '}';
     }
 }
