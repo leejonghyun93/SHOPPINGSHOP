@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.dao.OrdersDao">
+    <insert id="createOrder" parameterType="com.shoppingShop.domain.OrdersDto">
+        INSERT INTO orders (user_id, od_status, od_totalprice, created_at, cart_id, pro_id, quantity, shipping_fee, unit_price)
+        VALUES (#{userId}, #{odStatus}, #{odTotalPrice}, NOW(), #{cartId}, #{proId}, #{quantity}, #{shippingFee}, #{unitPrice});
+    </insert>
+
+    <select id="getOrderHistoryByUserId" parameterType="string" resultType="com.shoppingShop.domain.OrdersDto">
+        SELECT *
+        FROM orders
+        WHERE user_id = #{userId};
+    </select>
+</mapper>
