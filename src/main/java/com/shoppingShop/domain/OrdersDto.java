@@ -3,56 +3,32 @@ package com.shoppingShop.domain;
 import java.time.LocalDateTime;
 
 public class OrdersDto {
-    private int orderId;
-    private String userId;
-    private String odStatus;
-    private int odTotalPrice;
-    private LocalDateTime createdAt;
     private Long cartId;
-    private Long proId;
+    private String userId;
+    private String proName;
+    private String proColor;
+    private String proSize;
     private int quantity;
-    private int shippingFee;
     private int unitPrice;
+    private int shippingFee;
+    private int odTotalPrice;
+    private String odStatus;
+
+    private String createdAt;
 
     public OrdersDto() {}
 
-    public int getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
+    public OrdersDto(Long cartId, String userId, String proName, String proColor, String proSize, int quantity, int unitPrice, int shippingFee, int odTotalPrice, String odStatus, String createdAt) {
+        this.cartId = cartId;
         this.userId = userId;
-    }
-
-    public String getOdStatus() {
-        return odStatus;
-    }
-
-    public void setOdStatus(String odStatus) {
-        this.odStatus = odStatus;
-    }
-
-    public int getOdTotalPrice() {
-        return odTotalPrice;
-    }
-
-    public void setOdTotalPrice(int odTotalPrice) {
+        this.proName = proName;
+        this.proColor = proColor;
+        this.proSize = proSize;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+        this.shippingFee = shippingFee;
         this.odTotalPrice = odTotalPrice;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
+        this.odStatus = odStatus;
         this.createdAt = createdAt;
     }
 
@@ -64,12 +40,36 @@ public class OrdersDto {
         this.cartId = cartId;
     }
 
-    public Long getProId() {
-        return proId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setProId(Long proId) {
-        this.proId = proId;
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getProName() {
+        return proName;
+    }
+
+    public void setProName(String proName) {
+        this.proName = proName;
+    }
+
+    public String getProColor() {
+        return proColor;
+    }
+
+    public void setProColor(String proColor) {
+        this.proColor = proColor;
+    }
+
+    public String getProSize() {
+        return proSize;
+    }
+
+    public void setProSize(String proSize) {
+        this.proSize = proSize;
     }
 
     public int getQuantity() {
@@ -80,14 +80,6 @@ public class OrdersDto {
         this.quantity = quantity;
     }
 
-    public int getShippingFee() {
-        return shippingFee;
-    }
-
-    public void setShippingFee(int shippingFee) {
-        this.shippingFee = shippingFee;
-    }
-
     public int getUnitPrice() {
         return unitPrice;
     }
@@ -96,32 +88,52 @@ public class OrdersDto {
         this.unitPrice = unitPrice;
     }
 
-    public OrdersDto(int orderId, String userId, String odStatus, int odTotalPrice, LocalDateTime createdAt, Long cartId, Long proId, int quantity, int shippingFee, int unitPrice) {
-        this.orderId = orderId;
-        this.userId = userId;
-        this.odStatus = odStatus;
-        this.odTotalPrice = odTotalPrice;
-        this.createdAt = createdAt;
-        this.cartId = cartId;
-        this.proId = proId;
-        this.quantity = quantity;
+    public int getShippingFee() {
+        return shippingFee;
+    }
+
+    public void setShippingFee(int shippingFee) {
         this.shippingFee = shippingFee;
-        this.unitPrice = unitPrice;
+    }
+
+    public int getOdTotalPrice() {
+        return odTotalPrice;
+    }
+
+    public void setOdTotalPrice(int odTotalPrice) {
+        this.odTotalPrice = odTotalPrice;
+    }
+
+    public String getOdStatus() {
+        return odStatus;
+    }
+
+    public void setOdStatus(String odStatus) {
+        this.odStatus = odStatus;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 
     @Override
     public String toString() {
         return "OrdersDto{" +
-                "orderId=" + orderId +
+                "cartId=" + cartId +
                 ", userId='" + userId + '\'' +
-                ", odStatus='" + odStatus + '\'' +
-                ", odTotalPrice=" + odTotalPrice +
-                ", createdAt=" + createdAt +
-                ", cartId=" + cartId +
-                ", proId=" + proId +
+                ", proName='" + proName + '\'' +
+                ", proColor='" + proColor + '\'' +
+                ", proSize='" + proSize + '\'' +
                 ", quantity=" + quantity +
-                ", shippingFee=" + shippingFee +
                 ", unitPrice=" + unitPrice +
+                ", shippingFee=" + shippingFee +
+                ", odTotalPrice=" + odTotalPrice +
+                ", odStatus='" + odStatus + '\'' +
+                ", createdAt='" + createdAt + '\'' +
                 '}';
     }
 }

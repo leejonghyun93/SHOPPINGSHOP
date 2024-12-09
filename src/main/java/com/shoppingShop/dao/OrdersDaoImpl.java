@@ -13,7 +13,7 @@ public class OrdersDaoImpl implements OrdersDao {
     @Autowired
     private SqlSession sqlSession;
 
-    private static final String NAMESPACE = "com.example.dao.OrdersDao";
+    private static final String NAMESPACE = "com.shoppingShop.dao.OrdersDao";
 
     @Override
     public void createOrder(OrdersDto order) {
@@ -23,5 +23,10 @@ public class OrdersDaoImpl implements OrdersDao {
     @Override
     public List<OrdersDto> getOrderHistoryByUserId(String userId) {
         return sqlSession.selectList(NAMESPACE + ".getOrderHistoryByUserId", userId);
+    }
+
+    @Override
+    public List<OrdersDto> getSelectOrderList(String userId) {
+        return sqlSession.selectList(NAMESPACE + ".selectGetOrderList", userId);
     }
 }

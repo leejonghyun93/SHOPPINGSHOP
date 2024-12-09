@@ -25,32 +25,35 @@ public class OrdersController {
     public String checkout(@RequestParam("cartIds") List<Long> cartIds, HttpSession session) {
         String userId = (String) session.getAttribute("userId");
 
-        // Mock 데이터
-        List<OrdersDto> orders = new ArrayList<>();
-        for (Long cartId : cartIds) {
-            OrdersDto order = new OrdersDto();
-            order.setUserId(userId);
-            order.setCartId(cartId);
-            order.setOdStatus("결제완료");
-            order.setQuantity(1); // 임시 수량
-            order.setUnitPrice(50000); // 임시 단가
-            order.setShippingFee(2500); // 임시 배송비
-            order.setOdTotalPrice(order.getQuantity() * order.getUnitPrice() + order.getShippingFee());
-            orders.add(order);
-        }
+        // 단순히 주문 데이터를 서비스에 넘겨 저장
+        ordersService.placeOrder(userId, cartIds);
 
-        // 주문 생성
-        ordersService.placeOrder(orders);
-
+        // 주문 완료 후 주문 내역 페이지로 리다이렉트
         return "redirect:/orders/history";
     }
 
     @GetMapping("/history")
     public String orderHistory(HttpSession session, Model model) {
         String userId = (String) session.getAttribute("userId");
+
+        // 주문 내역 가져오기
         List<OrdersDto> orderHistory = ordersService.getOrderHistory(userId);
 
+        // 모델에 주문 내역 추가
         model.addAttribute("orderHistory", orderHistory);
-        return "orderHistory"; // 주문 내역 JSP 페이지
+
+        return "user/orderHistory"; // 주문 내역 JSP 페이지
+    }
+
+    @GetMapping("/list")
+    public String getOrderList(HttpSession session,Model model){
+        String userId = (String) session.getAttribute("userId");
+
+        List<OrdersDto> getOrderList = ordersService.getSelectOrderList(userId);
+        model.addAttribute("orderList",getOrderList);
+
+        return "user/orderList";
+
     }
 }
+

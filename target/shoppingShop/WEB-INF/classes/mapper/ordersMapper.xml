@@ -15,9 +15,4 @@
         WHERE user_id = #{userId}
     </select>
 
-    <select id="selectGetOrderList" parameterType="String" resultType="com.shoppingShop.domain.OrdersDto">
-        SELECT *
-        FROM orders
-        WHERE user_id = ${userId}
-    </select>
 </mapper>
