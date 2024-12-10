@@ -3,6 +3,8 @@ package com.shoppingShop.domain;
 import java.time.LocalDateTime;
 
 public class OrdersDto {
+
+    private int orderId;
     private Long cartId;
     private String userId;
     private String proName;
@@ -14,11 +16,12 @@ public class OrdersDto {
     private int odTotalPrice;
     private String odStatus;
 
-    private String createdAt;
+    private LocalDateTime createdAt;
 
     public OrdersDto() {}
 
-    public OrdersDto(Long cartId, String userId, String proName, String proColor, String proSize, int quantity, int unitPrice, int shippingFee, int odTotalPrice, String odStatus, String createdAt) {
+    public OrdersDto(int orderId, Long cartId, String userId, String proName, String proColor, String proSize, int quantity, int unitPrice, int shippingFee, int odTotalPrice, String odStatus, LocalDateTime createdAt) {
+        this.orderId = orderId;
         this.cartId = cartId;
         this.userId = userId;
         this.proName = proName;
@@ -30,6 +33,14 @@ public class OrdersDto {
         this.odTotalPrice = odTotalPrice;
         this.odStatus = odStatus;
         this.createdAt = createdAt;
+    }
+
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
     }
 
     public Long getCartId() {
@@ -112,18 +123,19 @@ public class OrdersDto {
         this.odStatus = odStatus;
     }
 
-    public String getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
     @Override
     public String toString() {
         return "OrdersDto{" +
-                "cartId=" + cartId +
+                "orderId=" + orderId +
+                ", cartId=" + cartId +
                 ", userId='" + userId + '\'' +
                 ", proName='" + proName + '\'' +
                 ", proColor='" + proColor + '\'' +

@@ -242,7 +242,8 @@
             proColor: selectedColor,
             proSize: selectedSize,
             proName: "${productDetail.proName}",
-            quantity: 1
+            quantity: 1,
+            totalPrice : "${productDetail.totalPrice}"
         };
 
         fetch('/cart/add', {

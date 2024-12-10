@@ -109,7 +109,7 @@
         <ul class="headerSidebar">
             <li><a href="<c:url value='${loginOutLink}'/>">${logout}</a></li>
             <li><a href="<c:url value='/membership/register'/>">회원가입</a></li>
-            <li><a href="<c:url value='/orders/history'/>">주문/배송조회</a></li>
+            <li><a href="<c:url value='/orders/list'/>">주문/배송조회</a></li>
             <li><a>1:1문의</a></li>
             <li><a href="<c:url value='/board/list'/>">게시판</a></li>
             <li><a href="<c:url value='/cart/cart'/>">장바구니</a></li>

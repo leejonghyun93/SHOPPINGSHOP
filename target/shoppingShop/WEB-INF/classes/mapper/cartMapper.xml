@@ -1,24 +1,58 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
+<mapper namespace="com.shoppingShop.dao.CartDao">
 
-<!-- 사용자 ID로 장바구니 조회 -->
-<mapper namespace="com.shoppingShop.mapper.CartMapper">
-
+    <!-- 사용자 ID로 장바구니 조회 -->
     <select id="selectCartByUserId" resultType="com.shoppingShop.domain.CartDto">
         SELECT *
         FROM cart
         WHERE user_id = #{userId}
     </select>
 
+    <!-- 장바구니 추가 -->
     <insert id="insertCart">
-        INSERT INTO cart (user_id, pro_id, cart_count,  product_info, pro_name, pro_color, pro_size, total_price)
-        VALUES (#{userId}, #{proId}, #{cartCount},  #{productInfo}, #{proName}, #{proColor}, #{proSize}, #{totalPrice})
+        INSERT INTO cart (user_id, pro_id, cart_count, product_info, pro_name, pro_color, pro_size, total_price)
+        VALUES (#{userId}, #{proId}, #{cartCount}, #{productInfo}, #{proName}, #{proColor}, #{proSize}, #{totalPrice})
     </insert>
 
+    <!-- 개별 장바구니 항목 삭제 -->
     <delete id="deleteCart">
         DELETE FROM cart WHERE cart_id = #{cartId}
     </delete>
 
-</mapper>
+    <!-- 여러 장바구니 항목 삭제 -->
+    <delete id="deleteCartItems" parameterType="map">
+        DELETE FROM cart
+        WHERE cart_id IN
+        <foreach item="cartId" collection="cartIds" open="(" separator="," close=")">
+            #{cartId}
+        </foreach>
+    </delete>
 
+    <!-- 장바구니 ID 목록으로 상품 조회 -->
+    <select id="getCartItemsByIds" resultType="com.shoppingShop.domain.OrdersDto">
+        SELECT cart_id, pro_name, pro_color, pro_size, cart_count AS quantity, total_price AS unit_price
+        FROM cart
+        WHERE cart_id IN
+        <foreach item="cartId" collection="cartIds" open="(" separator="," close=")">
+            #{cartId}
+        </foreach>
+    </select>
+    <delete id="deleteDeliveryByCartIds" parameterType="map">
+        DELETE FROM delivery
+        WHERE order_id IN
+        <foreach item="cartId" collection="cartIds" open="(" separator="," close=")">
+            #{cartId}
+        </foreach>
+    </delete>
+
+    <!-- orders 테이블에서 cart_id에 연관된 데이터 삭제 -->
+    <delete id="deleteOrdersByCartIds" parameterType="map">
+        DELETE FROM orders
+        WHERE cart_id IN
+        <foreach item="cartId" collection="cartIds" open="(" separator="," close=")">
+            #{cartId}
+        </foreach>
+    </delete>
+</mapper>

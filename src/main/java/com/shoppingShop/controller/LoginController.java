@@ -54,4 +54,22 @@ public class LoginController {
             return "login/login"; // 오류 발생 시 로그인 페이지로 다시 이동
         }
     }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        // 세션 무효화
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        // 쿠키 삭제
+        Cookie cookie = new Cookie("userId", null);
+        cookie.setMaxAge(0); // 쿠키 만료
+        cookie.setPath("/"); // 경로 설정
+        response.addCookie(cookie);
+
+        // 로그아웃 후 로그인 페이지로 리다이렉트
+        return "redirect:/login/login";
+    }
 }

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/orders")
@@ -46,14 +48,22 @@ public class OrdersController {
     }
 
     @GetMapping("/list")
-    public String getOrderList(HttpSession session,Model model){
+    public String getOrderList(HttpSession session, Model model) {
         String userId = (String) session.getAttribute("userId");
 
-        List<OrdersDto> getOrderList = ordersService.getSelectOrderList(userId);
-        model.addAttribute("orderList",getOrderList);
+        List<OrdersDto> orders = ordersService.getSelectOrderList(userId);
+
+        // 날짜별로 주문 데이터를 그룹화
+        Map<String, List<OrdersDto>> groupedOrders = orders.stream()
+                .collect(Collectors.groupingBy(order -> order.getCreatedAt().toLocalDate().toString()));
+
+        // JSP에서 접근할 수 있도록 데이터 전달
+        model.addAttribute("ordersByDate", groupedOrders);
+
+        // 주문이 없을 때를 위해 추가
+        model.addAttribute("hasOrders", !groupedOrders.isEmpty());
 
         return "user/orderList";
-
     }
 }
 

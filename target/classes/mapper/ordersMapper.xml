@@ -15,4 +15,16 @@
         WHERE user_id = #{userId}
     </select>
 
+    <select id="selectGetOrderList" parameterType="String" resultType="com.shoppingShop.domain.OrdersDto">
+        SELECT os.order_id AS orderId,
+               p.pro_name AS proName,
+               p.pro_color AS proColor,
+               p.pro_size AS proSize,
+               os.quantity AS quantity,
+               os.od_total_price AS odTotalPrice,
+               os.created_at AS createdAt
+        FROM orders os
+                 JOIN product p ON os.pro_id = p.pro_id
+        WHERE os.user_id = #{userId}
+    </select>
 </mapper>
