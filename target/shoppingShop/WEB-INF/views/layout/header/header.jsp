@@ -110,7 +110,7 @@
             <li><a href="<c:url value='${loginOutLink}'/>">${logout}</a></li>
             <li><a href="<c:url value='/membership/register'/>">회원가입</a></li>
             <li><a href="<c:url value='/orders/list'/>">주문/배송조회</a></li>
-            <li><a>1:1문의</a></li>
+            <li><a href="#" onclick="openChatWindow()">1:1문의</a></li>
             <li><a href="<c:url value='/board/list'/>">게시판</a></li>
             <li><a href="<c:url value='/cart/cart'/>">장바구니</a></li>
         </ul>
@@ -132,5 +132,42 @@
             </c:forEach>
         </ul>
     </div>
+    <script>
+        let socket;
+
+        // 웹소켓 서버 연결
+        function connectWebSocket() {
+            socket = new WebSocket('ws://localhost:8087/chat'); // 서버 URL에 맞게 수정
+            socket.onopen = function() {
+                console.log('웹소켓 연결 성공');
+            };
+            socket.onmessage = function(event) {
+                const message = event.data;
+                console.log('메시지 수신:', message);
+                // 메시지 처리, 예를 들어 메시지 출력
+                document.getElementById('messages').innerHTML += `<p>${message}</p>`;
+            };
+            socket.onerror = function(error) {
+                console.error('웹소켓 오류:', error);
+            };
+            socket.onclose = function() {
+                console.log('웹소켓 연결 종료');
+            };
+        }
+
+        window.onload = function() {
+            connectWebSocket(); // 페이지 로드 시 웹소켓 연결
+        };
+
+        // 채팅 팝업 창 열기
+        function openChatWindow() {
+            const chatWindow = window.open('/chat-popup', 'chat', 'width=400,height=400');
+            chatWindow.onload = function() {
+                // 팝업 창에서 웹소켓 연결 시작
+                chatWindow.connectWebSocket();
+            };
+        }
+    </script>
 </head>
+
 </html>

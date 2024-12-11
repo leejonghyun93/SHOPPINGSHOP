@@ -100,6 +100,17 @@
       <artifactId>jackson-databind</artifactId>
       <version>2.13.2</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-websocket</artifactId>
+      <version>5.3.30</version> <!-- Spring 버전에 맞게 조정 -->
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-messaging</artifactId>
+      <version>5.3.30</version> <!-- Spring 버전에 맞게 조정 -->
+    </dependency>
   </dependencies>
 
   <build>
