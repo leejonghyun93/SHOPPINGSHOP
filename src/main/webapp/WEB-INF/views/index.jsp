@@ -155,49 +155,50 @@
 </div>
 <!-- 상품 리스트 -->
 <div class="product-list">
-
+    <c:forEach var="product" items="${productList}">
+        <div class="product-item">
+            <img src="<c:url value='/resources/img/${product.imageUrl}'/>" alt="${product.proName} 이미지"/>
+            <h3><a href="<c:url value='/product/detail/${product.proId}'/>">${product.proName}</a></h3>
+            <p>가격: ${product.proPrice}원</p>
+        </div>
+    </c:forEach>
     <div class="product-item">
-        <img src="pants.JPG" alt="Product 1">
-        <h3>상품명 1</h3>
-        <p>가격: 10,000원</p>
-    </div>
-    <div class="product-item">
-        <img src="shoes.JPG" alt="Product 2">
-        <h3>상품명 2</h3>
+        <img src="<c:url value='/resources/img/shoes.JPG'/>" alt="Product 2">
+        <h3><a href="<c:url value='/product/detail/2'/>">상품명 2</a></h3>
         <p>가격: 20,000원</p>
     </div>
     <div class="product-item">
-        <img src="top.JPG" alt="Product 3">
-        <h3>상품명 3</h3>
+        <img src="<c:url value='/resources/img/top.JPG'/>" alt="Product 3">
+        <h3><a href="<c:url value='/product/detail/3'/>">상품명 3</a></h3>
         <p>가격: 30,000원</p>
     </div>
     <div class="product-item">
-        <img src="pants.JPG" alt="Product 4">
-        <h3>상품명 4</h3>
+        <img src="<c:url value='/resources/img/pants.JPG'/>" alt="Product 4">
+        <h3><a href="<c:url value='/product/detail/4'/>">상품명 4</a></h3>
         <p>가격: 40,000원</p>
     </div>
     <div class="product-item">
-        <img src="shoes.JPG" alt="Product 5">
-        <h3>상품명 5</h3>
+        <img src="<c:url value='/resources/img/shoes.JPG'/>" alt="Product 5">
+        <h3><a href="<c:url value='/product/detail/5'/>">상품명 5</a></h3>
         <p>가격: 50,000원</p>
     </div>
     <div class="product-item">
-        <img src="top.JPG" alt="Product 6">
-        <h3>상품명 6</h3>
+        <img src="<c:url value='/resources/img/top.JPG'/>" alt="Product 6">
+        <h3><a href="<c:url value='/product/detail/6'/>">상품명 6</a></h3>
         <p>가격: 60,000원</p>
     </div>
     <div class="product-item">
-        <img src="top.JPG" alt="Product 6">
-        <h3>상품명 7</h3>
-        <p>가격: 60,000원</p>
+        <img src="<c:url value='/resources/img/top.JPG'/>" alt="Product 7">
+        <h3><a href="<c:url value='/product/detail/7'/>">상품명 7</a></h3>
+        <p>가격: 70,000원</p>
     </div>
     <div class="product-item">
-        <img src="top.JPG" alt="Product 6">
-        <h3>상품명 8</h3>
-        <p>가격: 60,000원</p>
+        <img src="<c:url value='/resources/img/top.JPG'/>" alt="Product 8">
+        <h3><a href="<c:url value='/product/detail/8'/>">상품명 8</a></h3>
+        <p>가격: 80,000원</p>
     </div>
-
 </div>
+
 
 <%@ include file="/WEB-INF/views/layout/footer/footer.jsp" %>
 

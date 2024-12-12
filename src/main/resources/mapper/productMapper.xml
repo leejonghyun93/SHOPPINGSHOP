@@ -13,4 +13,9 @@
           FROM product p
          WHERE p.pro_id = #{proId};
     </select>
+
+    <select id="selectAllProducts" resultType="com.shoppingShop.domain.ProductDto">
+        SELECT *
+        FROM product;
+    </select>
 </mapper>

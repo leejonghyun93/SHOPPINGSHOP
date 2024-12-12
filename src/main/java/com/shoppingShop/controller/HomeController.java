@@ -1,7 +1,9 @@
 package com.shoppingShop.controller;
 
 import com.shoppingShop.domain.CategoryDto;
+import com.shoppingShop.domain.ProductDto;
 import com.shoppingShop.service.CategoryService;
+import com.shoppingShop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +14,8 @@ import java.util.List;
 
 @Controller
 public class HomeController {
-
+    @Autowired
+    private ProductService productService;
     @Autowired
     private CategoryService categoryService;
 
@@ -22,9 +25,9 @@ public class HomeController {
     }
 
     @RequestMapping("/")
-    public String home(Model model){
-//        List<CategoryDto> mainCategories = categoryService.getMainCategories();
-//        model.addAttribute("mainCategories", mainCategories);
+    public String home(Model model)throws Exception{
+        List<ProductDto> productList = productService.getAllProducts();
+        model.addAttribute("productList", productList);
         return "index";
     }
 }

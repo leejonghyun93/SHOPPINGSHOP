@@ -137,23 +137,28 @@
 
         // 웹소켓 서버 연결
         function connectWebSocket() {
-            socket = new WebSocket('ws://localhost:8087/chat'); // 서버 URL에 맞게 수정
+            if (!socket || socket.readyState !== WebSocket.OPEN) {
+                socket = new WebSocket('ws://localhost:8087/chat');
+            }
+
             socket.onopen = function() {
                 console.log('웹소켓 연결 성공');
             };
+
             socket.onmessage = function(event) {
-                const message = event.data;
-                console.log('메시지 수신:', message);
-                // 메시지 처리, 예를 들어 메시지 출력
-                document.getElementById('messages').innerHTML += `<p>${message}</p>`;
+                console.log('메시지 수신:', event.data);
+                document.getElementById('messages').innerHTML += `<p>${event.data}</p>`;
             };
+
             socket.onerror = function(error) {
                 console.error('웹소켓 오류:', error);
             };
+
             socket.onclose = function() {
                 console.log('웹소켓 연결 종료');
             };
         }
+
 
         window.onload = function() {
             connectWebSocket(); // 페이지 로드 시 웹소켓 연결

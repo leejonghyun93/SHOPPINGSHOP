@@ -8,4 +8,6 @@ public interface ProductDao {
     List<ProductDto> selectProductAll(int subCategoryId) throws Exception;
 
     ProductDto selectProductDetail(int proId) throws Exception;
+
+    List<ProductDto> selectAllProducts() throws Exception;
 }
