@@ -14,6 +14,8 @@ public class UserDaoImpl implements UserDao {
     @Autowired
     private SqlSession sqlSession;
 
+    private static final String NAMESPACE = "com.shoppingShop.dao.UserDao";
+
     @Override
     public UserDto selectUser(String userId) throws Exception {
         return sqlSession.selectOne("com.shoppingShop.dao.UserDao.selectUser", userId);
@@ -25,5 +27,10 @@ public class UserDaoImpl implements UserDao {
         params.put("userId", userId);
         params.put("userPwd", userPwd);
         return sqlSession.selectOne("com.shoppingShop.dao.UserDao.findByUserIdAndPassword", params);
+    }
+
+    @Override
+    public void insertUser(UserDto userDto) throws Exception {
+        sqlSession.insert(NAMESPACE + ".insertUser", userDto);
     }
 }

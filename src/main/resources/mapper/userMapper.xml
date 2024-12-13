@@ -9,5 +9,9 @@
     <select id="selectUser" parameterType="String" resultType="com.shoppingShop.domain.UserDto">
         SELECT * FROM user WHERE user_id = #{userId}
     </select>
+    <insert id="insertUser">
+        INSERT INTO user (user_id, user_pwd, user_name, user_address, user_phone, user_email, created_at, updated_at)
+        VALUES (#{userId}, #{userPwd}, #{userName}, #{userAddress}, #{userPhone}, #{userEmail}, #{createdAt}, #{updatedAt});
+    </insert>
 
 </mapper>

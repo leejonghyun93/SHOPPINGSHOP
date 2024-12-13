@@ -155,48 +155,15 @@
 </div>
 <!-- 상품 리스트 -->
 <div class="product-list">
-
-    <div class="product-item">
-        <img src="pants.JPG" alt="Product 1">
-        <h3>상품명 1</h3>
-        <p>가격: 10,000원</p>
-    </div>
-    <div class="product-item">
-        <img src="shoes.JPG" alt="Product 2">
-        <h3>상품명 2</h3>
-        <p>가격: 20,000원</p>
-    </div>
-    <div class="product-item">
-        <img src="top.JPG" alt="Product 3">
-        <h3>상품명 3</h3>
-        <p>가격: 30,000원</p>
-    </div>
-    <div class="product-item">
-        <img src="pants.JPG" alt="Product 4">
-        <h3>상품명 4</h3>
-        <p>가격: 40,000원</p>
-    </div>
-    <div class="product-item">
-        <img src="shoes.JPG" alt="Product 5">
-        <h3>상품명 5</h3>
-        <p>가격: 50,000원</p>
-    </div>
-    <div class="product-item">
-        <img src="top.JPG" alt="Product 6">
-        <h3>상품명 6</h3>
-        <p>가격: 60,000원</p>
-    </div>
-    <div class="product-item">
-        <img src="top.JPG" alt="Product 6">
-        <h3>상품명 7</h3>
-        <p>가격: 60,000원</p>
-    </div>
-    <div class="product-item">
-        <img src="top.JPG" alt="Product 6">
-        <h3>상품명 8</h3>
-        <p>가격: 60,000원</p>
-    </div>
-
+    <c:forEach var="product" items="${productList}" varStatus="status">
+        <c:if test="${status.index < 8}">
+            <div class="product-item">
+                <img src="<c:url value='/resources/img/${product.imageUrl}'/>" alt="${product.proName} 이미지"/>
+                <h3><a href="<c:url value='/product/detail/${product.proId}'/>">${product.proName}</a></h3>
+                <p>가격: ${product.proPrice}원</p>
+            </div>
+        </c:if>
+    </c:forEach>
 </div>
 
 <%@ include file="/WEB-INF/views/layout/footer/footer.jsp" %>

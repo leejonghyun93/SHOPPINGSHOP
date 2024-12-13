@@ -47,15 +47,25 @@
             width: 100%;
             text-align: right; /* 리스트를 오른쪽으로 정렬 */
         }
-        .title{
+        .title {
             font-size: 30px;
             text-align: center;
             border-bottom: 1px solid #f3f3f3;
             margin-top: 0px;
             margin-bottom: 0px;
+            color: inherit;
+        }
+
+        .title-link {
+            text-decoration: none; /* 밑줄 제거 */
+            color: inherit; /* 상위 요소의 색상 상속 */
+        }
+
+        .title-link:hover {
+            text-decoration: none; /* 호버 시에도 밑줄 제거 */
         }
         .category-container {
-            /*width: 80%; */
+            border-bottom: 1px solid #f3f3f3;
         }
 
         .main-category-list {
@@ -115,7 +125,7 @@
             <li><a href="<c:url value='/cart/cart'/>">장바구니</a></li>
         </ul>
     </div>
-    <h1 class="title">shoppingShop</h1>
+    <h1 class="title"><a href="/" class="title-link">shoppingShop</a></h1>
     <div class="category-container">
         <ul class="main-category-list">
             <c:forEach var="category" items="${mainCategories}">
