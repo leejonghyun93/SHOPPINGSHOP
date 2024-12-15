@@ -117,8 +117,15 @@
 
     <div class="sidebar">
         <ul class="headerSidebar">
-            <li><a href="<c:url value='${loginOutLink}'/>">${logout}</a></li>
-            <li><a href="<c:url value='/membership/register'/>">회원가입</a></li>
+<%--            <li><a href="<c:url value='${loginOutLink}'/>">${logout}</a></li>--%>
+            <li class="login-out">
+                <a href="<c:url value='${loginOutLink}'/>">${logout}</a>
+            </li>
+            <c:if test="${loginId == ''}">
+                <li class="register">
+                    <a href="<c:url value='/membership/register'/>">회원가입</a>
+                </li>
+            </c:if>
             <li><a href="<c:url value='/orders/list'/>">주문/배송조회</a></li>
             <li><a href="#" onclick="openChatWindow()">1:1문의</a></li>
             <li><a href="<c:url value='/board/list'/>">게시판</a></li>

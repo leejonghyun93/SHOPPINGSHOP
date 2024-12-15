@@ -15,7 +15,10 @@ public class UserDaoImpl implements UserDao {
     private SqlSession sqlSession;
 
     private static final String NAMESPACE = "com.shoppingShop.dao.UserDao";
-
+    @Override
+    public UserDto findUserById(String userId) {
+        return sqlSession.selectOne(NAMESPACE + ".findUserById", userId);
+    }
     @Override
     public UserDto selectUser(String userId) throws Exception {
         return sqlSession.selectOne("com.shoppingShop.dao.UserDao.selectUser", userId);

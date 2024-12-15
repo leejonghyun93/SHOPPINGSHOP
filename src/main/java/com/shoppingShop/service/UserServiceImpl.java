@@ -34,4 +34,13 @@ public class UserServiceImpl implements UserService {
             return false;
         }
     }
+
+    @Override
+    public boolean validateUser(String userId, String userPwd) {
+        UserDto user = userDao.findUserById(userId);
+        if (user != null && user.getUserPwd().equals(userPwd)) {
+            return true;
+        }
+        return false;
+    }
 }

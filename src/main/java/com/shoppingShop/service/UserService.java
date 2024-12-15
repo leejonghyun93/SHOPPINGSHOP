@@ -7,4 +7,6 @@ public interface UserService {
     UserDto getUser(String userId) throws Exception;
 
     boolean registerUser(UserDto userDto);
+
+    boolean validateUser(String userId, String userPwd);
 }
