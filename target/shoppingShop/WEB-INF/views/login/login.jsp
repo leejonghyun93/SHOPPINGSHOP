@@ -108,6 +108,7 @@
 </head>
 <body>
 <%@ include file="/WEB-INF/views/layout/header/header.jsp" %>
+<%@ include file="/WEB-INF/views/layout/categoryBar/categoryBar.jsp" %>
 <div class="content">
     <div class="login-container">
         <h1 class="login-h1">로그인</h1>
@@ -126,9 +127,9 @@
         </form>
 
         <ul class="membership">
-            <li><a href="#">회원가입</a></li>
-            <li><a href="#">아이디 찾기</a></li>
-            <li><a href="#">비밀번호 찾기</a></li>
+            <li><a href="/membership/register">회원가입</a></li>
+            <li><a href="/membership/findId">아이디 찾기</a></li>
+            <li><a href="/membership/findPassword">비밀번호 찾기</a></li>
         </ul>
     </div>
 </div>

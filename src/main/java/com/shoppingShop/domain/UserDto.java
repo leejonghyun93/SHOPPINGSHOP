@@ -1,5 +1,7 @@
 package com.shoppingShop.domain;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.util.Date;
 
 public class UserDto {
@@ -27,6 +29,9 @@ public class UserDto {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    // 비밀번호 암호화 메소드
 
     public String getUserId() {
         return userId;
@@ -41,7 +46,8 @@ public class UserDto {
     }
 
     public void setUserPwd(String userPwd) {
-        this.userPwd = userPwd;
+
+        this.userPwd = passwordEncoder.encode(userPwd);
     }
 
     public String getUserName() {

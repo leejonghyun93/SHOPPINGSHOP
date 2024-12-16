@@ -15,13 +15,15 @@ public class UserDaoImpl implements UserDao {
     private SqlSession sqlSession;
 
     private static final String NAMESPACE = "com.shoppingShop.dao.UserDao";
+
     @Override
     public UserDto findUserById(String userId) {
         return sqlSession.selectOne(NAMESPACE + ".findUserById", userId);
     }
+
     @Override
     public UserDto selectUser(String userId) throws Exception {
-        return sqlSession.selectOne("com.shoppingShop.dao.UserDao.selectUser", userId);
+        return sqlSession.selectOne(NAMESPACE + ".selectUser", userId);
     }
 
     @Override
@@ -29,11 +31,28 @@ public class UserDaoImpl implements UserDao {
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("userPwd", userPwd);
-        return sqlSession.selectOne("com.shoppingShop.dao.UserDao.findByUserIdAndPassword", params);
+        return sqlSession.selectOne(NAMESPACE + ".findByUserIdAndPassword", params);
     }
 
     @Override
     public void insertUser(UserDto userDto) throws Exception {
         sqlSession.insert(NAMESPACE + ".insertUser", userDto);
+    }
+
+    @Override
+    public String findIdByNameAndEmail(String userName, String userEmail) {
+        Map<String, String> params = new HashMap<>();
+        params.put("userName", userName);
+        params.put("userEmail", userEmail);
+        return sqlSession.selectOne(NAMESPACE + ".findIdByNameAndEmail", params);
+    }
+
+    @Override
+    public String findPasswordByNameEmailAndId(String userName, String userEmail, String userId) {
+        Map<String, String> params = new HashMap<>();
+        params.put("userName", userName);
+        params.put("userEmail", userEmail);
+        params.put("userId", userId);
+        return sqlSession.selectOne(NAMESPACE + ".findPasswordByNameEmailAndId", params);
     }
 }

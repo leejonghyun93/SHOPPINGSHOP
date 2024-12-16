@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -38,7 +37,7 @@ public class LoginController {
 
                     // 쿠키 설정
                     Cookie cookie = new Cookie("userId", userId);
-                    cookie.setMaxAge(60 * 60 * 24);
+                    cookie.setMaxAge(60 * 60 * 24); // 쿠키 유지 시간(1일)
                     cookie.setPath("/");
                     response.addCookie(cookie);
 
@@ -57,7 +56,6 @@ public class LoginController {
             return "login/login"; // 오류 발생 시 로그인 페이지로 다시 이동
         }
     }
-
 
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {

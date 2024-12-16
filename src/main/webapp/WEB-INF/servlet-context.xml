@@ -36,4 +36,8 @@
 
     <!-- CategoryInterceptor 빈 등록 -->
     <bean id="categoryInterceptor" class="com.shoppingShop.interceptor.CategoryInterceptor"/>
+
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+        <constructor-arg value="10"/> <!-- 코스트 설정 (10 ~ 12 추천) -->
+    </bean>
 </beans>
