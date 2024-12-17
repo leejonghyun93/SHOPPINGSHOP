@@ -1,8 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page session="false"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <c:set var="loginId" value="${pageContext.request.getSession(false)==null ? '' : pageContext.request.session.getAttribute('userId')}"/>
-<c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : '/login/logout'}" />
+<c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : ''}" />
 <c:set var="logout" value="${loginId == '' ? 'Login' : loginId}" />
 
 <html lang="ko">
@@ -18,7 +19,6 @@
 
         .content {
             flex: 1;
-            display: flex;
             justify-content: center;
             align-items: flex-start;
             padding-bottom: 50px;
@@ -28,19 +28,14 @@
             max-width: 1200px;
             width: 100%;
             background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .product-image {
-            flex: 1;
+            flex: 2;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            border-right: 1px solid #ddd;
         }
 
         .product-image img {
@@ -50,7 +45,7 @@
         }
 
         .product-details {
-            flex: 2;
+            flex: 1;
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -116,32 +111,48 @@
         }
 
         #selectedProductInfo {
-            display: none;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center; /* 선택한 상품 정보 가운데 정렬 */
         }
 
         #selectedProductInfo p {
             margin: 5px 0;
         }
 
-        .toggle-btn {
-            background: none;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-            color: #007bff;
+        /* 탭 스타일 추가 */
+        .tab-section {
+            display: flex;
+            flex-direction: column; /* 탭과 콘텐츠를 세로로 배치 */
+            margin-top: 30px;
+            width: 100%; /* 전체 너비 사용 */
         }
 
-        .additional-info {
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: border-color 0.3s, color 0.3s;
+            flex: 1; /* 탭 너비를 균등하게 배분 */
+            text-align: center; /* 탭 텍스트 가운데 정렬 */
+        }
+
+        .tab:hover, .tab.active {
+            color: #007bff;
+            border-bottom: 3px solid #007bff;
+        }
+
+        .tab-content {
             display: none;
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            border-top: 1px solid #ddd;
-            padding-top: 10px;
+            padding: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
         }
     </style>
 </head>
@@ -152,6 +163,7 @@
 
 <div class="content">
     <div class="container">
+        <!-- 상품 이미지 및 상세 정보 -->
         <div class="product-image">
             <img src="resources/img/shoes.JPG" alt="상품 이미지">
         </div>
@@ -162,6 +174,7 @@
                 <span class="productPrice">${productDetail.proPrice}원</span>
             </c:if>
 
+            <!-- 색상 및 사이즈 옵션 -->
             <div class="option-section">
                 <span class="option-label">색상</span>
                 <div class="option-buttons" id="colorOptions">
@@ -180,6 +193,7 @@
                 </div>
             </div>
 
+            <!-- 선택한 상품 정보 -->
             <div id="selectedProductInfo">
                 <h3>선택한 상품 정보</h3>
                 <p>색상: <span id="selectedColor"></span></p>
@@ -187,7 +201,36 @@
                 <p>총 가격: <span id="totalPrice"></span>원</p>
             </div>
 
+            <!-- 구매 버튼 -->
             <a href="#" class="buy-button" onclick="addToCart()">구매하기</a>
+        </div>
+    </div>
+
+    <!-- 탭 영역 (상품 이미지 및 상세 정보 아래에 배치) -->
+    <div class="tab-section">
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('reviews')">상품 후기</div>
+            <div class="tab" onclick="showTab('details')">상세 정보</div>
+            <div class="tab" onclick="showTab('inquiry')">상품 문의</div>
+            <div class="tab" onclick="showTab('guide')">구매 안내</div>
+        </div>
+        <div class="tab-content active" id="reviews">
+            <h3>상품 후기</h3>
+            <p>여기에 사용자들의 상품 후기가 표시됩니다.</p>
+        </div>
+        <div class="tab-content" id="details">
+            <h3>상세 정보</h3>
+            <img src="resources/img/detail1.jpg" alt="상세 이미지 1" width="100%">
+            <img src="resources/img/detail2.jpg" alt="상세 이미지 2" width="100%">
+        </div>
+        <div class="tab-content" id="inquiry">
+            <h3>상품 문의</h3>
+            <textarea rows="5" cols="50" placeholder="문의 내용을 입력하세요."></textarea>
+            <button>문의하기</button>
+        </div>
+        <div class="tab-content" id="guide">
+            <h3>구매 안내</h3>
+            <p>배송, 교환, 환불 정책에 대한 안내가 표시됩니다.</p>
         </div>
     </div>
 </div>
@@ -268,6 +311,14 @@
                 console.error('오류:', error.message);
                 alert('오류 발생: ' + error.message);
             });
+    }
+    // 탭 기능
+    function showTab(tabId) {
+        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+        document.querySelector(`.tab[onclick="showTab('${tabId}')"]`).classList.add('active');
+        document.getElementById(tabId).classList.add('active');
     }
 
 </script>
