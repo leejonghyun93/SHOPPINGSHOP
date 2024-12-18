@@ -10,4 +10,6 @@ public interface ProductDao {
     ProductDto selectProductDetail(int proId) throws Exception;
 
     List<ProductDto> selectAllProducts() throws Exception;
+
+    ProductDto findCurrentProduct(int proId);
 }

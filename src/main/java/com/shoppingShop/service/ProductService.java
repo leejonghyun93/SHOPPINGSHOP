@@ -10,4 +10,7 @@ public interface ProductService {
     List<ProductDto> getList(int subCategoryId) throws Exception;
 
     ProductDto getProductDetail(int proId) throws Exception;
+
+
+    ProductDto getCurrentProduct(int proId);
 }

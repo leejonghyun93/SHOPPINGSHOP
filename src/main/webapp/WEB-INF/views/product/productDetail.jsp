@@ -1,14 +1,16 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%@ page session="false"%>
+<%@ page session="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<c:set var="loginId" value="${pageContext.request.getSession(false)==null ? '' : pageContext.request.session.getAttribute('userId')}"/>
-<c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : ''}" />
-<c:set var="logout" value="${loginId == '' ? 'Login' : loginId}" />
+<c:set var="loginId"
+       value="${pageContext.request.getSession(false)==null ? '' : pageContext.request.session.getAttribute('userId')}"/>
+<c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : ''}"/>
+<c:set var="logout" value="${loginId == '' ? 'Login' : loginId}"/>
 
 <html lang="ko">
 <head>
     <title>상품 상세보기</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
             height: 100%;
@@ -23,15 +25,17 @@
             align-items: flex-start;
             padding-bottom: 50px;
         }
+
         .container {
             display: flex;
+            margin: 0 auto;
             max-width: 1200px;
             width: 100%;
             background-color: #fff;
         }
 
         .product-image {
-            flex: 2;
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -45,7 +49,7 @@
         }
 
         .product-details {
-            flex: 1;
+            flex: 0.5;
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -90,10 +94,6 @@
             background-color: #e0e0e0;
         }
 
-        .active {
-            background-color: #007bff;
-            color: white;
-        }
 
         .buy-button {
             padding: 15px 30px;
@@ -123,8 +123,9 @@
         .tab-section {
             display: flex;
             flex-direction: column; /* 탭과 콘텐츠를 세로로 배치 */
-            margin-top: 30px;
-            width: 100%; /* 전체 너비 사용 */
+            margin: 30px auto 0; /* 위 30px, 왼쪽/오른쪽 auto, 아래는 0 */
+            max-width: 1200px;
+            width: 100%;
         }
 
         .tabs {
@@ -147,12 +148,70 @@
         }
 
         .tab-content {
-            display: none;
-            padding: 20px;
+            display: none; /* 초기에는 모든 콘텐츠를 숨김 */
         }
 
         .tab-content.active {
-            display: block;
+            display: block; /* 활성 탭의 콘텐츠만 표시 */
+        }
+
+        #rating-bars {
+            margin-top: 20px;
+        }
+
+        .rating-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .label {
+            flex: 1;
+        }
+
+        .bar {
+            flex: 4;
+            background: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+            height: 20px;
+            margin: 0 10px;
+            position: relative;
+        }
+
+        .progress {
+            background: #ffcc00;
+            height: 100%;
+            width: 0;
+            transition: width 0.3s;
+        }
+
+        span {
+            flex: 1;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #rating-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #rating-popup h3 {
+            margin-bottom: 10px;
+        }
+
+        #rating-popup div {
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -209,14 +268,73 @@
     <!-- 탭 영역 (상품 이미지 및 상세 정보 아래에 배치) -->
     <div class="tab-section">
         <div class="tabs">
-            <div class="tab active" onclick="showTab('reviews')">상품 후기</div>
-            <div class="tab" onclick="showTab('details')">상세 정보</div>
-            <div class="tab" onclick="showTab('inquiry')">상품 문의</div>
-            <div class="tab" onclick="showTab('guide')">구매 안내</div>
+            <div id="reviews-tab" class="tab active" onclick="showTab('reviews')">상품 후기</div>
+            <div id="details-tab" class="tab" onclick="showTab('details')">상세 정보</div>
+            <div id="inquiry-tab" class="tab" onclick="showTab('inquiry')">상품 문의</div>
+            <div id="guide-tab" class="tab" onclick="showTab('guide')">구매 안내</div>
         </div>
-        <div class="tab-content active" id="reviews">
-            <h3>상품 후기</h3>
-            <p>여기에 사용자들의 상품 후기가 표시됩니다.</p>
+        <div id="reviews" class="tab-content active">
+            <h2>상품 후기</h2>
+            <div id="total-rating">
+                <h3>총 별점: <span id="average-rating">0.0</span> / 5</h3>
+            </div>
+            <div id="rating-bars">
+                <div class="rating-item">
+                    <label>아주좋아요</label>
+                    <div class="bar">
+                        <div class="progress" id="excellent-bar"></div>
+                    </div>
+                    <span id="excellent-score">0</span>
+                </div>
+                <div class="rating-item">
+                    <label>맘에 들어요</label>
+                    <div class="bar">
+                        <div class="progress" id="good-bar"></div>
+                    </div>
+                    <span id="good-score">0</span>
+                </div>
+                <div class="rating-item">
+                    <label>보통이에요</label>
+                    <div class="bar">
+                        <div class="progress" id="average-bar"></div>
+                    </div>
+                    <span id="average-score">0</span>
+                </div>
+                <div class="rating-item">
+                    <label>그냥그래요</label>
+                    <div class="bar">
+                        <div class="progress" id="poor-bar"></div>
+                    </div>
+                    <span id="poor-score">0</span>
+                </div>
+                <div class="rating-item">
+                    <label>별로에요</label>
+                    <div class="bar">
+                        <div class="progress" id="terrible-bar"></div>
+                    </div>
+                    <span id="terrible-score">0</span>
+                </div>
+            </div>
+            <button id="open-rating-popup">별점 추가</button>
+
+            <!-- 별점 팝업 -->
+            <div id="rating-popup" class="hidden">
+                <h3>별점을 선택해주세요</h3>
+                <div>
+                    <input type="radio" id="excellent" name="rating" value="excellent">
+                    <label for="excellent">아주좋아요</label><br>
+                    <input type="radio" id="good" name="rating" value="good">
+                    <label for="good">맘에 들어요</label><br>
+                    <input type="radio" id="average" name="rating" value="average">
+                    <label for="average">보통이에요</label><br>
+                    <input type="radio" id="poor" name="rating" value="poor">
+                    <label for="poor">그냥그래요</label><br>
+                    <input type="radio" id="terrible" name="rating" value="terrible">
+                    <label for="terrible">별로에요</label><br>
+                </div>
+                <button id="submit-rating">평점 추가</button>
+                <button id="close-popup">닫기</button>
+            </div>
         </div>
         <div class="tab-content" id="details">
             <h3>상세 정보</h3>
@@ -236,6 +354,7 @@
 </div>
 
 <%@ include file="/WEB-INF/views/layout/footer/footer.jsp" %>
+
 
 <script>
     const colorButtons = document.querySelectorAll('.color-button');
@@ -286,7 +405,7 @@
             proSize: selectedSize,
             proName: "${productDetail.proName}",
             quantity: 1,
-            totalPrice : "${productDetail.totalPrice}"
+            totalPrice: "${productDetail.totalPrice}"
         };
 
         fetch('/cart/add', {
@@ -298,7 +417,9 @@
         })
             .then(response => {
                 if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text); });
+                    return response.text().then(text => {
+                        throw new Error(text);
+                    });
                 }
                 return response.json(); // JSON으로 응답 처리
             })
@@ -312,14 +433,119 @@
                 alert('오류 발생: ' + error.message);
             });
     }
+
     // 탭 기능
     function showTab(tabId) {
-        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        const tabs = document.querySelectorAll('.tab');
+        const contents = document.querySelectorAll('.tab-content');
 
-        document.querySelector(`.tab[onclick="showTab('${tabId}')"]`).classList.add('active');
-        document.getElementById(tabId).classList.add('active');
+        // 모든 탭과 콘텐츠 비활성화
+        tabs.forEach(tab => tab.classList.remove('active'));
+        contents.forEach(content => content.classList.remove('active'));
+
+        // 선택한 탭과 콘텐츠 활성화
+        document.getElementById(tabId + '-tab').classList.add('active'); // 탭 활성화
+        document.getElementById(tabId).classList.add('active'); // 콘텐츠 활성화
     }
+
+    $(document).ready(function() {
+        let proId;  // 초기화
+
+        async function getProductIdFromBackend() {
+            try {
+                const response = await $.get(`/product/current?proId=${proId}`);
+                if (!response || !response.proId) {
+                    throw new Error('상품 ID 가져오기 실패');
+                }
+                proId = response.proId;  // 프로덕트 ID를 proId로 설정
+                console.log('프로덕트 ID:', proId);
+                await getReviews(proId);  // 필수적으로 await 붙이기
+            } catch (error) {
+                console.error('상품 ID 가져오기 실패:', error);
+                if (error.status === 404) {
+                    alert('해당 상품이 존재하지 않습니다. 다시 시도해주세요.');
+                } else {
+                    alert('프로덕트 ID를 가져오는 데 실패했습니다. 다시 시도해주세요.');
+                }
+            }
+        }
+
+        async function getReviews(proId) {
+            try {
+                const response = await $.get(`/product/review/getByProductId/${proId}`);
+                if (!response || !Array.isArray(response) || response.length === 0) {
+                    throw new Error('리뷰 데이터 가져오기 실패');
+                }
+                updateRatings(response);  // 평점 데이터 업데이트
+            } catch (error) {
+                console.error('리뷰 데이터 가져오기 실패:', error);
+                alert('리뷰 데이터를 가져오는 데 실패했습니다. 다시 시도해주세요.');
+            }
+        }
+
+        // 초기 로드시 상품 ID 가져오기
+        getProductIdFromBackend();
+
+        document.getElementById('open-rating-popup').addEventListener('click', function() {
+            document.getElementById('rating-popup').classList.remove('hidden');
+        });
+
+        document.getElementById('close-popup').addEventListener('click', function() {
+            document.getElementById('rating-popup').classList.add('hidden');
+        });
+
+        document.getElementById('submit-rating').addEventListener('click', async function() {
+            const ratingValueElem = document.querySelector('input[name="rating"]:checked');
+
+            if (!ratingValueElem) {
+                alert('별점을 선택해주세요.');
+                return;
+            }
+
+            const ratingValue = ratingValueElem.value;  // 체크된 라디오 버튼의 value
+            const comment = document.getElementById('review-comment').value;  // 추가된 리뷰 내용
+
+            try {
+                const response = await $.post('/product/review/add', {
+                    proId: proId,    // 프로덕트 ID
+                    rating: ratingValue,  // 선택된 평점 값
+                    comment: comment,     // 추가된 리뷰
+                });
+
+                if (!response) {
+                    throw new Error('평점 추가 실패');
+                }
+
+                updateRatings(response);  // 평점 갱신
+                document.getElementById('rating-popup').classList.add('hidden');  // 팝업 숨기기
+            } catch (error) {
+                console.error('평점 추가 실패:', error);
+                alert('평점 추가에 실패했습니다. 다시 시도해주세요.');
+            }
+        });
+
+        function updateRatings(data) {
+            const averageRating = data.averageRating || 0;  // NaN 방지 및 기본값 설정
+            $('#average-rating').text(averageRating.toFixed(1));  // 소수점 한자리로 표시
+            $('#total-rating').text(`총 별점: ${averageRating.toFixed(1)} / 5 (${data.totalVotes} 투표)` || '총 별점: 0 / 5 (0 투표)');
+
+            ['excellent', 'good', 'average', 'poor', 'terrible'].forEach(label => {
+                const score = data[label] || 0;
+                const percentage = data.totalVotes > 0 ? (score / data.totalVotes) * 100 : 0;
+                $(`#${label}-score`).text(score);
+                updateProgressBar(label, percentage);
+            });
+        }
+
+        function updateProgressBar(barId, percentage) {
+            $(`#${barId}-bar`).css('width', `${percentage}%`);
+        }
+    });
+
+
+
+    // 초기 로드시 상품 ID 가져오기
+
 
 </script>
 </body>

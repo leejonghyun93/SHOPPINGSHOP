@@ -28,5 +28,8 @@ public class ProductDaoImpl implements ProductDao{
     public ProductDto selectProductDetail(int proId) throws Exception{
         return session.selectOne(namespace + "selectProductDetail" , proId);
     }
-
+    @Override
+    public ProductDto findCurrentProduct(int proId) {
+        return session.selectOne("com.shoppingShop.dao.ProductDao.findCurrentProduct", proId);
+    }
 }
