@@ -102,6 +102,11 @@
     </dependency>
 
     <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>2.13.2</version>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-websocket</artifactId>
       <version>5.3.30</version> <!-- Spring 버전에 맞게 조정 -->
@@ -116,6 +121,7 @@
       <artifactId>spring-security-core</artifactId>
       <version>6.4.1</version>
     </dependency>
+
   </dependencies>
 
   <build>

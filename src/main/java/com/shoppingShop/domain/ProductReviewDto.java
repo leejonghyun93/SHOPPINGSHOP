@@ -1,6 +1,9 @@
 package com.shoppingShop.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDateTime;
+import java.util.Date;
 
 public class ProductReviewDto {
     private int reviewId;
@@ -12,7 +15,25 @@ public class ProductReviewDto {
     private int average;
     private int poor;
     private int terrible;
-    private LocalDateTime createdAt;
+
+    private Date createdAt;
+
+    public ProductReviewDto(){
+
+    }
+
+    public ProductReviewDto(int reviewId, int proId, int rating, String comment, int excellent, int good, int average, int poor, int terrible, Date createdAt) {
+        this.reviewId = reviewId;
+        this.proId = proId;
+        this.rating = rating;
+        this.comment = comment;
+        this.excellent = excellent;
+        this.good = good;
+        this.average = average;
+        this.poor = poor;
+        this.terrible = terrible;
+        this.createdAt = createdAt;
+    }
 
     // Getter와 Setter
     public int getReviewId() { return reviewId; }
@@ -42,6 +63,22 @@ public class ProductReviewDto {
     public int getTerrible() { return terrible; }
     public void setTerrible(int terrible) { this.terrible = terrible; }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public Date getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+
+    @Override
+    public String toString() {
+        return "ProductReviewDto{" +
+                "reviewId=" + reviewId +
+                ", proId=" + proId +
+                ", rating=" + rating +
+                ", comment='" + comment + '\'' +
+                ", excellent=" + excellent +
+                ", good=" + good +
+                ", average=" + average +
+                ", poor=" + poor +
+                ", terrible=" + terrible +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 }

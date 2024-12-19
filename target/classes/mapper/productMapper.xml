@@ -20,5 +20,7 @@
        ORDER BY pro_id ASC
         LIMIT 8;
     </select>
-
+    <select id="findCurrentProduct" resultType="com.shoppingShop.domain.ProductDto">
+        SELECT * FROM product WHERE pro_id = #{proId}
+    </select>
 </mapper>

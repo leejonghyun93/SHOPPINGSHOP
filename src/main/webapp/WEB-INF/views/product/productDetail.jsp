@@ -11,6 +11,7 @@
 <head>
     <title>상품 상세보기</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             height: 100%;
@@ -160,30 +161,31 @@
         }
 
         .rating-item {
-            display: flex;
-            align-items: center;
+            display: flex; /* 가로 정렬 */
+            align-items: center; /* 세로 중앙 정렬 */
+            justify-content: space-between; /* 요소 간 간격 조절 */
             margin-bottom: 10px;
         }
 
-        .label {
-            flex: 1;
+        .rating-item label {
+            width: 100px; /* 라벨의 고정 너비 */
+            text-align: right; /* 라벨 정렬 */
+            margin-right: 10px;
         }
 
         .bar {
-            flex: 4;
-            background: #f0f0f0;
-            border-radius: 5px;
-            overflow: hidden;
-            height: 20px;
-            margin: 0 10px;
-            position: relative;
+            width: 100%; /* 막대가 가로로 꽉 채워지도록 */
+            background-color: #ddd; /* 기본 배경색 */
         }
 
         .progress {
-            background: #ffcc00;
-            height: 100%;
-            width: 0;
-            transition: width 0.3s;
+            width: 0%; /* 초기 막대의 길이 */
+            height: 20px; /* 막대 높이 */
+            background-color: #4caf50; /* 녹색으로 막대 스타일링 */
+        }
+        .rating-item span {
+            width: 50px; /* 점수 표시 고정 너비 */
+            text-align: left;
         }
 
         span {
@@ -213,6 +215,7 @@
         #rating-popup div {
             margin-bottom: 10px;
         }
+
     </style>
 </head>
 
@@ -332,7 +335,7 @@
                     <input type="radio" id="terrible" name="rating" value="terrible">
                     <label for="terrible">별로에요</label><br>
                 </div>
-                <button id="submit-rating">평점 추가</button>
+                <button id="submitRating">평점 추가</button>
                 <button id="close-popup">닫기</button>
             </div>
         </div>
@@ -447,25 +450,33 @@
         document.getElementById(tabId + '-tab').classList.add('active'); // 탭 활성화
         document.getElementById(tabId).classList.add('active'); // 콘텐츠 활성화
     }
-
-    $(document).ready(function() {
-        let proId;  // 초기화
+    document.getElementById("open-rating-popup").addEventListener("click", function() {
+        // 별점 추가 로직
+        fetch("your-server-endpoint-for-reviews") // 서버에서 데이터를 받아옵니다.
+            .then(response => response.json())
+            .then(reviews => {
+                const ratingsData = calculateRatings(reviews);
+                updateRatingsOnPage(ratingsData);
+            });
+    });
+    $(document).ready(function () {
+        let proId; // 초기화
 
         async function getProductIdFromBackend() {
             try {
                 const response = await $.get(`/product/current?proId=${proId}`);
                 if (!response || !response.proId) {
-                    throw new Error('상품 ID 가져오기 실패');
+                    throw new Error("상품 ID 가져오기 실패");
                 }
-                proId = response.proId;  // 프로덕트 ID를 proId로 설정
-                console.log('프로덕트 ID:', proId);
-                await getReviews(proId);  // 필수적으로 await 붙이기
+                proId = response.proId; // 프로덕트 ID를 proId로 설정
+                console.log("프로덕트 ID:", proId);
+                await getReviews(proId); // 필수적으로 await 붙이기
             } catch (error) {
-                console.error('상품 ID 가져오기 실패:', error);
+                console.error("상품 ID 가져오기 실패:", error);
                 if (error.status === 404) {
-                    alert('해당 상품이 존재하지 않습니다. 다시 시도해주세요.');
+                    alert("해당 상품이 존재하지 않습니다. 다시 시도해주세요.");
                 } else {
-                    alert('프로덕트 ID를 가져오는 데 실패했습니다. 다시 시도해주세요.');
+                    alert("프로덕트 ID를 가져오는 데 실패했습니다. 다시 시도해주세요.");
                 }
             }
         }
@@ -474,77 +485,152 @@
             try {
                 const response = await $.get(`/product/review/getByProductId/${proId}`);
                 if (!response || !Array.isArray(response) || response.length === 0) {
-                    throw new Error('리뷰 데이터 가져오기 실패');
+                    throw new Error("리뷰 데이터가 비어 있습니다.");
                 }
-                updateRatings(response);  // 평점 데이터 업데이트
+
+                const calculatedData = calculateRatings(response); // 평점 데이터 계산
+                updateRatingsOnPage(calculatedData); // 평점 업데이트
             } catch (error) {
-                console.error('리뷰 데이터 가져오기 실패:', error);
-                alert('리뷰 데이터를 가져오는 데 실패했습니다. 다시 시도해주세요.');
+                console.error("리뷰 데이터 가져오기 실패:", error);
+                alert("리뷰 데이터를 가져오는 데 실패했습니다.");
             }
         }
+        function calculateRatings(reviews) {
+            if (reviews.length === 0) {
+                return { excellent: 0, good: 0, average: 0, poor: 0, terrible: 0 };
+            }
+
+            let counts = { excellent: 0, good: 0, average: 0, poor: 0, terrible: 0 };
+
+            reviews.forEach(review => {
+                switch (review.rating) {
+                    case 5: counts.excellent++; break;
+                    case 4: counts.good++; break;
+                    case 3: counts.average++; break;
+                    case 2: counts.poor++; break;
+                    case 1: counts.terrible++; break;
+                }
+            });
+
+            return counts;
+        }
+
+        function updateRatingsOnPage(data) {
+            console.log(data);
+            const { excellent, good, average, poor, terrible } = data;
+
+            const totalRatings = Number(excellent) + Number(good) + Number(average) + Number(poor) + Number(terrible);
+
+            if (totalRatings > 0) {
+                const calculateWidth = (value) => `${(value / totalRatings) * 100}%`;
+
+                document.getElementById("excellent-bar").style.width = calculateWidth(excellent);
+                document.getElementById("good-bar").style.width = calculateWidth(good);
+                document.getElementById("average-bar").style.width = calculateWidth(average);
+                document.getElementById("poor-bar").style.width = calculateWidth(poor);
+                document.getElementById("terrible-bar").style.width = calculateWidth(terrible);
+            } else {
+                document.getElementById("excellent-bar").style.width = '0%';
+                document.getElementById("good-bar").style.width = '0%';
+                document.getElementById("average-bar").style.width = '0%';
+                document.getElementById("poor-bar").style.width = '0%';
+                document.getElementById("terrible-bar").style.width = '0%';
+            }
+
+            const weightedSum =
+                Number(excellent) * 5 + Number(good) * 4 + Number(average) * 3 + Number(poor) * 2 + Number(terrible) * 1;
+            const averageRating = totalRatings > 0 ? weightedSum / totalRatings : 0;
+
+            document.getElementById("average-rating").innerText = averageRating.toFixed(1);
+
+            document.getElementById("excellent-score").innerText = excellent;
+            document.getElementById("good-score").innerText = good;
+            document.getElementById("average-score").innerText = average;
+            document.getElementById("poor-score").innerText = poor;
+            document.getElementById("terrible-score").innerText = terrible;
+        }
+
+
+        console.log('updateRatingsOnPage called');
+
+        function handleServerResponse(response) {
+            if (Array.isArray(response) && response.length > 0) {
+                updateRatingsOnPage({
+                    excellent: Number(response[0].excellent || 0),
+                    good: Number(response[0].good || 0),
+                    average: Number(response[0].average || 0),
+                    poor: Number(response[0].poor || 0),
+                    terrible: Number(response[0].terrible || 0),
+                });
+            } else {
+                console.error("Invalid response format:", response);
+            }
+        }
+
+        const totalRatings =
+            Number(excellent) + Number(good) + Number(average) + Number(poor) + Number(terrible);
+
+        function handleServerResponse(response) {
+            console.log("Response from server:", response); // 서버 응답 확인
+
+            if (Array.isArray(response) && response.length > 0) {
+                const data = response[0];
+                updateRatingsOnPage({
+                    excellent: Number(data.excellent || 0),
+                    good: Number(data.good || 0),
+                    average: Number(data.average || 0),
+                    poor: Number(data.poor || 0),
+                    terrible: Number(data.terrible || 0),
+                });
+            } else {
+                console.error("Invalid response format:", response);
+            }
+        }
+
+
 
         // 초기 로드시 상품 ID 가져오기
         getProductIdFromBackend();
 
-        document.getElementById('open-rating-popup').addEventListener('click', function() {
-            document.getElementById('rating-popup').classList.remove('hidden');
+        $("#open-rating-popup").on("click", function () {
+            $("#rating-popup").removeClass("hidden");
         });
 
-        document.getElementById('close-popup').addEventListener('click', function() {
-            document.getElementById('rating-popup').classList.add('hidden');
+        $("#close-popup").on("click", function () {
+            $("#rating-popup").addClass("hidden");
         });
 
-        document.getElementById('submit-rating').addEventListener('click', async function() {
-            const ratingValueElem = document.querySelector('input[name="rating"]:checked');
+        $("#submitRating").on("click", async function () {
+            const ratingValueElem = $("input[name='rating']:checked");
 
-            if (!ratingValueElem) {
-                alert('별점을 선택해주세요.');
+            if (ratingValueElem.length === 0) {
+                alert("별점을 선택해주세요.");
                 return;
             }
 
-            const ratingValue = ratingValueElem.value;  // 체크된 라디오 버튼의 value
-            const comment = document.getElementById('review-comment').value;  // 추가된 리뷰 내용
+            const ratingValue = ratingValueElem.val(); // 체크된 라디오 버튼의 value
+            const comment = $("#review-comment").val(); // 추가된 리뷰 내용
 
             try {
-                const response = await $.post('/product/review/add', {
-                    proId: proId,    // 프로덕트 ID
-                    rating: ratingValue,  // 선택된 평점 값
-                    comment: comment,     // 추가된 리뷰
+                const response = await $.post("/product/review/add", {
+                    proId: proId, // 프로덕트 ID
+                    rating: ratingValue, // 선택된 평점 값
+                    comment: comment, // 추가된 리뷰
                 });
 
                 if (!response) {
-                    throw new Error('평점 추가 실패');
+                    throw new Error("평점 추가 실패");
                 }
 
-                updateRatings(response);  // 평점 갱신
-                document.getElementById('rating-popup').classList.add('hidden');  // 팝업 숨기기
+                const updatedData = calculateRatings(response); // 리뷰 업데이트 데이터 계산
+                updateRatingsOnPage(updatedData); // 평점 갱신
+                $("#rating-popup").addClass("hidden"); // 팝업 숨기기
             } catch (error) {
-                console.error('평점 추가 실패:', error);
-                alert('평점 추가에 실패했습니다. 다시 시도해주세요.');
+                console.error("평점 추가 실패:", error);
+                alert("평점 추가에 실패했습니다. 다시 시도해주세요.");
             }
         });
-
-        function updateRatings(data) {
-            const averageRating = data.averageRating || 0;  // NaN 방지 및 기본값 설정
-            $('#average-rating').text(averageRating.toFixed(1));  // 소수점 한자리로 표시
-            $('#total-rating').text(`총 별점: ${averageRating.toFixed(1)} / 5 (${data.totalVotes} 투표)` || '총 별점: 0 / 5 (0 투표)');
-
-            ['excellent', 'good', 'average', 'poor', 'terrible'].forEach(label => {
-                const score = data[label] || 0;
-                const percentage = data.totalVotes > 0 ? (score / data.totalVotes) * 100 : 0;
-                $(`#${label}-score`).text(score);
-                updateProgressBar(label, percentage);
-            });
-        }
-
-        function updateProgressBar(barId, percentage) {
-            $(`#${barId}-bar`).css('width', `${percentage}%`);
-        }
     });
-
-
-
-    // 초기 로드시 상품 ID 가져오기
 
 
 </script>
