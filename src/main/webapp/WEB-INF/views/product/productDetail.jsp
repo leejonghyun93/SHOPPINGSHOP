@@ -161,30 +161,59 @@
         }
 
         .rating-item {
-            display: flex; /* 가로 정렬 */
-            align-items: center; /* 세로 중앙 정렬 */
-            justify-content: space-between; /* 요소 간 간격 조절 */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-bottom: 10px;
         }
 
         .rating-item label {
-            width: 100px; /* 라벨의 고정 너비 */
-            text-align: right; /* 라벨 정렬 */
+            width: 100px;
+            text-align: right;
             margin-right: 10px;
         }
 
+        .rating-bar {
+            height: 20px; /* 막대 높이 */
+            background-color: #4CAF50; /* 막대 색상 */
+        }
+
         .bar {
-            width: 100%; /* 막대가 가로로 꽉 채워지도록 */
-            background-color: #ddd; /* 기본 배경색 */
+            width: 100%; /* 부모 컨테이너 너비 */
+            background-color: #ddd; /* 막대 배경색 */
+            border-radius: 5px;
+            overflow: hidden; /* 막대가 넘치지 않도록 설정 */
+        }
+
+        #excellent-bar {
+            background-color: #4caf50;
+        }
+
+        #good-bar {
+            background-color: #2196F3;
+        }
+
+        #average-bar {
+            background-color: #FFC107;
+        }
+
+        #poor-bar {
+            background-color: #FF5722;
+        }
+
+        #terrible-bar {
+            background-color: #F44336;
         }
 
         .progress {
-            width: 0%; /* 초기 막대의 길이 */
-            height: 20px; /* 막대 높이 */
-            background-color: #4caf50; /* 녹색으로 막대 스타일링 */
+            width: 0%;
+            height: 100%;
+            background-color: #4caf50;
+            transition: width 0.3s ease;
         }
+
         .rating-item span {
-            width: 50px; /* 점수 표시 고정 너비 */
+            width: 50px;
             text-align: left;
         }
 
@@ -276,6 +305,7 @@
             <div id="inquiry-tab" class="tab" onclick="showTab('inquiry')">상품 문의</div>
             <div id="guide-tab" class="tab" onclick="showTab('guide')">구매 안내</div>
         </div>
+
         <div id="reviews" class="tab-content active">
             <h2>상품 후기</h2>
             <div id="total-rating">
@@ -285,75 +315,77 @@
                 <div class="rating-item">
                     <label>아주좋아요</label>
                     <div class="bar">
-                        <div class="progress" id="excellent-bar"></div>
+                        <div id="excellent-bar" class="rating-bar"></div>
                     </div>
                     <span id="excellent-score">0</span>
                 </div>
                 <div class="rating-item">
                     <label>맘에 들어요</label>
                     <div class="bar">
-                        <div class="progress" id="good-bar"></div>
+                        <div id="good-bar" class="rating-bar"></div>
                     </div>
                     <span id="good-score">0</span>
                 </div>
                 <div class="rating-item">
                     <label>보통이에요</label>
                     <div class="bar">
-                        <div class="progress" id="average-bar"></div>
+                        <div id="average-bar" class="rating-bar"></div>
                     </div>
                     <span id="average-score">0</span>
                 </div>
                 <div class="rating-item">
                     <label>그냥그래요</label>
                     <div class="bar">
-                        <div class="progress" id="poor-bar"></div>
+                        <div id="poor-bar" class="rating-bar"></div>
                     </div>
                     <span id="poor-score">0</span>
                 </div>
                 <div class="rating-item">
                     <label>별로에요</label>
                     <div class="bar">
-                        <div class="progress" id="terrible-bar"></div>
+                        <div id="terrible-bar" class="rating-bar"></div>
                     </div>
                     <span id="terrible-score">0</span>
                 </div>
             </div>
-            <button id="open-rating-popup">별점 추가</button>
-
-            <!-- 별점 팝업 -->
-            <div id="rating-popup" class="hidden">
-                <h3>별점을 선택해주세요</h3>
-                <div>
-                    <input type="radio" id="excellent" name="rating" value="excellent">
-                    <label for="excellent">아주좋아요</label><br>
-                    <input type="radio" id="good" name="rating" value="good">
-                    <label for="good">맘에 들어요</label><br>
-                    <input type="radio" id="average" name="rating" value="average">
-                    <label for="average">보통이에요</label><br>
-                    <input type="radio" id="poor" name="rating" value="poor">
-                    <label for="poor">그냥그래요</label><br>
-                    <input type="radio" id="terrible" name="rating" value="terrible">
-                    <label for="terrible">별로에요</label><br>
-                </div>
-                <button id="submitRating">평점 추가</button>
-                <button id="close-popup">닫기</button>
-            </div>
-        </div>
-        <div class="tab-content" id="details">
-            <h3>상세 정보</h3>
-            <img src="resources/img/detail1.jpg" alt="상세 이미지 1" width="100%">
-            <img src="resources/img/detail2.jpg" alt="상세 이미지 2" width="100%">
-        </div>
-        <div class="tab-content" id="inquiry">
-            <h3>상품 문의</h3>
-            <textarea rows="5" cols="50" placeholder="문의 내용을 입력하세요."></textarea>
-            <button>문의하기</button>
-        </div>
-        <div class="tab-content" id="guide">
-            <h3>구매 안내</h3>
-            <p>배송, 교환, 환불 정책에 대한 안내가 표시됩니다.</p>
         </div>
     </div>
+    <button id="open-rating-popup">별점 추가</button>
+
+    <!-- 별점 팝업 -->
+    <div id="rating-popup" class="hidden">
+        <h3>별점을 선택해주세요</h3>
+        <div>
+            <input type="radio" id="excellent" name="rating" value="excellent">
+            <label for="excellent">아주좋아요</label><br>
+            <input type="radio" id="good" name="rating" value="good">
+            <label for="good">맘에 들어요</label><br>
+            <input type="radio" id="average" name="rating" value="average">
+            <label for="average">보통이에요</label><br>
+            <input type="radio" id="poor" name="rating" value="poor">
+            <label for="poor">그냥그래요</label><br>
+            <input type="radio" id="terrible" name="rating" value="terrible">
+            <label for="terrible">별로에요</label><br>
+        </div>
+        <button id="submitRating">평점 추가</button>
+        <button id="close-popup">닫기</button>
+    </div>
+</div>
+<div class="tab-content" id="details">
+    <h3>상세 정보</h3>
+    <img src="resources/img/detail1.jpg" alt="상세 이미지 1" width="100%">
+    <img src="resources/img/detail2.jpg" alt="상세 이미지 2" width="100%">
+</div>
+<div class="tab-content" id="inquiry">
+    <h3>상품 문의</h3>
+    <textarea rows="5" cols="50" placeholder="문의 내용을 입력하세요."></textarea>
+    <button>문의하기</button>
+</div>
+<div class="tab-content" id="guide">
+    <h3>구매 안내</h3>
+    <p>배송, 교환, 환불 정책에 대한 안내가 표시됩니다.</p>
+</div>
+</div>
 </div>
 
 <%@ include file="/WEB-INF/views/layout/footer/footer.jsp" %>
@@ -371,6 +403,7 @@
     let selectedColor = '';
     let selectedSize = '';
 
+    const loginId = "${loginId}";
     colorButtons.forEach(button => {
         button.addEventListener('click', () => {
             selectedColor = button.dataset.value;
@@ -450,15 +483,6 @@
         document.getElementById(tabId + '-tab').classList.add('active'); // 탭 활성화
         document.getElementById(tabId).classList.add('active'); // 콘텐츠 활성화
     }
-    document.getElementById("open-rating-popup").addEventListener("click", function() {
-        // 별점 추가 로직
-        fetch("your-server-endpoint-for-reviews") // 서버에서 데이터를 받아옵니다.
-            .then(response => response.json())
-            .then(reviews => {
-                const ratingsData = calculateRatings(reviews);
-                updateRatingsOnPage(ratingsData);
-            });
-    });
     $(document).ready(function () {
         let proId; // 초기화
 
@@ -495,20 +519,27 @@
                 alert("리뷰 데이터를 가져오는 데 실패했습니다.");
             }
         }
-        function calculateRatings(reviews) {
-            if (reviews.length === 0) {
-                return { excellent: 0, good: 0, average: 0, poor: 0, terrible: 0 };
-            }
 
-            let counts = { excellent: 0, good: 0, average: 0, poor: 0, terrible: 0 };
+        function calculateRatings(reviews) {
+            let counts = {excellent: 0, good: 0, average: 0, poor: 0, terrible: 0};
 
             reviews.forEach(review => {
                 switch (review.rating) {
-                    case 5: counts.excellent++; break;
-                    case 4: counts.good++; break;
-                    case 3: counts.average++; break;
-                    case 2: counts.poor++; break;
-                    case 1: counts.terrible++; break;
+                    case 5:
+                        counts.excellent++;
+                        break;
+                    case 4:
+                        counts.good++;
+                        break;
+                    case 3:
+                        counts.average++;
+                        break;
+                    case 2:
+                        counts.poor++;
+                        break;
+                    case 1:
+                        counts.terrible++;
+                        break;
                 }
             });
 
@@ -516,120 +547,85 @@
         }
 
         function updateRatingsOnPage(data) {
-            console.log(data);
-            const { excellent, good, average, poor, terrible } = data;
+            console.log("평점 데이터:", data);
 
-            const totalRatings = Number(excellent) + Number(good) + Number(average) + Number(poor) + Number(terrible);
+            const {excellent, good, average, poor, terrible} = data;
+            const totalRatings = excellent + good + average + poor + terrible;
 
-            if (totalRatings > 0) {
-                const calculateWidth = (value) => `${(value / totalRatings) * 100}%`;
-
-                document.getElementById("excellent-bar").style.width = calculateWidth(excellent);
-                document.getElementById("good-bar").style.width = calculateWidth(good);
-                document.getElementById("average-bar").style.width = calculateWidth(average);
-                document.getElementById("poor-bar").style.width = calculateWidth(poor);
-                document.getElementById("terrible-bar").style.width = calculateWidth(terrible);
-            } else {
-                document.getElementById("excellent-bar").style.width = '0%';
-                document.getElementById("good-bar").style.width = '0%';
-                document.getElementById("average-bar").style.width = '0%';
-                document.getElementById("poor-bar").style.width = '0%';
-                document.getElementById("terrible-bar").style.width = '0%';
+            if (totalRatings === 0) {
+                console.log("평점 데이터가 없습니다.");
+                return;
             }
 
-            const weightedSum =
-                Number(excellent) * 5 + Number(good) * 4 + Number(average) * 3 + Number(poor) * 2 + Number(terrible) * 1;
-            const averageRating = totalRatings > 0 ? weightedSum / totalRatings : 0;
+            const calculateWidth = (value) => {
+                if (totalRatings === 0) return '0%'; // 0% 처리
+                const percentage = ((value / totalRatings) * 100).toFixed(2); // 소수점 2자리 고정
+                return `${percentage}%`;
+            };
 
-            document.getElementById("average-rating").innerText = averageRating.toFixed(1);
+            // 막대 그래프 업데이트
+            $("#excellent-bar").css("width", calculateWidth(excellent));
+            $("#good-bar").css("width", calculateWidth(good));
+            $("#average-bar").css("width", calculateWidth(average));
+            $("#poor-bar").css("width", calculateWidth(poor));
+            $("#terrible-bar").css("width", calculateWidth(terrible));
 
-            document.getElementById("excellent-score").innerText = excellent;
-            document.getElementById("good-score").innerText = good;
-            document.getElementById("average-score").innerText = average;
-            document.getElementById("poor-score").innerText = poor;
-            document.getElementById("terrible-score").innerText = terrible;
+            // 평점 및 개수 업데이트
+            $("#average-rating").text(
+                totalRatings > 0 ? (5 * excellent + 4 * good + 3 * average + 2 * poor + terrible) / totalRatings : 0
+            );
+            $("#excellent-score").text(excellent);
+            $("#good-score").text(good);
+            $("#average-score").text(average);
+            $("#poor-score").text(poor);
+            $("#terrible-score").text(terrible);
         }
 
-
-        console.log('updateRatingsOnPage called');
-
-        function handleServerResponse(response) {
-            if (Array.isArray(response) && response.length > 0) {
-                updateRatingsOnPage({
-                    excellent: Number(response[0].excellent || 0),
-                    good: Number(response[0].good || 0),
-                    average: Number(response[0].average || 0),
-                    poor: Number(response[0].poor || 0),
-                    terrible: Number(response[0].terrible || 0),
-                });
-            } else {
-                console.error("Invalid response format:", response);
-            }
-        }
-
-        const totalRatings =
-            Number(excellent) + Number(good) + Number(average) + Number(poor) + Number(terrible);
-
-        function handleServerResponse(response) {
-            console.log("Response from server:", response); // 서버 응답 확인
-
-            if (Array.isArray(response) && response.length > 0) {
-                const data = response[0];
-                updateRatingsOnPage({
-                    excellent: Number(data.excellent || 0),
-                    good: Number(data.good || 0),
-                    average: Number(data.average || 0),
-                    poor: Number(data.poor || 0),
-                    terrible: Number(data.terrible || 0),
-                });
-            } else {
-                console.error("Invalid response format:", response);
-            }
-        }
-
-
-
-        // 초기 로드시 상품 ID 가져오기
-        getProductIdFromBackend();
-
-        $("#open-rating-popup").on("click", function () {
-            $("#rating-popup").removeClass("hidden");
-        });
-
-        $("#close-popup").on("click", function () {
-            $("#rating-popup").addClass("hidden");
-        });
-
+        // 리뷰 추가 처리
         $("#submitRating").on("click", async function () {
-            const ratingValueElem = $("input[name='rating']:checked");
+            const ratingValue = $("input[name='rating']:checked").val();
 
-            if (ratingValueElem.length === 0) {
+            if (!ratingValue) {
                 alert("별점을 선택해주세요.");
                 return;
             }
 
-            const ratingValue = ratingValueElem.val(); // 체크된 라디오 버튼의 value
-            const comment = $("#review-comment").val(); // 추가된 리뷰 내용
-
             try {
                 const response = await $.post("/product/review/add", {
-                    proId: proId, // 프로덕트 ID
-                    rating: ratingValue, // 선택된 평점 값
-                    comment: comment, // 추가된 리뷰
+                    proId: proId,
+                    rating: ratingValue,
+                }, {
+                    contentType: "application/json" // 요청 헤더에 설정
                 });
 
                 if (!response) {
-                    throw new Error("평점 추가 실패");
+                    throw new Error("리뷰 추가 실패");
                 }
 
-                const updatedData = calculateRatings(response); // 리뷰 업데이트 데이터 계산
-                updateRatingsOnPage(updatedData); // 평점 갱신
-                $("#rating-popup").addClass("hidden"); // 팝업 숨기기
+                const updatedData = calculateRatings(response);
+                updateRatingsOnPage(updatedData);
+                $("#rating-popup").addClass("hidden");
             } catch (error) {
-                console.error("평점 추가 실패:", error);
-                alert("평점 추가에 실패했습니다. 다시 시도해주세요.");
+                console.error("리뷰 추가 실패:", error);
+                alert("리뷰 추가에 실패했습니다. 다시 시도해주세요.");
             }
         });
+
+
+        // 별점 추가 팝업 열기 버튼 이벤트 리스너
+
+            $('#open-rating-popup').on('click', function () {
+                if (!loginId || loginId.trim() === '') { // 로그인 여부 확인
+                    alert('로그인 후 이용할 수 있습니다.'); // 경고 메시지 출력
+                } else {
+                    $('#rating-popup').removeClass('hidden'); // 팝업 표시
+                }
+            });
+
+        $("#close-popup").on("click", () => $("#rating-popup").addClass("hidden"));
+
+        // 초기 실행
+        getProductIdFromBackend();
     });
 
 

@@ -7,8 +7,8 @@ import java.util.Date;
 
 public class ProductReviewDto {
     private int reviewId;
-    private int proId;
-    private int rating;
+    private Integer proId;
+    private Integer  rating;
     private String comment;
     private int excellent;
     private int good;
@@ -22,7 +22,7 @@ public class ProductReviewDto {
 
     }
 
-    public ProductReviewDto(int reviewId, int proId, int rating, String comment, int excellent, int good, int average, int poor, int terrible, Date createdAt) {
+    public ProductReviewDto(int reviewId, Integer  proId, Integer  rating, String comment, int excellent, int good, int average, int poor, int terrible, Date createdAt) {
         this.reviewId = reviewId;
         this.proId = proId;
         this.rating = rating;
@@ -39,11 +39,11 @@ public class ProductReviewDto {
     public int getReviewId() { return reviewId; }
     public void setReviewId(int reviewId) { this.reviewId = reviewId; }
 
-    public int getProId() { return proId; }
-    public void setProId(int proId) { this.proId = proId; }
+    public Integer getProId() { return proId; }
+    public void setProId(Integer  proId) { this.proId = proId; }
 
-    public int getRating() { return rating; }
-    public void setRating(int rating) { this.rating = rating; }
+    public Integer  getRating() { return rating; }
+    public void setRating(Integer  rating) { this.rating = rating; }
 
     public String getComment() { return comment; }
     public void setComment(String comment) { this.comment = comment; }

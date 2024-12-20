@@ -20,10 +20,17 @@ public class ProductReviewController {
     }
 
     @PostMapping("/add")
-    public ProductReviewDto addReview(@RequestBody ProductReviewDto reviewDto) {
-        return productReviewService.addReview(reviewDto);
+    public ResponseEntity<ProductReviewDto> addReview(@RequestBody ProductReviewDto reviewDto) {
+        try {
+            if (reviewDto.getProId() == null || reviewDto.getRating() == null || reviewDto.getRating() < 1 || reviewDto.getRating() > 5) {
+                return ResponseEntity.badRequest().body(null); // Invalid input data
+            }
+            ProductReviewDto savedReview = productReviewService.addReview(reviewDto);
+            return ResponseEntity.ok(savedReview); // 정상적인 응답 처리
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null); // 리뷰 추가 실패
+        }
     }
-
     @GetMapping("/getByProductId/{proId}")
     public List<ProductReviewDto> getReviewsByProductId(@PathVariable("proId") int proId) {
         System.out.println("Received proId: " + proId);

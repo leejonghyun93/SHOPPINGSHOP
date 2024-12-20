@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shoppingShop.dao.ProductReviewDao">
+    <select id="getReviewsByProductId" resultType="com.shoppingShop.domain.ProductReviewDto">
+        SELECT review_id, pro_id, rating, comment, excellent, good, average, poor, terrible, created_at
+        FROM product_review
+        WHERE pro_id = #{proId}
+    </select>
+
+    <insert id="addReview" parameterType="com.shoppingShop.domain.ProductReviewDto">
+        INSERT INTO product_review (pro_id, rating, comment, excellent, good, average, poor, terrible, created_at)
+        VALUES (#{proId}, #{rating}, #{comment}, #{excellent}, #{good}, #{average}, #{poor}, #{terrible}, NOW())
+    </insert>
+</mapper>

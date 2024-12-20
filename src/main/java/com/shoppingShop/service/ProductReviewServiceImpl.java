@@ -20,6 +20,7 @@ public class ProductReviewServiceImpl implements ProductReviewService {
 
     @Override
     public ProductReviewDto addReview(ProductReviewDto productReview) {
+
         productReviewDao.insertReview(productReview);  // DAO 메서드 호출
         return productReview;  // 추가된 리뷰 반환
     }
