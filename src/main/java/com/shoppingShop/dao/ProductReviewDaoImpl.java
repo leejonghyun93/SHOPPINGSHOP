@@ -22,6 +22,6 @@ public class ProductReviewDaoImpl implements ProductReviewDao {
 
     @Override
     public void insertReview(ProductReviewDto productReview) {
-        sqlSession.insert(NAMESPACE + ".insertReview", productReview);  // 메서드 호출
+        sqlSession.insert(NAMESPACE + ".addReview", productReview);  // 메서드 호출
     }
 }

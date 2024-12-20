@@ -366,6 +366,7 @@
             <label for="poor">그냥그래요</label><br>
             <input type="radio" id="terrible" name="rating" value="terrible">
             <label for="terrible">별로에요</label><br>
+            <textarea id="reviewComment" placeholder="리뷰를 입력해주세요"></textarea>
         </div>
         <button id="submitRating">평점 추가</button>
         <button id="close-popup">닫기</button>
@@ -584,6 +585,7 @@
         // 리뷰 추가 처리
         $("#submitRating").on("click", async function () {
             const ratingValue = $("input[name='rating']:checked").val();
+            const comment = $("#reviewComment").val(); // 추가된 리뷰 코멘트
 
             if (!ratingValue) {
                 alert("별점을 선택해주세요.");
@@ -591,19 +593,18 @@
             }
 
             try {
-                const response = await $.post("/product/review/add", {
-                    proId: proId,
-                    rating: ratingValue,
-                }, {
-                    contentType: "application/json" // 요청 헤더에 설정
+                await $.ajax({
+                    url: "/product/review/add",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        proId: proId,
+                        rating: ratingValue,
+                        comment: comment, // 코멘트 데이터 전송
+                    }),
                 });
 
-                if (!response) {
-                    throw new Error("리뷰 추가 실패");
-                }
-
-                const updatedData = calculateRatings(response);
-                updateRatingsOnPage(updatedData);
+                alert("리뷰가 추가되었습니다.");
                 $("#rating-popup").addClass("hidden");
             } catch (error) {
                 console.error("리뷰 추가 실패:", error);

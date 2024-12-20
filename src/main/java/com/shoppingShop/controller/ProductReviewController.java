@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -20,15 +21,27 @@ public class ProductReviewController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ProductReviewDto> addReview(@RequestBody ProductReviewDto reviewDto) {
+    public ResponseEntity<String> addReview(@RequestBody ProductReviewDto reviewDto) {
+        System.out.println("Received Review: " + reviewDto);
+
+        if (reviewDto.getProId() == null || reviewDto.getRating() == null) {
+            System.out.println("Validation failed: Missing proId or rating");
+            return ResponseEntity.badRequest().body("Product ID or Rating is missing");
+        }
+
+        // 유효성 검사
+        List<String> validRatings = Arrays.asList("terrible", "poor", "average", "good", "excellent");
+        if (!validRatings.contains(reviewDto.getRating())) {
+            System.out.println("Validation failed: Invalid rating value");
+            return ResponseEntity.badRequest().body("Invalid rating value");
+        }
+
         try {
-            if (reviewDto.getProId() == null || reviewDto.getRating() == null || reviewDto.getRating() < 1 || reviewDto.getRating() > 5) {
-                return ResponseEntity.badRequest().body(null); // Invalid input data
-            }
-            ProductReviewDto savedReview = productReviewService.addReview(reviewDto);
-            return ResponseEntity.ok(savedReview); // 정상적인 응답 처리
+            productReviewService.addReview(reviewDto); // 서비스 호출
+            return ResponseEntity.ok("Review added successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(null); // 리뷰 추가 실패
+            System.err.println("Error occurred: " + e.getMessage());
+            return ResponseEntity.status(500).body("Failed to add review: " + e.getMessage());
         }
     }
     @GetMapping("/getByProductId/{proId}")

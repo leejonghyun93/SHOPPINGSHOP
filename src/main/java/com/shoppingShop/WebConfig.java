@@ -2,13 +2,18 @@ package com.shoppingShop;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.nio.charset.StandardCharsets;
 
 @Component
+@Configuration
+@EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
     @Bean
@@ -21,5 +26,14 @@ public class WebConfig implements WebMvcConfigurer {
         converter.setObjectMapper(objectMapper);
         converter.setDefaultCharset(StandardCharsets.UTF_8);
         return converter;
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:8087") // 클라이언트의 origin
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }
