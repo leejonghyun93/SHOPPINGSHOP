@@ -30,7 +30,7 @@ public class ProductReviewController {
         }
 
         // 유효성 검사
-        List<String> validRatings = Arrays.asList("terrible", "poor", "average", "good", "excellent");
+        List<String> validRatings = Arrays.asList("1", "2", "3", "4", "5");
         if (!validRatings.contains(reviewDto.getRating())) {
             System.out.println("Validation failed: Invalid rating value");
             return ResponseEntity.badRequest().body("Invalid rating value");

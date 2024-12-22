@@ -8,7 +8,7 @@
     </select>
 
     <insert id="addReview" parameterType="com.shoppingShop.domain.ProductReviewDto">
-        INSERT INTO product_review (pro_id, rating, comment, excellent, good, average, poor, terrible, created_at)
-        VALUES (#{proId}, #{rating}, #{comment}, #{excellent}, #{good}, #{average}, #{poor}, #{terrible}, NOW())
+        INSERT INTO product_review (pro_id, rating, comment, created_at)
+        VALUES (#{proId}, #{rating}, #{comment}, NOW())
     </insert>
 </mapper>

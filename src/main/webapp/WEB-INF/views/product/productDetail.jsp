@@ -356,15 +356,15 @@
     <div id="rating-popup" class="hidden">
         <h3>별점을 선택해주세요</h3>
         <div>
-            <input type="radio" id="excellent" name="rating" value="excellent">
+            <input type="radio" id="excellent" name="rating" value="5">
             <label for="excellent">아주좋아요</label><br>
-            <input type="radio" id="good" name="rating" value="good">
+            <input type="radio" id="good" name="rating" value="4">
             <label for="good">맘에 들어요</label><br>
-            <input type="radio" id="average" name="rating" value="average">
+            <input type="radio" id="average" name="rating" value="3">
             <label for="average">보통이에요</label><br>
-            <input type="radio" id="poor" name="rating" value="poor">
+            <input type="radio" id="poor" name="rating" value="2">
             <label for="poor">그냥그래요</label><br>
-            <input type="radio" id="terrible" name="rating" value="terrible">
+            <input type="radio" id="terrible" name="rating" value="1">
             <label for="terrible">별로에요</label><br>
             <textarea id="reviewComment" placeholder="리뷰를 입력해주세요"></textarea>
         </div>
@@ -509,12 +509,14 @@
         async function getReviews(proId) {
             try {
                 const response = await $.get(`/product/review/getByProductId/${proId}`);
+                console.log("서버에서 반환된 리뷰 데이터:", response); // 서버 데이터 출력
+
                 if (!response || !Array.isArray(response) || response.length === 0) {
                     throw new Error("리뷰 데이터가 비어 있습니다.");
                 }
 
-                const calculatedData = calculateRatings(response); // 평점 데이터 계산
-                updateRatingsOnPage(calculatedData); // 평점 업데이트
+                const calculatedData = calculateRatings(response);
+                updateRatingsOnPage(calculatedData);
             } catch (error) {
                 console.error("리뷰 데이터 가져오기 실패:", error);
                 alert("리뷰 데이터를 가져오는 데 실패했습니다.");
@@ -525,7 +527,8 @@
             let counts = {excellent: 0, good: 0, average: 0, poor: 0, terrible: 0};
 
             reviews.forEach(review => {
-                switch (review.rating) {
+                const rating = parseInt(review.rating, 10); // 문자열을 숫자로 변환
+                switch (rating) {
                     case 5:
                         counts.excellent++;
                         break;
@@ -573,7 +576,9 @@
 
             // 평점 및 개수 업데이트
             $("#average-rating").text(
-                totalRatings > 0 ? (5 * excellent + 4 * good + 3 * average + 2 * poor + terrible) / totalRatings : 0
+                totalRatings > 0
+                    ? ((5 * excellent + 4 * good + 3 * average + 2 * poor + terrible) / totalRatings).toFixed(1)
+                    : "0.0"
             );
             $("#excellent-score").text(excellent);
             $("#good-score").text(good);
@@ -606,6 +611,10 @@
 
                 alert("리뷰가 추가되었습니다.");
                 $("#rating-popup").addClass("hidden");
+
+                // 새로운 리뷰 데이터를 다시 가져오고 페이지를 업데이트
+                await getReviews(proId);
+
             } catch (error) {
                 console.error("리뷰 추가 실패:", error);
                 alert("리뷰 추가에 실패했습니다. 다시 시도해주세요.");
