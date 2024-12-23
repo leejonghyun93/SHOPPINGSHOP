@@ -245,6 +245,35 @@
             margin-bottom: 10px;
         }
 
+        .inquiry-item {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+        }
+
+        .inquiry-item p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .inquiry-item small {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .pagination-button {
+            margin: 5px;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+
+        .pagination-button.active {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+
     </style>
 </head>
 
@@ -349,6 +378,7 @@
                 </div>
             </div>
         </div>
+
     </div>
     <button id="open-rating-popup">별점 추가</button>
 
@@ -379,8 +409,11 @@
 </div>
 <div class="tab-content" id="inquiry">
     <h3>상품 문의</h3>
-    <textarea rows="5" cols="50" placeholder="문의 내용을 입력하세요."></textarea>
-    <button>문의하기</button>
+    <textarea id="inquiry-textarea" rows="5" cols="50" placeholder="문의 내용을 입력하세요."></textarea>
+    <button id="submit-inquiry">문의하기</button>
+
+    <div id="inquiry-list"></div> <!-- 문의 리스트 -->
+    <div id="inquiry-pagination"></div> <!-- 페이징 버튼 -->
 </div>
 <div class="tab-content" id="guide">
     <h3>구매 안내</h3>
@@ -484,6 +517,7 @@
         document.getElementById(tabId + '-tab').classList.add('active'); // 탭 활성화
         document.getElementById(tabId).classList.add('active'); // 콘텐츠 활성화
     }
+
     $(document).ready(function () {
         let proId; // 초기화
 
@@ -624,18 +658,123 @@
 
         // 별점 추가 팝업 열기 버튼 이벤트 리스너
 
-            $('#open-rating-popup').on('click', function () {
-                if (!loginId || loginId.trim() === '') { // 로그인 여부 확인
-                    alert('로그인 후 이용할 수 있습니다.'); // 경고 메시지 출력
-                } else {
-                    $('#rating-popup').removeClass('hidden'); // 팝업 표시
-                }
-            });
+        $('#open-rating-popup').on('click', function () {
+            if (!loginId || loginId.trim() === '') { // 로그인 여부 확인
+                alert('로그인 후 이용할 수 있습니다.'); // 경고 메시지 출력
+            } else {
+                $('#rating-popup').removeClass('hidden'); // 팝업 표시
+            }
+        });
 
         $("#close-popup").on("click", () => $("#rating-popup").addClass("hidden"));
 
         // 초기 실행
         getProductIdFromBackend();
+    });
+
+    let currentPage = 1;
+    const pageSize = 5;
+
+    // 페이지 로드 시 문의 리스트 로드
+    $(document).ready(function () {
+        loadInquiries(currentPage, pageSize);
+    });
+
+    // 문의 리스트 로드
+    async function loadInquiries(page, size) {
+        try {
+            const response = await $.ajax({
+                url: `/product/inquiry/list`,
+                type: "GET",
+                data: {
+                    proId: proId,
+                    page: page,
+                    size: size,
+                },
+            });
+
+            renderInquiryList(response.inquiries);
+            renderPagination(response.totalInquiries, page, size);
+
+        } catch (error) {
+            console.error("문의 리스트 로드 실패:", error);
+            alert("문의 리스트를 불러오는 데 실패했습니다.");
+        }
+    }
+
+    // 문의 리스트 렌더링
+    function renderInquiryList(inquiries) {
+        const inquiryList = $("#inquiry-list");
+        inquiryList.empty();
+
+        if (inquiries.length === 0) {
+            inquiryList.append("<p>등록된 문의가 없습니다.</p>");
+            return;
+        }
+
+        inquiries.forEach((inquiry) => {
+            const createdAt = inquiry.createdAt;
+            const formattedDate = createdAt ? new Date(createdAt).toLocaleString() : "날짜 정보 없음";
+
+            const inquiryItem = `
+        <div class="inquiry-item">
+            <p>${inquiry.content}</p>
+            <small>작성일: ${formattedDate}</small>
+        </div>
+    `;
+
+            document.querySelector("#inquiry-list").insertAdjacentHTML("beforeend", inquiryItem);
+        });
+    }
+
+    // 페이징 버튼 렌더링
+    function renderPagination(totalItems, currentPage, pageSize) {
+        const pagination = $("#inquiry-pagination");
+        pagination.empty();
+
+        const totalPages = Math.ceil(totalItems / pageSize);
+        if (totalPages <= 1) return;
+
+        for (let i = 1; i <= totalPages; i++) {
+            const isActive = i === currentPage ? "active" : "";
+            const pageButton = `
+        <button class="pagination-button ${isActive}" data-page="${i}">
+            ${i}
+        </button>
+    `;
+            pagination.append(pageButton);
+        }
+
+        // 페이지 버튼 클릭 이벤트
+        $(".pagination-button").on("click", function () {
+            const page = $(this).data("page");
+            loadInquiries(page, pageSize);
+        });
+    }
+
+    // 문의 등록
+    $("#submit-inquiry").on("click", async function () {
+        const content = $("#inquiry-textarea").val().trim();
+        if (!content) {
+            alert("문의 내용을 입력해주세요.");
+            return;
+        }
+
+        try {
+            await $.ajax({
+                url: `/product/inquiry/add`,
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ proId: proId, content: content }),
+            });
+
+            alert("문의가 등록되었습니다.");
+            $("#inquiry-textarea").val(""); // 입력창 초기화
+            loadInquiries(currentPage, pageSize); // 리스트 갱신
+        } catch (error) {
+            console.error("문의 등록 실패:", error);
+            alert("문의 등록에 실패했습니다. 다시 시도해주세요.");
+        }
     });
 
 
