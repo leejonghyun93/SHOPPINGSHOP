@@ -14,9 +14,9 @@ public class InquiryServiceImpl implements InquiryService {
     private InquiryDao inquiryDao;
 
     @Override
-    public List<InquiryDto> getInquiries(int proId, int page, int size) {
-        int offset = (page - 1) * size;
-        return inquiryDao.getInquiries(proId, offset, size);
+    public List<InquiryDto> getInquiriesByPage(int page) {
+        int offset = (page - 1) * 10; // 페이지 당 10개 기준
+        return inquiryDao.selectInquiries(offset, 10);
     }
 
     @Override

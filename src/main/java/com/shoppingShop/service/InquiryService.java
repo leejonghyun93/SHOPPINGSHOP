@@ -5,7 +5,7 @@ import com.shoppingShop.domain.InquiryDto;
 import java.util.List;
 
 public interface InquiryService {
-    List<InquiryDto> getInquiries(int proId, int page, int size);
+    List<InquiryDto> getInquiriesByPage(int page);
     int getInquiryCount(int proId);
     void addInquiry(InquiryDto inquiryDto);
 }

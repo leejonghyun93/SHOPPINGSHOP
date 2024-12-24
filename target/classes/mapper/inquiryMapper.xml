@@ -5,13 +5,14 @@
 <mapper namespace="com.shoppingShop.dao.InquiryDao">
 
     <!-- 문의 리스트 가져오기 -->
-    <select id="getInquiries" resultType="com.shoppingShop.domain.InquiryDto">
-        SELECT *
-        FROM product_inquiry
-        WHERE pro_id = #{proId}
+    <select id="selectInquiries" parameterType="map" resultType="com.shoppingShop.domain.InquiryDto">
+        SELECT id, title, content, created_at
+        FROM inquiry
         ORDER BY created_at DESC
-            LIMIT #{offset}, #{size}
+            LIMIT #{limit}
+        OFFSET #{offset}
     </select>
+
 
     <!-- 문의 개수 가져오기 -->
     <select id="getInquiryCount" resultType="int">

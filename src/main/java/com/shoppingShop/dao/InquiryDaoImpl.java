@@ -15,17 +15,16 @@ public class InquiryDaoImpl implements InquiryDao {
     @Autowired
     private SqlSession sqlSession;
 
-    private static final String NAMESPACE = "com.shoppingShop.dao.InquiryDao";
+    private static final String NAMESPACE = "com.example.mapper.InquiryMapper";
 
     @Override
-    public List<InquiryDto> getInquiries(int proId, int offset, int size) {
+    public List<InquiryDto> selectInquiries(int offset, int limit) {
         Map<String, Object> params = new HashMap<>();
-        params.put("proId", proId);
         params.put("offset", offset);
-        params.put("size", size);
-        return sqlSession.selectList(NAMESPACE + ".getInquiries", params);
-    }
+        params.put("limit", limit);
 
+        return sqlSession.selectList(NAMESPACE + ".selectInquiries", params);
+    }
     @Override
     public int getInquiryCount(int proId) {
         return sqlSession.selectOne(NAMESPACE + ".getInquiryCount", proId);
