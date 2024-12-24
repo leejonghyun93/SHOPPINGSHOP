@@ -409,8 +409,6 @@
 </div>
 <div class="tab-content" id="inquiry">
     <h3>상품 문의</h3>
-    <textarea id="inquiry-textarea" rows="5" cols="50" placeholder="문의 내용을 입력하세요."></textarea>
-    <button id="submit-inquiry">문의하기</button>
 
     <div id="inquiry-list"></div> <!-- 문의 리스트 -->
     <div id="inquiry-pagination"></div> <!-- 페이징 버튼 -->
@@ -433,7 +431,6 @@
     const selectedProductInfo = document.getElementById('selectedProductInfo');
     const totalPriceElement = document.getElementById('totalPrice');
     const pricePerItem = ${productDetail.proPrice};
-
     let selectedColor = '';
     let selectedSize = '';
 
@@ -672,112 +669,109 @@
         getProductIdFromBackend();
     });
 
-    let currentPage = 1;
-    const pageSize = 5;
-
-    // 페이지 로드 시 문의 리스트 로드
+    // 전역에서 접근 가능한 위치에 선언
     $(document).ready(function () {
+        // proId를 가져오는 함수 호출
+        const proId = getProIdFromPage();
+
+        if (!proId) {
+            console.error("상품 ID를 가져오지 못했습니다.");
+            alert("상품 정보를 불러올 수 없습니다.");
+            return;
+        }
+
+        console.log("최종 상품 ID:", proId);
+
+        const currentPage = 1;
+        const pageSize = 5;
+
+        // 문의 리스트 로드
         loadInquiries(currentPage, pageSize);
-    });
 
-    // 문의 리스트 로드
-    async function loadInquiries(page, size) {
-        try {
-            const response = await $.ajax({
-                url: `/product/inquiry/list`,
-                type: "GET",
-                data: {
-                    proId: proId,
-                    page: page,
-                    size: size,
-                },
+        // 상품 ID 가져오기 함수
+        function getProIdFromPage() {
+            // 1. URL에서 가져오기
+            const params = new URLSearchParams(window.location.search);
+            const proIdFromUrl = params.get("proId");
+            if (proIdFromUrl) {
+                console.log("URL에서 가져온 proId:", proIdFromUrl);
+                return proIdFromUrl;
+            }
+
+            // 2. HTML 데이터 속성에서 가져오기
+            const proIdFromHtml = $("#product-info").data("pro-id");
+            if (proIdFromHtml) {
+                console.log("HTML에서 가져온 proId:", proIdFromHtml);
+                return proIdFromHtml;
+            }
+
+            // 값이 없으면 null 반환
+            return null;
+        }
+
+        async function loadInquiries(page, size) {
+            try {
+                const response = await $.ajax({
+                    url: `/product/inquiry/list`,
+                    type: "GET",
+                    data: { proId: proId, page: page, size: size },
+                });
+
+                renderInquiryList(response.inquiries);
+                renderPagination(response.totalInquiries, page, size);
+            } catch (error) {
+                console.error("문의 리스트 로드 실패:", error);
+                alert("문의 리스트를 불러오는 데 실패했습니다.");
+            }
+        }
+
+        function renderInquiryList(inquiries) {
+            const inquiryList = $("#inquiry-list");
+            inquiryList.empty();
+
+            if (!inquiries || inquiries.length === 0) {
+                inquiryList.append("<p>등록된 문의가 없습니다.</p>");
+                return;
+            }
+
+            inquiries.forEach((inquiry) => {
+                const formattedDate = inquiry.createdAt
+                    ? new Date(inquiry.createdAt).toLocaleString()
+                    : "날짜 정보 없음";
+
+                const inquiryItem = `
+                    <div class="inquiry-item">
+                        <p>${inquiry.content}</p>
+                        <small>작성일: ${formattedDate}</small>
+                    </div>
+                `;
+                inquiryList.append(inquiryItem);
             });
-
-            renderInquiryList(response.inquiries);
-            renderPagination(response.totalInquiries, page, size);
-
-        } catch (error) {
-            console.error("문의 리스트 로드 실패:", error);
-            alert("문의 리스트를 불러오는 데 실패했습니다.");
-        }
-    }
-
-    // 문의 리스트 렌더링
-    function renderInquiryList(inquiries) {
-        const inquiryList = $("#inquiry-list");
-        inquiryList.empty();
-
-        if (inquiries.length === 0) {
-            inquiryList.append("<p>등록된 문의가 없습니다.</p>");
-            return;
         }
 
-        inquiries.forEach((inquiry) => {
-            const createdAt = inquiry.createdAt;
-            const formattedDate = createdAt ? new Date(createdAt).toLocaleString() : "날짜 정보 없음";
+        function renderPagination(totalItems, currentPage, pageSize) {
+            const pagination = $("#inquiry-pagination");
+            pagination.empty();
 
-            const inquiryItem = `
-        <div class="inquiry-item">
-            <p>${inquiry.content}</p>
-            <small>작성일: ${formattedDate}</small>
-        </div>
-    `;
+            const totalPages = Math.ceil(totalItems / pageSize);
+            if (totalPages <= 1) return;
 
-            document.querySelector("#inquiry-list").insertAdjacentHTML("beforeend", inquiryItem);
-        });
-    }
+            for (let i = 1; i <= totalPages; i++) {
+                const isActive = i === currentPage ? "active" : "";
+                const pageButton = `
+                    <button class="pagination-button ${isActive}" data-page="${i}">
+                        ${i}
+                    </button>
+                `;
+                pagination.append(pageButton);
+            }
 
-    // 페이징 버튼 렌더링
-    function renderPagination(totalItems, currentPage, pageSize) {
-        const pagination = $("#inquiry-pagination");
-        pagination.empty();
-
-        const totalPages = Math.ceil(totalItems / pageSize);
-        if (totalPages <= 1) return;
-
-        for (let i = 1; i <= totalPages; i++) {
-            const isActive = i === currentPage ? "active" : "";
-            const pageButton = `
-        <button class="pagination-button ${isActive}" data-page="${i}">
-            ${i}
-        </button>
-    `;
-            pagination.append(pageButton);
-        }
-
-        // 페이지 버튼 클릭 이벤트
-        $(".pagination-button").on("click", function () {
-            const page = $(this).data("page");
-            loadInquiries(page, pageSize);
-        });
-    }
-
-    // 문의 등록
-    $("#submit-inquiry").on("click", async function () {
-        const content = $("#inquiry-textarea").val().trim();
-        if (!content) {
-            alert("문의 내용을 입력해주세요.");
-            return;
-        }
-
-        try {
-            await $.ajax({
-                url: `/product/inquiry/add`,
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify({ proId: proId, content: content }),
+            $(".pagination-button").on("click", function () {
+                const selectedPage = $(this).data("page");
+                loadInquiries(selectedPage, pageSize);
             });
-
-            alert("문의가 등록되었습니다.");
-            $("#inquiry-textarea").val(""); // 입력창 초기화
-            loadInquiries(currentPage, pageSize); // 리스트 갱신
-        } catch (error) {
-            console.error("문의 등록 실패:", error);
-            alert("문의 등록에 실패했습니다. 다시 시도해주세요.");
         }
     });
-
-
 </script>
 </body>
 </html>
