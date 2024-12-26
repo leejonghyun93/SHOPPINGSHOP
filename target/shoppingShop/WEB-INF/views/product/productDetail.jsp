@@ -132,15 +132,27 @@
         .tabs {
             display: flex;
             border-bottom: 1px solid #ddd;
+            align-items: center;
         }
 
         .tab {
-            padding: 15px 20px;
+            padding: 10px 20px;
             cursor: pointer;
             font-weight: bold;
             transition: border-color 0.3s, color 0.3s;
             flex: 1; /* 탭 너비를 균등하게 배분 */
             text-align: center; /* 탭 텍스트 가운데 정렬 */
+            position: relative; /* 필요 */
+        }
+
+        .tab:not(:last-child)::after {
+            content: '|';
+            position: absolute;
+            right: 25%; /* 기호를 중앙에 위치시킴 */
+            margin-right: -80px; /* 기호 위치 조정 */
+            transform: translateX(50%); /* 수평 축 중앙 위치 조정 */
+            color: #ccc; /* 막대 색상 조정 가능 */
+            font-size: 20px;
         }
 
         .tab:hover, .tab.active {
@@ -152,9 +164,90 @@
             display: none; /* 초기에는 모든 콘텐츠를 숨김 */
         }
 
-        .tab-content.active {
-            display: block; /* 활성 탭의 콘텐츠만 표시 */
+        .tab.active {
+            font-weight: bold;
+            color: #007bff;
         }
+
+        /* 전체 컨테이너 */
+        #reviews-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+
+        /* 왼쪽 섹션 */
+        #left-section {
+            text-align: center;
+            width: 40%;
+            padding-right: 20px;
+            border-right: 2px solid #e1e1e1;
+        }
+
+        #star-icon {
+            font-size: 100px;
+            color: gold;
+            margin-bottom: 20px;
+        }
+
+        #total-rating {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #write-review-button {
+            background-color: #ffcc00;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        #write-review-button:hover {
+            background-color: #ffaa00;
+        }
+
+        /* 오른쪽 섹션 */
+        #reviews {
+            width: 50%;
+        }
+
+        #rating-bars .rating-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        #rating-bars .bar {
+            flex: 1;
+            height: 10px;
+            background-color: #f0f0f0;
+            margin: 0 10px;
+            position: relative;
+        }
+
+        #rating-bars .rating-bar {
+            height: 100%;
+            background-color: #4caf50;
+            width: 0%;
+        }
+
+        .rating-item span {
+            font-weight: bold;
+        }
+
+        /* 활성화된 탭 */
+        .tab-content.active {
+            display: block;
+        }
+
 
         #rating-bars {
             margin-top: 20px;
@@ -273,48 +366,91 @@
             color: #fff;
             border-color: #007bff;
         }
-        /* 문의 목록 스타일 */
+
+        /* 문의 리스트 스타일 */
         #inquiry-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             margin: 20px 0;
         }
 
         .inquiry-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
             border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 10px;
+            border-radius: 8px;
             background-color: #f9f9f9;
-            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .inquiry-item:hover {
+            background-color: #f1f1f1;
         }
 
         .inquiry-item h4 {
-            margin: 0 0 10px 0;
+            margin: 0;
+            font-size: 16px;
             color: #333;
         }
 
-        .inquiry-item p {
-            color: #666;
+        .inquiry-item small {
+            color: #888;
+        }
+
+        .view-details {
+            padding: 8px 12px;
             font-size: 14px;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
-        .inquiry-pagination {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
+        .view-details:hover {
+            background-color: #0056b3;
         }
 
-        .page-link {
+        /************************* 문의 상세보기 스타일 ******************************/
+        #inquiry-list .inquiry-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        #inquiry-list .inquiry-item h4 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        #inquiry-list .inquiry-item small {
+            color: #666;
+        }
+
+        #inquiry-pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #inquiry-pagination .page-link {
             margin: 0 5px;
             padding: 5px 10px;
-            border: 1px solid #ddd;
-            background-color: #fff;
             cursor: pointer;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            border-radius: 3px;
         }
 
-        .page-link:disabled {
-            cursor: not-allowed;
+        #inquiry-pagination .page-link:hover {
             background-color: #ddd;
-            color: #999;
         }
+
     </style>
 </head>
 
@@ -370,104 +506,112 @@
     <!-- 탭 영역 (상품 이미지 및 상세 정보 아래에 배치) -->
     <div class="tab-section">
         <div class="tabs">
-            <div id="reviews-tab" class="tab active" onclick="showTab('reviews')">상품 후기</div>
+            <div id="reviews-tab" class="tab active" onclick="showTab('reviews-container')">상품 후기</div>
             <div id="details-tab" class="tab" onclick="showTab('details')">상세 정보</div>
             <div id="inquiry-tab" class="tab" onclick="showTab('inquiry')">상품 문의</div>
             <div id="guide-tab" class="tab" onclick="showTab('guide')">구매 안내</div>
         </div>
-
-        <div id="reviews" class="tab-content active">
-            <h2>상품 후기</h2>
-            <div id="total-rating">
-                <h3>총 별점: <span id="average-rating">0.0</span> / 5</h3>
+        <div id="reviews-container" class="tab-content active">
+            <!-- 왼쪽 섹션 -->
+            <div id="left-section">
+                <div id="star-icon">
+                    ⭐
+                </div>
+                <div id="total-rating">
+                    <h3>총 별점: <span id="average-rating">4.5</span> / 5</h3>
+                </div>
+                <button id="write-review-button">상품 리뷰 작성하기</button>
             </div>
-            <div id="rating-bars">
-                <div class="rating-item">
-                    <label>아주좋아요</label>
-                    <div class="bar">
-                        <div id="excellent-bar" class="rating-bar"></div>
+
+            <!-- 오른쪽 섹션 -->
+            <div id="reviews">
+                <h2>상품 후기</h2>
+                <div id="rating-bars">
+                    <div class="rating-item">
+                        <label>아주좋아요</label>
+                        <div class="bar">
+                            <div id="excellent-bar" class="rating-bar"></div>
+                        </div>
+                        <span id="excellent-score">30</span>
                     </div>
-                    <span id="excellent-score">0</span>
-                </div>
-                <div class="rating-item">
-                    <label>맘에 들어요</label>
-                    <div class="bar">
-                        <div id="good-bar" class="rating-bar"></div>
+                    <div class="rating-item">
+                        <label>맘에 들어요</label>
+                        <div class="bar">
+                            <div id="good-bar" class="rating-bar"></div>
+                        </div>
+                        <span id="good-score">15</span>
                     </div>
-                    <span id="good-score">0</span>
-                </div>
-                <div class="rating-item">
-                    <label>보통이에요</label>
-                    <div class="bar">
-                        <div id="average-bar" class="rating-bar"></div>
+                    <div class="rating-item">
+                        <label>보통이에요</label>
+                        <div class="bar">
+                            <div id="average-bar" class="rating-bar"></div>
+                        </div>
+                        <span id="average-score">10</span>
                     </div>
-                    <span id="average-score">0</span>
-                </div>
-                <div class="rating-item">
-                    <label>그냥그래요</label>
-                    <div class="bar">
-                        <div id="poor-bar" class="rating-bar"></div>
+                    <div class="rating-item">
+                        <label>그냥그래요</label>
+                        <div class="bar">
+                            <div id="poor-bar" class="rating-bar"></div>
+                        </div>
+                        <span id="poor-score">5</span>
                     </div>
-                    <span id="poor-score">0</span>
-                </div>
-                <div class="rating-item">
-                    <label>별로에요</label>
-                    <div class="bar">
-                        <div id="terrible-bar" class="rating-bar"></div>
+                    <div class="rating-item">
+                        <label>별로에요</label>
+                        <div class="bar">
+                            <div id="terrible-bar" class="rating-bar"></div>
+                        </div>
+                        <span id="terrible-score">2</span>
                     </div>
-                    <span id="terrible-score">0</span>
                 </div>
+                <button id="open-rating-popup">별점 추가</button>
             </div>
         </div>
 
-    </div>
-    <button id="open-rating-popup">별점 추가</button>
-
-    <!-- 별점 팝업 -->
-    <div id="rating-popup" class="hidden">
-        <h3>별점을 선택해주세요</h3>
-        <div>
-            <input type="radio" id="excellent" name="rating" value="5">
-            <label for="excellent">아주좋아요</label><br>
-            <input type="radio" id="good" name="rating" value="4">
-            <label for="good">맘에 들어요</label><br>
-            <input type="radio" id="average" name="rating" value="3">
-            <label for="average">보통이에요</label><br>
-            <input type="radio" id="poor" name="rating" value="2">
-            <label for="poor">그냥그래요</label><br>
-            <input type="radio" id="terrible" name="rating" value="1">
-            <label for="terrible">별로에요</label><br>
-            <textarea id="reviewComment" placeholder="리뷰를 입력해주세요"></textarea>
+        <!-- 별점 팝업 -->
+        <div id="rating-popup" class="hidden">
+            <h3>별점을 선택해주세요</h3>
+            <div>
+                <input type="radio" id="excellent" name="rating" value="5">
+                <label for="excellent">아주좋아요</label><br>
+                <input type="radio" id="good" name="rating" value="4">
+                <label for="good">맘에 들어요</label><br>
+                <input type="radio" id="average" name="rating" value="3">
+                <label for="average">보통이에요</label><br>
+                <input type="radio" id="poor" name="rating" value="2">
+                <label for="poor">그냥그래요</label><br>
+                <input type="radio" id="terrible" name="rating" value="1">
+                <label for="terrible">별로에요</label><br>
+                <textarea id="reviewComment" placeholder="리뷰를 입력해주세요"></textarea>
+            </div>
+            <button id="submitRating">평점 추가</button>
+            <button id="close-popup">닫기</button>
         </div>
-        <button id="submitRating">평점 추가</button>
-        <button id="close-popup">닫기</button>
+    </div>
+    <div class="tab-content" id="details">
+        <h3>상세 정보</h3>
+        <img src="resources/img/detail1.jpg" alt="상세 이미지 1" width="100%">
+        <img src="resources/img/detail2.jpg" alt="상세 이미지 2" width="100%">
+    </div>
+    <div id="inquiry" class="tab-content">
+        <!-- 문의 리스트 -->
+        <div id="inquiry-list"></div>
+
+        <!-- 문의 상세보기 -->
+        <div id="inquiry-details" style="display: none;">
+            <h3>문의 상세보기</h3>
+            <p id="inquiry-content"></p>
+            <button id="close-inquiry-details">닫기</button>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <div id="inquiry-pagination"></div>
+    </div>
+    <div class="tab-content" id="guide">
+        <h3>구매 안내</h3>
+        <p>배송, 교환, 환불 정책에 대한 안내가 표시됩니다.</p>
     </div>
 </div>
-<div class="tab-content" id="details">
-    <h3>상세 정보</h3>
-    <img src="resources/img/detail1.jpg" alt="상세 이미지 1" width="100%">
-    <img src="resources/img/detail2.jpg" alt="상세 이미지 2" width="100%">
-</div>
-<div id="inquiry-section">
-    <!-- 문의 리스트 -->
-    <div id="inquiry-list"></div>
 
-    <!-- 문의 상세보기 -->
-    <div id="inquiry-details" style="display: none;">
-        <h3>문의 상세보기</h3>
-        <p id="inquiry-content"></p>
-        <button id="close-inquiry-details">닫기</button>
-    </div>
-
-    <!-- 페이지네이션 -->
-    <div id="inquiry-pagination"></div>
-</div>
-<div class="tab-content" id="guide">
-    <h3>구매 안내</h3>
-    <p>배송, 교환, 환불 정책에 대한 안내가 표시됩니다.</p>
-</div>
-</div>
-</div>
 
 <%@ include file="/WEB-INF/views/layout/footer/footer.jsp" %>
 
@@ -552,16 +696,31 @@
 
     // 탭 기능
     function showTab(tabId) {
-        const tabs = document.querySelectorAll('.tab');
-        const contents = document.querySelectorAll('.tab-content');
+        // 모든 탭 콘텐츠 숨기기
+        const allTabs = document.querySelectorAll('.tab-content');
+        allTabs.forEach(tab => {
+            tab.classList.remove('active');
+            tab.style.display = 'none'; // 탭 콘텐츠는 숨김
+        });
 
-        // 모든 탭과 콘텐츠 비활성화
-        tabs.forEach(tab => tab.classList.remove('active'));
-        contents.forEach(content => content.classList.remove('active'));
+        // 모든 탭에서 'active' 클래스 제거
+        const allTabButtons = document.querySelectorAll('.tab');
+        allTabButtons.forEach(tabButton => {
+            tabButton.classList.remove('active');
+        });
 
-        // 선택한 탭과 콘텐츠 활성화
-        document.getElementById(tabId + '-tab').classList.add('active'); // 탭 활성화
-        document.getElementById(tabId).classList.add('active'); // 콘텐츠 활성화
+        // 선택한 탭 버튼에 'active' 클래스 추가
+        const selectedTabButton = document.querySelector(`[onclick="showTab('${tabId}')"]`);
+        if (selectedTabButton) {
+            selectedTabButton.classList.add('active');
+        }
+
+        // 선택한 탭 콘텐츠 보여주기
+        const selectedTabContent = document.getElementById(tabId);
+        if (selectedTabContent) {
+            selectedTabContent.classList.add('active');
+            selectedTabContent.style.display = ''; // 탭 콘텐츠를 다시 보여줌
+        }
     }
 
     $(document).ready(function () {
@@ -718,92 +877,102 @@
         getProductIdFromBackend();
     });
 
+    // ---------------------------------------------------------------------------//
     $(document).ready(function () {
-        loadInquiryList(1); // 첫 페이지 로드
+        loadInquiryList(1); // 초기 페이지 로드
 
-        // 페이지 클릭 이벤트 처리
-        $("#inquiry-pagination").on("click", ".page-link", function () {
-            const page = $(this).data("page");
+        // 페이지네이션 클릭 이벤트
+        $('#inquiry-pagination').on('click', '.page-link', function () {
+            const page = $(this).data('page');
             loadInquiryList(page);
         });
 
-        // '닫기' 버튼 클릭 시 상세보기 창 닫기
-        $("#close-inquiry-details").on("click", function () {
-            $("#inquiry-details").hide(); // 상세보기 창 숨기기
+        // 문의 상세보기 닫기 버튼
+        $('#close-inquiry-details').on('click', function () {
+            $('#inquiry-details').hide();
+            $('#inquiry-list').show();
         });
     });
 
+    // 문의 리스트 로드 함수
     function loadInquiryList(page) {
         $.ajax({
-            url: `/inquiry/list?page=${page}`,
-            method: "GET",
-            dataType: "json",
+            url: `/api/inquiries?page=${page}`,
+            method: 'GET',
             success: function (data) {
-                renderInquiryList(data);
-                renderPagination(page);
+                const $inquiryList = $('#inquiry-list');
+                $inquiryList.empty(); // 기존 리스트 비우기
+
+                // 문의 리스트 확인 및 렌더링
+                if (data.content && data.content.length > 0) {
+                    data.content.forEach((inquiry) => {
+                        // createdAt 배열을 날짜 문자열로 변환
+                        const createdAt = formatDate(inquiry.createdAt);
+
+                        const inquiryHtml = `
+                    <div class="inquiry-item">
+                        <h4>${inquiry.content}</h4>
+                        <small>${createdAt}</small>
+                        <button class="view-details" data-id="${inquiry.inquiryId}">상세보기</button>
+                    </div>
+                    `;
+                        $inquiryList.append(inquiryHtml);
+                    });
+                } else {
+                    $inquiryList.html('<p>문의 내역이 없습니다.</p>');
+                }
+
+                setupViewDetails(); // 상세보기 이벤트 설정
+                setupPagination(data); // 페이지네이션 생성
             },
-            error: function (xhr, status, error) {
-                console.error("Error loading inquiries:", error);
+            error: function (err) {
+                console.error(err);
+                alert('문의 리스트를 불러오는 데 실패했습니다.');
             },
         });
     }
 
-    function renderInquiryList(data) {
-        const $inquiryList = $("#inquiry-list");
-        $inquiryList.empty(); // 기존 내용 초기화
+    // 날짜 배열을 문자열로 변환하는 함수
+    function formatDate(dateArray) {
+        const [year, month, day, hour, minute] = dateArray;
+        return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')} ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+    }
 
-        data.forEach(function (inquiry) {
-            const $item = $(`
-            <div class="inquiry-item">
-                <h4>${inquiry.title}</h4>
-                <p>${inquiry.content}</p>
-                <button class="view-details-btn" data-id="${inquiry.id}">자세히 보기</button>
-            </div>
-        `);
-            $inquiryList.append($item);
-        });
-
-        // "자세히 보기" 버튼 클릭 이벤트 처리
-        $(".view-details-btn").on("click", function () {
-            const id = $(this).data("id");
-            viewInquiryDetails(id);
+    // 문의 상세보기 설정
+    function setupViewDetails() {
+        $('.view-details').on('click', function () {
+            const inquiryId = $(this).data('id');
+            $.ajax({
+                url: `/api/inquiries/${inquiryId}`,
+                method: 'GET',
+                success: function (data) {
+                    $('#inquiry-content').text(data.content);
+                    $('#inquiry-list').hide();
+                    $('#inquiry-details').show();
+                },
+                error: function () {
+                    alert('문의 상세 정보를 불러오는 데 실패했습니다.');
+                },
+            });
         });
     }
 
-    function renderPagination(currentPage) {
-        const $pagination = $("#inquiry-pagination");
-        $pagination.empty(); // 기존 페이지네이션 초기화
+    // 페이지네이션 생성
+    function setupPagination(data) {
+        const $pagination = $('#inquiry-pagination');
+        $pagination.empty(); // 기존 페이지네이션 비우기
 
-        for (let i = 1; i <= 5; i++) { // 임시로 5페이지까지 표시
-            const $pageLink = $("<button>")
-                .addClass("page-link")
-                .attr("data-page", i)
-                .text(i);
-
-            if (i === parseInt(currentPage)) {
-                $pageLink.prop("disabled", true); // 현재 페이지는 비활성화
-            }
-
-            $pagination.append($pageLink);
+        for (let i = 1; i <= data.totalPages; i++) {
+            const pageHtml = `<span class="page-link" data-page="${i}">${i}</span>`;
+            $pagination.append(pageHtml);
         }
-    }
 
-    function viewInquiryDetails(id) {
-        // 인수 ID를 기반으로 상세 데이터를 불러옴
-        $.ajax({
-            url: `/inquiry/details/${id}`, // 상세보기 API 호출
-            method: "GET",
-            dataType: "json",
-            success: function (data) {
-                $("#inquiry-content").text(data.content); // 상세 내용 표시
-                $("#inquiry-details").show(); // 상세보기 창 표시
-            },
-            error: function (xhr, status, error) {
-                console.error("Error loading inquiry details:", error);
-            }
+        // 페이지 링크 클릭 이벤트 바인딩
+        $('.page-link').on('click', function () {
+            const page = $(this).data('page');
+            loadInquiryList(page);
         });
     }
-
 
 </script>
 </body>

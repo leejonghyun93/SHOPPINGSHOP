@@ -5,7 +5,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,19 +14,16 @@ public class InquiryDaoImpl implements InquiryDao {
     @Autowired
     private SqlSession sqlSession;
 
-    private static final String NAMESPACE = "com.example.mapper.InquiryMapper";
+    private static final String NAMESPACE = "com.shoppingShop.dao.InquiryDao";
 
     @Override
-    public List<InquiryDto> selectInquiries(int offset, int limit) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("offset", offset);
-        params.put("limit", limit);
-
+    public List<InquiryDto> selectInquiries(Map<String, Integer> params) {
         return sqlSession.selectList(NAMESPACE + ".selectInquiries", params);
     }
+
     @Override
-    public int getInquiryCount(int proId) {
-        return sqlSession.selectOne(NAMESPACE + ".getInquiryCount", proId);
+    public int getInquiryCount() {
+        return sqlSession.selectOne(NAMESPACE + ".getInquiryCount");
     }
 
     @Override

@@ -12,23 +12,26 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/inquiry")
+@RequestMapping("/api/inquiries")
 public class InquiryController {
 
     @Autowired
     private InquiryService inquiryService;
 
-    @GetMapping("/list")
+    // 문의 리스트 API
+    @GetMapping
     @ResponseBody
-    public List<InquiryDto> getInquiryList(@RequestParam(value = "page", defaultValue = "1") int page) {
-        return inquiryService.getInquiriesByPage(page);
+    public Map<String, Object> getInquiryList(@RequestParam(value = "page", defaultValue = "1") int page) {
+        int pageSize = 10; // 한 페이지당 문의 개수
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", inquiryService.getInquiriesByPage(page, pageSize));
+        response.put("totalPages", inquiryService.getTotalPages(pageSize));
+        return response;
     }
 
-
-
-    // 문의 등록하기
+    // 문의 등록 API
+    @PostMapping
     @ResponseBody
-    @PostMapping("/add")
     public ResponseEntity<String> addInquiry(@RequestBody InquiryDto inquiryDto) {
         inquiryService.addInquiry(inquiryDto);
         return ResponseEntity.ok("문의가 등록되었습니다.");

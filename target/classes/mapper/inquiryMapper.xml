@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.shoppingShop.dao.InquiryDao">
 
     <!-- 문의 리스트 가져오기 -->
     <select id="selectInquiries" parameterType="map" resultType="com.shoppingShop.domain.InquiryDto">
-        SELECT id, title, content, created_at
-        FROM inquiry
+        SELECT inquiry_id AS inquiryId, pro_id AS proId, content, created_at AS createdAt
+        FROM product_inquiry
         ORDER BY created_at DESC
             LIMIT #{limit}
         OFFSET #{offset}
     </select>
 
-
     <!-- 문의 개수 가져오기 -->
     <select id="getInquiryCount" resultType="int">
         SELECT COUNT(*)
         FROM product_inquiry
-        WHERE pro_id = #{proId}
     </select>
 
     <!-- 문의 등록 -->

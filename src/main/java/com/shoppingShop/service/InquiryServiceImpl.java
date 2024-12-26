@@ -5,7 +5,9 @@ import com.shoppingShop.domain.InquiryDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class InquiryServiceImpl implements InquiryService {
@@ -14,14 +16,18 @@ public class InquiryServiceImpl implements InquiryService {
     private InquiryDao inquiryDao;
 
     @Override
-    public List<InquiryDto> getInquiriesByPage(int page) {
-        int offset = (page - 1) * 10; // 페이지 당 10개 기준
-        return inquiryDao.selectInquiries(offset, 10);
+    public List<InquiryDto> getInquiriesByPage(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        Map<String, Integer> params = new HashMap<>();
+        params.put("limit", pageSize);
+        params.put("offset", offset);
+        return inquiryDao.selectInquiries(params);
     }
 
     @Override
-    public int getInquiryCount(int proId) {
-        return inquiryDao.getInquiryCount(proId);
+    public int getTotalPages(int pageSize) {
+        int totalInquiries = inquiryDao.getInquiryCount();
+        return (int) Math.ceil((double) totalInquiries / pageSize);
     }
 
     @Override
