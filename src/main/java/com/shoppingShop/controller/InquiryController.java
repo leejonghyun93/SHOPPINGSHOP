@@ -21,14 +21,22 @@ public class InquiryController {
     // 문의 리스트 API
     @GetMapping
     @ResponseBody
-    public Map<String, Object> getInquiryList(@RequestParam(value = "page", defaultValue = "1") int page) {
-        int pageSize = 10; // 한 페이지당 문의 개수
+    public Map<String, Object> getInquiryList(@RequestParam(value = "page", defaultValue = "1") int page,
+                                              @RequestParam(value = "size", defaultValue = "5") int pageSize) {
         Map<String, Object> response = new HashMap<>();
-        response.put("content", inquiryService.getInquiriesByPage(page, pageSize));
-        response.put("totalPages", inquiryService.getTotalPages(pageSize));
+        List<InquiryDto> inquiries = inquiryService.getInquiriesByPage(page, pageSize);
+        int totalPages = inquiryService.getTotalPages(pageSize);
+
+        // 디버깅 출력
+        System.out.println("Page: " + page);
+        System.out.println("Page Size: " + pageSize);
+        System.out.println("Total Pages: " + totalPages);
+        System.out.println("Inquiries: " + inquiries);
+
+        response.put("content", inquiries);
+        response.put("totalPages", totalPages);
         return response;
     }
-
     // 문의 등록 API
     @PostMapping
     @ResponseBody

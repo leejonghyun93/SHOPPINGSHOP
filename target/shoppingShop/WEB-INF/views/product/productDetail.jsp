@@ -338,33 +338,12 @@
             margin-bottom: 10px;
         }
 
-        .inquiry-item {
-            border-bottom: 1px solid #ccc;
-            padding: 10px 0;
-        }
 
-        .inquiry-item p {
+        /************************* 문의 상세보기 스타일 ******************************/
+        h4 {
             margin: 0;
-            font-size: 14px;
-        }
-
-        .inquiry-item small {
-            color: #888;
-            font-size: 12px;
-        }
-
-        .pagination-button {
-            margin: 5px;
-            padding: 5px 10px;
-            border: 1px solid #ddd;
-            background-color: #f9f9f9;
-            cursor: pointer;
-        }
-
-        .pagination-button.active {
-            background-color: #007bff;
-            color: #fff;
-            border-color: #007bff;
+            font-size: 16px;
+            color: #333;
         }
 
         /* 문의 리스트 스타일 */
@@ -384,10 +363,6 @@
             border-radius: 8px;
             background-color: #f9f9f9;
             transition: background-color 0.3s ease;
-        }
-
-        .inquiry-item:hover {
-            background-color: #f1f1f1;
         }
 
         .inquiry-item h4 {
@@ -415,24 +390,34 @@
             background-color: #0056b3;
         }
 
-        /************************* 문의 상세보기 스타일 ******************************/
-        #inquiry-list .inquiry-item {
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
 
-        #inquiry-list .inquiry-item h4 {
+        .inquiry-item p {
             margin: 0;
-            font-size: 16px;
+            font-size: 14px;
         }
 
-        #inquiry-list .inquiry-item small {
-            color: #666;
+        .inquiry-item small {
+            color: #888;
+            font-size: 12px;
         }
 
+        /* 상세보기 버튼 스타일 */
+        .view-details {
+            padding: 8px 12px;
+            font-size: 14px;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .view-details:hover {
+            background-color: #0056b3;
+        }
+
+        /* Pagination 스타일 */
         #inquiry-pagination {
             margin-top: 20px;
             text-align: center;
@@ -451,6 +436,40 @@
             background-color: #ddd;
         }
 
+        /* 문의 상세보기 스타일 */
+        #inquiry-details {
+            display: none;
+        }
+
+        #inquiry-details.active {
+            display: block;
+        }
+
+        #inquiry-details h4 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        #inquiry-details p {
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        #inquiry-details small {
+            display: block;
+            color: #888;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .page-link {
+            cursor: pointer; /* 클릭 가능하도록 커서 설정 */
+            margin: 0 5px; /* 간격 조정 */
+        }
+        .page-link.active {
+            font-weight: bold; /* 현재 페이지 버튼 강조 */
+        }
     </style>
 </head>
 
@@ -883,96 +902,85 @@
 
         // 페이지네이션 클릭 이벤트
         $('#inquiry-pagination').on('click', '.page-link', function () {
-            const page = $(this).data('page');
-            loadInquiryList(page);
+            const page = $(this).data('page'); // 클릭한 페이지 번호 가져오기
+            console.log('Page Clicked:', page); // 디버깅: 클릭한 페이지 번호 출력
+            if (page) {
+                loadInquiryList(page); // 해당 페이지 데이터 로드
+            }
         });
 
-        // 문의 상세보기 닫기 버튼
-        $('#close-inquiry-details').on('click', function () {
-            $('#inquiry-details').hide();
-            $('#inquiry-list').show();
-        });
-    });
-
-    // 문의 리스트 로드 함수
-    function loadInquiryList(page) {
-        $.ajax({
-            url: `/api/inquiries?page=${page}`,
-            method: 'GET',
-            success: function (data) {
-                const $inquiryList = $('#inquiry-list');
-                $inquiryList.empty(); // 기존 리스트 비우기
-
-                // 문의 리스트 확인 및 렌더링
-                if (data.content && data.content.length > 0) {
-                    data.content.forEach((inquiry) => {
-                        // createdAt 배열을 날짜 문자열로 변환
-                        const createdAt = formatDate(inquiry.createdAt);
-
-                        const inquiryHtml = `
-                    <div class="inquiry-item">
-                        <h4>${inquiry.content}</h4>
-                        <small>${createdAt}</small>
-                        <button class="view-details" data-id="${inquiry.inquiryId}">상세보기</button>
-                    </div>
-                    `;
-                        $inquiryList.append(inquiryHtml);
-                    });
-                } else {
-                    $inquiryList.html('<p>문의 내역이 없습니다.</p>');
-                }
-
-                setupViewDetails(); // 상세보기 이벤트 설정
-                setupPagination(data); // 페이지네이션 생성
-            },
-            error: function (err) {
-                console.error(err);
-                alert('문의 리스트를 불러오는 데 실패했습니다.');
-            },
-        });
-    }
-
-    // 날짜 배열을 문자열로 변환하는 함수
-    function formatDate(dateArray) {
-        const [year, month, day, hour, minute] = dateArray;
-        return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')} ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-    }
-
-    // 문의 상세보기 설정
-    function setupViewDetails() {
-        $('.view-details').on('click', function () {
-            const inquiryId = $(this).data('id');
+        // 문의 리스트 로드 함수
+        function loadInquiryList(page) {
+            console.log('Requested Page:', page); // 디버깅: 요청한 페이지 번호
             $.ajax({
-                url: `/api/inquiries/${inquiryId}`,
+                url: `/api/inquiries?page=${page}&size=5`, // 페이지 번호와 페이지 크기를 함께 전달
                 method: 'GET',
                 success: function (data) {
-                    $('#inquiry-content').text(data.content);
-                    $('#inquiry-list').hide();
-                    $('#inquiry-details').show();
+                    console.log('AJAX Success:', data);// 디버깅: 서버에서 받은 데이터
+                    if (data.content && data.content.length > 0) {
+                        View(data); // 테이블로 데이터를 출력하는 함수 호출
+                        setupPagination(data, page); // 페이지네이션 설정
+                    } else {
+                        alert('문의 리스트를 불러오는 데 실패했습니다.'); // 컨텐츠 없는 경우
+                    }
                 },
-                error: function () {
-                    alert('문의 상세 정보를 불러오는 데 실패했습니다.');
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX Error:", textStatus, errorThrown); // 에러 로그 출력
+                    alert('문의 리스트를 불러오는 데 실패했습니다.');
                 },
             });
-        });
-    }
-
-    // 페이지네이션 생성
-    function setupPagination(data) {
-        const $pagination = $('#inquiry-pagination');
-        $pagination.empty(); // 기존 페이지네이션 비우기
-
-        for (let i = 1; i <= data.totalPages; i++) {
-            const pageHtml = `<span class="page-link" data-page="${i}">${i}</span>`;
-            $pagination.append(pageHtml);
         }
 
-        // 페이지 링크 클릭 이벤트 바인딩
-        $('.page-link').on('click', function () {
-            const page = $(this).data('page');
-            loadInquiryList(page);
-        });
-    }
+        // 테이블로 데이터를 출력하는 함수
+        function View(data) {
+            let Html = "<table class='inquiry-table'>";
+            Html += "<tr>";
+            Html += "<td>번호</td>";
+            Html += "<td>제목</td>";
+            Html += "<td>작성자</td>";
+            Html += "</tr>";
+
+            $.each(data.content, function (index, obj) {
+                Html += "<tr>";
+                Html += "<td>" + obj.inquiryId + "</td>"; // 문의 ID
+                Html += "<td>" + obj.content + "</td>"; // 문의 내용
+                Html += "<td>" + obj.author + "</td>"; // 작성자
+                Html += "</tr>";
+            });
+
+            Html += "</table>";
+            $('#inquiry-list').html(Html); // 테이블을 DOM에 추가
+        }
+
+        // 페이지네이션 설정
+        function setupPagination(data, currentPage) {
+            const $pagination = $('#inquiry-pagination');
+            $pagination.empty(); // 기존 페이징 HTML 비우기
+
+            let paginationHtml = '';
+
+            // 이전 페이지 버튼
+            if (currentPage > 1) {
+                paginationHtml += `<span class="page-link" data-page="${currentPage - 1}">◀</span>`;
+            }
+
+            // 페이지 번호 버튼
+            for (let i = 1; i <= data.totalPages; i++) {
+                const activeClass = i === currentPage ? 'active' : '';
+                paginationHtml += `<span class="page-link ${activeClass}" data-page="${i}">${i}</span>`;
+            }
+
+            // 다음 페이지 버튼
+            if (currentPage < data.totalPages) {
+                paginationHtml += `<span class="page-link" data-page="${currentPage + 1}">▶</span>`;
+            }
+
+            $pagination.append(paginationHtml); // 페이징 HTML 추가
+            console.log('Pagination HTML:', paginationHtml); // 디버깅: 페이지네이션 HTML 확인
+        }
+    });
+
+    });
 
 </script>
 </body>
