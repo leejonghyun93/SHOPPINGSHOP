@@ -910,25 +910,35 @@
         });
 
         // 문의 리스트 로드 함수
-        function loadInquiryList(page) {
+        async function loadInquiryList(page) {
             console.log('Requested Page:', page); // 디버깅: 요청한 페이지 번호
-            $.ajax({
-                url: `/api/inquiries?page=${page}&size=5`, // 페이지 번호와 페이지 크기를 함께 전달
+            try {
+                const data = await getInquiryListFromServer(page); // 서버에서 데이터를 비동기로 가져오는 함수 호출
+                if (data && data.content && data.content.length > 0) {
+                    View(data); // 테이블로 데이터를 출력하는 함수 호출
+                    setupPagination(data, page); // 페이지네이션 설정
+                } else {
+                    alert('문의 리스트가 없습니다.');
+                }
+            } catch (error) {
+                console.error('Error loading inquiry list:', error); // 에러 로그 출력
+                alert('문의 리스트를 불러오는 데 실패했습니다.');
+            }
+        }
+
+        // 서버에서 비동기적으로 데이터 가져오는 함수
+        async function getInquiryListFromServer(page) {
+            const response = await fetch(`/api/inquiries?page=${page}&size=5`, {
                 method: 'GET',
-                success: function (data) {
-                    console.log('AJAX Success:', data);// 디버깅: 서버에서 받은 데이터
-                    if (data.content && data.content.length > 0) {
-                        View(data); // 테이블로 데이터를 출력하는 함수 호출
-                        setupPagination(data, page); // 페이지네이션 설정
-                    } else {
-                        alert('문의 리스트를 불러오는 데 실패했습니다.'); // 컨텐츠 없는 경우
-                    }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.error("AJAX Error:", textStatus, errorThrown); // 에러 로그 출력
-                    alert('문의 리스트를 불러오는 데 실패했습니다.');
-                },
             });
+
+            if (!response.ok) {
+                throw new Error('Failed to load inquiry list');
+            }
+
+            const data = await response.json(); // JSON 형식으로 응답 데이터 파싱
+            console.log('AJAX Success:', data); // 디버깅: 서버에서 받은 데이터
+            return data;
         }
 
         // 테이블로 데이터를 출력하는 함수
@@ -978,8 +988,6 @@
             $pagination.append(paginationHtml); // 페이징 HTML 추가
             console.log('Pagination HTML:', paginationHtml); // 디버깅: 페이지네이션 HTML 확인
         }
-
-
     });
 
 </script>

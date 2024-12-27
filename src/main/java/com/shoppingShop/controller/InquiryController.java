@@ -24,6 +24,8 @@ public class InquiryController {
     public Map<String, Object> getInquiryList(@RequestParam(value = "page", defaultValue = "1") int page,
                                               @RequestParam(value = "size", defaultValue = "5") int pageSize) {
         Map<String, Object> response = new HashMap<>();
+
+        // 동기 처리
         List<InquiryDto> inquiries = inquiryService.getInquiriesByPage(page, pageSize);
         int totalPages = inquiryService.getTotalPages(pageSize);
 
@@ -37,6 +39,7 @@ public class InquiryController {
         response.put("totalPages", totalPages);
         return response;
     }
+
     // 문의 등록 API
     @PostMapping
     @ResponseBody
