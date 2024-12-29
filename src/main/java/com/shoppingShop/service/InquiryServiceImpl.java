@@ -26,8 +26,8 @@ public class InquiryServiceImpl implements InquiryService {
 
     @Override
     public int getTotalPages(int pageSize) {
-        int totalInquiries = inquiryDao.getInquiryCount();
-        return (int) Math.ceil((double) totalInquiries / pageSize);
+        int totalCount = inquiryDao.getInquiryCount();
+        return (int) Math.ceil((double) totalCount / pageSize);
     }
 
     @Override

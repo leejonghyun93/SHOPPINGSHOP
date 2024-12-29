@@ -1,50 +1,28 @@
 package com.shoppingShop.controller;
 
-import com.shoppingShop.domain.InquiryDto;
 import com.shoppingShop.service.InquiryService;
+import com.shoppingShop.domain.InquiryDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/api/inquiries")
+
 public class InquiryController {
 
     @Autowired
     private InquiryService inquiryService;
 
-    // 문의 리스트 API
     @GetMapping
-    @ResponseBody
-    public Map<String, Object> getInquiryList(@RequestParam(value = "page", defaultValue = "1") int page,
-                                              @RequestParam(value = "size", defaultValue = "5") int pageSize) {
-        Map<String, Object> response = new HashMap<>();
-
-        // 동기 처리
-        List<InquiryDto> inquiries = inquiryService.getInquiriesByPage(page, pageSize);
-        int totalPages = inquiryService.getTotalPages(pageSize);
-
-        // 디버깅 출력
-        System.out.println("Page: " + page);
-        System.out.println("Page Size: " + pageSize);
-        System.out.println("Total Pages: " + totalPages);
-        System.out.println("Inquiries: " + inquiries);
-
-        response.put("content", inquiries);
-        response.put("totalPages", totalPages);
-        return response;
-    }
-
-    // 문의 등록 API
-    @PostMapping
-    @ResponseBody
-    public ResponseEntity<String> addInquiry(@RequestBody InquiryDto inquiryDto) {
-        inquiryService.addInquiry(inquiryDto);
-        return ResponseEntity.ok("문의가 등록되었습니다.");
+    public String viewInquiries(Model model,
+                                @RequestParam(value = "page", defaultValue = "1") int page,
+                                @RequestParam(value = "size", defaultValue = "5") int size) {
+        model.addAttribute("inquiries", inquiryService.getInquiriesByPage(page, size));
+        model.addAttribute("totalPages", inquiryService.getTotalPages(size));
+        model.addAttribute("currentPage", page);
+        return "product/productDetail";
     }
 }

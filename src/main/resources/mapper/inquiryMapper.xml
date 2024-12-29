@@ -15,9 +15,9 @@
         FROM product_inquiry pi
                  JOIN user u ON pi.user_id = u.user_id
         ORDER BY pi.created_at DESC
-            LIMIT #{limit}
-        OFFSET #{offset}
+            LIMIT #{limit} OFFSET #{offset}
     </select>
+
 
     <!-- 문의 개수 가져오기 -->
     <select id="getInquiryCount" resultType="int">

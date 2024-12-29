@@ -1,9 +1,11 @@
 package com.shoppingShop.controller;
 
 import com.shoppingShop.domain.CartDto;
+import com.shoppingShop.domain.InquiryDto;
 import com.shoppingShop.domain.ProductDto;
 import com.shoppingShop.domain.ProductReviewDto;
 import com.shoppingShop.service.CartService;
+import com.shoppingShop.service.InquiryService;
 import com.shoppingShop.service.ProductReviewService;
 import com.shoppingShop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +30,37 @@ public class ProductController {
     private CartService cartService;
     @Autowired
     private ProductReviewService productReviewService;
+
+    @Autowired
+    private InquiryService inquiryService;
+
     @GetMapping("/detail/{proId}")
-    public String productDetail(@PathVariable int proId, Model model) throws Exception {
+    public String productDetail(@PathVariable int proId, Model model,
+                                @RequestParam(value = "page", defaultValue = "1") int page,
+                                @RequestParam(value = "size", defaultValue = "5") int size) throws Exception {
         ProductDto detail = productService.getProductDetail(proId);
+
+        model.addAttribute("inquiries", inquiryService.getInquiriesByPage(page, size));
+        model.addAttribute("totalPages", inquiryService.getTotalPages(size));
+        model.addAttribute("currentPage", page);
+
         model.addAttribute("productDetail", detail);
         return "product/productDetail";
+    }
+    @GetMapping("/inquiries")
+    public ResponseEntity<Map<String, Object>> getInquiriesByPage(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size) {
+
+        Map<String, Object> response = new HashMap<>();
+        List<InquiryDto> inquiries = inquiryService.getInquiriesByPage(page, size);
+        int totalPages = inquiryService.getTotalPages(size);
+
+        response.put("content", inquiries);
+        response.put("totalPages", totalPages);
+        response.put("currentPage", page);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/current")

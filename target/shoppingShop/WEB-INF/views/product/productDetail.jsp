@@ -347,58 +347,28 @@
         }
 
         /* 문의 리스트 스타일 */
-        #inquiry-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        .inquiry-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            transition: background-color 0.3s ease;
-        }
-
-        .inquiry-item h4 {
-            margin: 0;
+        .inquiry-table {
+            width: 100%;
+            border-collapse: collapse; /* 테두리 사이 간격 없애기 */
+            margin: 30px auto 0;
             font-size: 16px;
-            color: #333;
+            text-align: left;
+            max-width: 1200px;
         }
 
-        .inquiry-item small {
-            color: #888;
+        .inquiry-table th, .inquiry-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd; /* 테이블의 아래쪽 테두리 */
+            max-width: 1200px;
         }
 
-        .view-details {
-            padding: 8px 12px;
-            font-size: 14px;
-            color: white;
-            background-color: #007bff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+        .inquiry-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
         }
 
-        .view-details:hover {
-            background-color: #0056b3;
-        }
-
-
-        .inquiry-item p {
-            margin: 0;
-            font-size: 14px;
-        }
-
-        .inquiry-item small {
-            color: #888;
-            font-size: 12px;
+        .inquiry-table tr:hover {
+            background-color: #f1f1f1; /* 행 호버 시 배경색 */
         }
 
         /* 상세보기 버튼 스타일 */
@@ -418,58 +388,32 @@
         }
 
         /* Pagination 스타일 */
-        #inquiry-pagination {
-            margin-top: 20px;
-            text-align: center;
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
         }
 
-        #inquiry-pagination .page-link {
-            margin: 0 5px;
-            padding: 5px 10px;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            background-color: #fff;
-            border-radius: 3px;
-        }
-
-        #inquiry-pagination .page-link:hover {
-            background-color: #ddd;
-        }
-
-        /* 문의 상세보기 스타일 */
-        #inquiry-details {
-            display: none;
-        }
-
-        #inquiry-details.active {
-            display: block;
-        }
-
-        #inquiry-details h4 {
-            margin-bottom: 10px;
-            font-size: 18px;
-            color: #333;
-        }
-
-        #inquiry-details p {
-            margin-bottom: 15px;
-            font-size: 14px;
-            color: #666;
-        }
-
-        #inquiry-details small {
-            display: block;
-            color: #888;
-            font-size: 12px;
-            margin-top: 5px;
-        }
         .page-link {
-            cursor: pointer; /* 클릭 가능하도록 커서 설정 */
-            margin: 0 5px; /* 간격 조정 */
+            padding: 8px 12px;
+            margin: 0 5px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #007bff; /* 기본 링크 색상 */
         }
+
+        .page-link:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
         .page-link.active {
-            font-weight: bold; /* 현재 페이지 버튼 강조 */
+            font-weight: bold;
+            color: red;
         }
+
     </style>
 </head>
 
@@ -613,18 +557,39 @@
     </div>
     <div id="inquiry" class="tab-content">
         <!-- 문의 리스트 -->
-        <div id="inquiry-list"></div>
-
-        <!-- 문의 상세보기 -->
-        <div id="inquiry-details" style="display: none;">
-            <h3>문의 상세보기</h3>
-            <p id="inquiry-content"></p>
-            <button id="close-inquiry-details">닫기</button>
+        <div id="inquiry-list">
+            <table class="inquiry-table">
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                </tr>
+                <c:forEach var="inquiry" items="${inquiries}">
+                    <tr>
+                        <td>${inquiry.inquiryId}</td>
+                        <td>${inquiry.content}</td>
+                        <td>${inquiry.author}</td>
+                    </tr>
+                </c:forEach>
+            </table>
         </div>
 
         <!-- 페이지네이션 -->
-        <div id="inquiry-pagination"></div>
+        <div id="inquiry-pagination">
+            <c:if test="${currentPage > 1}">
+                <a href="?page=${currentPage - 1}">◀</a>
+            </c:if>
+
+            <c:forEach var="i" begin="1" end="${totalPages}">
+                <a href="?page=${i}" class="${currentPage == i ? 'active' : ''}">${i}</a>
+            </c:forEach>
+
+            <c:if test="${currentPage < totalPages}">
+                <a href="?page=${currentPage + 1}">▶</a>
+            </c:if>
+        </div>
     </div>
+    <script src="pagination.js"></script>
     <div class="tab-content" id="guide">
         <h3>구매 안내</h3>
         <p>배송, 교환, 환불 정책에 대한 안내가 표시됩니다.</p>
@@ -741,255 +706,84 @@
             selectedTabContent.style.display = ''; // 탭 콘텐츠를 다시 보여줌
         }
     }
-
+//************************************************************//
     $(document).ready(function () {
-        let proId; // 초기화
+        loadProductDetails(); // 초기 데이터 로드
 
-        async function getProductIdFromBackend() {
-            try {
-                const response = await $.get(`/product/current?proId=${proId}`);
-                if (!response || !response.proId) {
-                    throw new Error("상품 ID 가져오기 실패");
-                }
-                proId = response.proId; // 프로덕트 ID를 proId로 설정
-                console.log("프로덕트 ID:", proId);
-                await getReviews(proId); // 필수적으로 await 붙이기
-            } catch (error) {
-                console.error("상품 ID 가져오기 실패:", error);
-                if (error.status === 404) {
-                    alert("해당 상품이 존재하지 않습니다. 다시 시도해주세요.");
-                } else {
-                    alert("프로덕트 ID를 가져오는 데 실패했습니다. 다시 시도해주세요.");
-                }
-            }
-        }
-
-        async function getReviews(proId) {
-            try {
-                const response = await $.get(`/product/review/getByProductId/${proId}`);
-                console.log("서버에서 반환된 리뷰 데이터:", response); // 서버 데이터 출력
-
-                if (!response || !Array.isArray(response) || response.length === 0) {
-                    throw new Error("리뷰 데이터가 비어 있습니다.");
-                }
-
-                const calculatedData = calculateRatings(response);
-                updateRatingsOnPage(calculatedData);
-            } catch (error) {
-                console.error("리뷰 데이터 가져오기 실패:", error);
-                alert("리뷰 데이터를 가져오는 데 실패했습니다.");
-            }
-        }
-
-        function calculateRatings(reviews) {
-            let counts = {excellent: 0, good: 0, average: 0, poor: 0, terrible: 0};
-
-            reviews.forEach(review => {
-                const rating = parseInt(review.rating, 10); // 문자열을 숫자로 변환
-                switch (rating) {
-                    case 5:
-                        counts.excellent++;
-                        break;
-                    case 4:
-                        counts.good++;
-                        break;
-                    case 3:
-                        counts.average++;
-                        break;
-                    case 2:
-                        counts.poor++;
-                        break;
-                    case 1:
-                        counts.terrible++;
-                        break;
-                }
-            });
-
-            return counts;
-        }
-
-        function updateRatingsOnPage(data) {
-            console.log("평점 데이터:", data);
-
-            const {excellent, good, average, poor, terrible} = data;
-            const totalRatings = excellent + good + average + poor + terrible;
-
-            if (totalRatings === 0) {
-                console.log("평점 데이터가 없습니다.");
-                return;
-            }
-
-            const calculateWidth = (value) => {
-                if (totalRatings === 0) return '0%'; // 0% 처리
-                const percentage = ((value / totalRatings) * 100).toFixed(2); // 소수점 2자리 고정
-                return `${percentage}%`;
-            };
-
-            // 막대 그래프 업데이트
-            $("#excellent-bar").css("width", calculateWidth(excellent));
-            $("#good-bar").css("width", calculateWidth(good));
-            $("#average-bar").css("width", calculateWidth(average));
-            $("#poor-bar").css("width", calculateWidth(poor));
-            $("#terrible-bar").css("width", calculateWidth(terrible));
-
-            // 평점 및 개수 업데이트
-            $("#average-rating").text(
-                totalRatings > 0
-                    ? ((5 * excellent + 4 * good + 3 * average + 2 * poor + terrible) / totalRatings).toFixed(1)
-                    : "0.0"
-            );
-            $("#excellent-score").text(excellent);
-            $("#good-score").text(good);
-            $("#average-score").text(average);
-            $("#poor-score").text(poor);
-            $("#terrible-score").text(terrible);
-        }
-
-        // 리뷰 추가 처리
-        $("#submitRating").on("click", async function () {
-            const ratingValue = $("input[name='rating']:checked").val();
-            const comment = $("#reviewComment").val(); // 추가된 리뷰 코멘트
-
-            if (!ratingValue) {
-                alert("별점을 선택해주세요.");
-                return;
-            }
-
-            try {
-                await $.ajax({
-                    url: "/product/review/add",
-                    type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify({
-                        proId: proId,
-                        rating: ratingValue,
-                        comment: comment, // 코멘트 데이터 전송
-                    }),
-                });
-
-                alert("리뷰가 추가되었습니다.");
-                $("#rating-popup").addClass("hidden");
-
-                // 새로운 리뷰 데이터를 다시 가져오고 페이지를 업데이트
-                await getReviews(proId);
-
-            } catch (error) {
-                console.error("리뷰 추가 실패:", error);
-                alert("리뷰 추가에 실패했습니다. 다시 시도해주세요.");
-            }
-        });
-
-
-        // 별점 추가 팝업 열기 버튼 이벤트 리스너
-
-        $('#open-rating-popup').on('click', function () {
-            if (!loginId || loginId.trim() === '') { // 로그인 여부 확인
-                alert('로그인 후 이용할 수 있습니다.'); // 경고 메시지 출력
-            } else {
-                $('#rating-popup').removeClass('hidden'); // 팝업 표시
-            }
-        });
-
-        $("#close-popup").on("click", () => $("#rating-popup").addClass("hidden"));
-
-        // 초기 실행
-        getProductIdFromBackend();
-    });
-
-    // ---------------------------------------------------------------------------//
-    $(document).ready(function () {
-        loadInquiryList(1); // 초기 페이지 로드
-
-        // 페이지네이션 클릭 이벤트
+        // 페이지네이션 클릭 이벤트 처리
         $('#inquiry-pagination').on('click', '.page-link', function () {
-            const page = $(this).data('page'); // 클릭한 페이지 번호 가져오기
-            console.log('Page Clicked:', page); // 디버깅: 클릭한 페이지 번호 출력
+            const page = $(this).data('page');
             if (page) {
-                loadInquiryList(page); // 해당 페이지 데이터 로드
+                loadInquiryList(page); // 해당 페이지 데이터를 비동기로 로드
+            } else {
+                console.error('Invalid page number:', page);
             }
         });
 
-        // 문의 리스트 로드 함수
-        async function loadInquiryList(page) {
-            console.log('Requested Page:', page); // 디버깅: 요청한 페이지 번호
-            try {
-                const data = await getInquiryListFromServer(page); // 서버에서 데이터를 비동기로 가져오는 함수 호출
-                if (data && data.content && data.content.length > 0) {
-                    View(data); // 테이블로 데이터를 출력하는 함수 호출
+// 문의 리스트 비동기 로드 함수
+        function loadInquiryList(page) {
+            $.ajax({
+                url: `/product/inquiries?page=${page}&size=5`, // 비동기 요청 URL
+                method: 'GET',
+                success: function (data) {
+                    setupInquiryList(data.content); // 테이블에 데이터 출력
                     setupPagination(data, page); // 페이지네이션 설정
-                } else {
-                    alert('문의 리스트가 없습니다.');
+                },
+                error: function (error) {
+                    console.error('Error loading inquiry list:', error);
                 }
-            } catch (error) {
-                console.error('Error loading inquiry list:', error); // 에러 로그 출력
-                alert('문의 리스트를 불러오는 데 실패했습니다.');
-            }
-        }
-
-        // 서버에서 비동기적으로 데이터 가져오는 함수
-        function getInquiryListFromServer(page) {
-            return new Promise((resolve, reject) => {
-                $.ajax({
-                    url: `/api/inquiries?page=${page}&size=5`, // 페이지 번호와 페이지 크기 전달
-                    method: 'GET',
-                    success: function (data) {
-                        console.log('AJAX Success:', data); // 디버깅: 서버에서 받은 데이터
-                        resolve(data); // 데이터 resolve
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.error("AJAX Error:", textStatus, errorThrown); // 에러 로그 출력
-                        reject(new Error('Failed to load inquiry list.'));
-                    },
-                });
             });
         }
-
         // 테이블로 데이터를 출력하는 함수
-        function View(data) {
-            let Html = "<table class='inquiry-table'>";
-            Html += "<tr>";
-            Html += "<td>번호</td>";
-            Html += "<td>제목</td>";
-            Html += "<td>작성자</td>";
-            Html += "</tr>";
-
-            $.each(data.content, function (index, obj) {
-                Html += "<tr>";
-                Html += "<td>" + obj.inquiryId + "</td>"; // 문의 ID
-                Html += "<td>" + obj.content + "</td>"; // 문의 내용
-                Html += "<td>" + obj.author + "</td>"; // 작성자
-                Html += "</tr>";
+        function setupInquiryList(content) {
+            let html = "<table class='inquiry-table'>";
+            html += "<tr><th>번호</th><th>제목</th><th>작성자</th></tr>";
+            $.each(content, function (index, obj) {
+                html += `<tr>
+                    <td>${obj.inquiryId}</td>
+                    <td>${obj.content}</td>
+                    <td>${obj.author}</td>
+                 </tr>`;
             });
-
-            Html += "</table>";
-            $('#inquiry-list').html(Html); // 테이블을 DOM에 추가
+            html += "</table>";
+            $('#inquiry-list').html(html); // 테이블에 출력
         }
 
         // 페이지네이션 설정
         function setupPagination(data, currentPage) {
             const $pagination = $('#inquiry-pagination');
-            $pagination.empty(); // 기존 페이징 HTML 비우기
+            $pagination.empty();
 
             let paginationHtml = '';
-
-            // 이전 페이지 버튼
             if (currentPage > 1) {
                 paginationHtml += `<span class="page-link" data-page="${currentPage - 1}">◀</span>`;
             }
 
-            // 페이지 번호 버튼
             for (let i = 1; i <= data.totalPages; i++) {
                 const activeClass = i === currentPage ? 'active' : '';
                 paginationHtml += `<span class="page-link ${activeClass}" data-page="${i}">${i}</span>`;
             }
 
-            // 다음 페이지 버튼
             if (currentPage < data.totalPages) {
                 paginationHtml += `<span class="page-link" data-page="${currentPage + 1}">▶</span>`;
             }
 
-            $pagination.append(paginationHtml); // 페이징 HTML 추가
-            console.log('Pagination HTML:', paginationHtml); // 디버깅: 페이지네이션 HTML 확인
+            $pagination.html(paginationHtml); // 페이지네이션 출력
+        }
+
+        // 상품 세부 정보 로드
+        function loadProductDetails() {
+            const proId = $('#productId').data('proId'); // 상품 ID
+            $.ajax({
+                url: `/product/detail/${proId}`,
+                method: 'GET',
+                success: function (data) {
+                    $('#product-detail-section').html(data); // 상품 세부정보를 업데이트
+                },
+                error: function (error) {
+                    console.error('Error loading product details:', error);
+                }
+            });
         }
     });
 
