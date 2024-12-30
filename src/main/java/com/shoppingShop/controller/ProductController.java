@@ -1,12 +1,8 @@
 package com.shoppingShop.controller;
 
-import com.shoppingShop.domain.CartDto;
-import com.shoppingShop.domain.InquiryDto;
 import com.shoppingShop.domain.ProductDto;
-import com.shoppingShop.domain.ProductReviewDto;
 import com.shoppingShop.service.CartService;
 import com.shoppingShop.service.InquiryService;
-import com.shoppingShop.service.ProductReviewService;
 import com.shoppingShop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
-import java.util.HashMap;
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/product")
@@ -28,39 +24,51 @@ public class ProductController {
 
     @Autowired
     private CartService cartService;
-    @Autowired
-    private ProductReviewService productReviewService;
 
     @Autowired
     private InquiryService inquiryService;
+
+    // 인텔리제이에서 사용할 수 있는 이미지 베이스 경로
+    private static final String IMAGE_BASE_PATH = "/src/main/resources/static/img/products/";
 
     @GetMapping("/detail/{proId}")
     public String productDetail(@PathVariable int proId, Model model,
                                 @RequestParam(value = "page", defaultValue = "1") int page,
                                 @RequestParam(value = "size", defaultValue = "5") int size) throws Exception {
+        // 상품 상세 정보 가져오기
         ProductDto detail = productService.getProductDetail(proId);
 
+        // 이미지 디렉토리 설정
+        String productImagePath = IMAGE_BASE_PATH + proId;
+
+        // 해당 상품 이미지 파일 목록 가져오기
+        File folder = Paths.get(productImagePath).toFile();
+        List<String> imagePaths = new ArrayList<>();
+        System.out.println("디렉토리 경로: " + folder.getAbsolutePath());
+
+        if (folder.exists() && folder.isDirectory()) {
+            for (File file : folder.listFiles()) {
+                System.out.println("파일 이름: " + file.getName());
+
+                if (file.isFile() && (file.getName().toLowerCase().endsWith(".JPG") || file.getName().toLowerCase().endsWith(".jpeg") || file.getName().toLowerCase().endsWith(".png"))) {
+                    imagePaths.add("/img/products/" + proId + "/" + file.getName());
+                }
+            }
+        }
+
+        // 이미지가 없을 경우 기본 이미지 추가
+        if (imagePaths.isEmpty()) {
+            imagePaths.add("/img/no-image.jpg");
+        }
+
+        // 모델에 데이터 추가
+        model.addAttribute("productDetail", detail);
+        model.addAttribute("imagePaths", imagePaths);
         model.addAttribute("inquiries", inquiryService.getInquiriesByPage(page, size));
         model.addAttribute("totalPages", inquiryService.getTotalPages(size));
         model.addAttribute("currentPage", page);
 
-        model.addAttribute("productDetail", detail);
         return "product/productDetail";
-    }
-    @GetMapping("/inquiries")
-    public ResponseEntity<Map<String, Object>> getInquiriesByPage(
-            @RequestParam("page") int page,
-            @RequestParam("size") int size) {
-
-        Map<String, Object> response = new HashMap<>();
-        List<InquiryDto> inquiries = inquiryService.getInquiriesByPage(page, size);
-        int totalPages = inquiryService.getTotalPages(size);
-
-        response.put("content", inquiries);
-        response.put("totalPages", totalPages);
-        response.put("currentPage", page);
-
-        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/current")

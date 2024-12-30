@@ -551,9 +551,14 @@
         </div>
     </div>
     <div class="tab-content" id="details">
-        <h3>상세 정보</h3>
-        <img src="resources/img/detail1.jpg" alt="상세 이미지 1" width="100%">
-        <img src="resources/img/detail2.jpg" alt="상세 이미지 2" width="100%">
+
+                <div class="product-item">
+                    <!-- productId에 따라 이미지 경로를 동적으로 설정 -->
+                    <img src="<c:url value='/img/products/${product.proId}/${product.imagePath}'/>"
+                         alt="${product.proName} 이미지"
+                         style="width: 300px; height: auto; margin: 10px;">
+                </div>
+
     </div>
     <div id="inquiry" class="tab-content">
         <!-- 문의 리스트 -->
@@ -573,7 +578,6 @@
                 </c:forEach>
             </table>
         </div>
-
         <!-- 페이지네이션 -->
         <div id="inquiry-pagination">
             <c:if test="${currentPage > 1}">
@@ -706,13 +710,14 @@
             selectedTabContent.style.display = ''; // 탭 콘텐츠를 다시 보여줌
         }
     }
-//************************************************************//
-    $(document).ready(function () {
-        loadProductDetails(); // 초기 데이터 로드
 
+    //************************************************************//
+    $(document).ready(function () {
         // 페이지네이션 클릭 이벤트 처리
-        $('#inquiry-pagination').on('click', '.page-link', function () {
-            const page = $(this).data('page');
+        $('#inquiry-pagination').on('click', '.page-link', function (e) {
+            e.preventDefault(); // 기본 링크 동작 방지
+            const page = $(this).data('page'); // 클릭한 페이지 번호
+
             if (page) {
                 loadInquiryList(page); // 해당 페이지 데이터를 비동기로 로드
             } else {
@@ -720,7 +725,7 @@
             }
         });
 
-// 문의 리스트 비동기 로드 함수
+        // 문의 리스트 비동기 로드 함수
         function loadInquiryList(page) {
             $.ajax({
                 url: `/product/inquiries?page=${page}&size=5`, // 비동기 요청 URL
@@ -734,19 +739,20 @@
                 }
             });
         }
+
         // 테이블로 데이터를 출력하는 함수
         function setupInquiryList(content) {
             let html = "<table class='inquiry-table'>";
             html += "<tr><th>번호</th><th>제목</th><th>작성자</th></tr>";
             $.each(content, function (index, obj) {
                 html += `<tr>
-                    <td>${obj.inquiryId}</td>
-                    <td>${obj.content}</td>
-                    <td>${obj.author}</td>
-                 </tr>`;
+                <td>${obj.inquiryId}</td>
+                <td>${obj.content}</td>
+                <td>${obj.author}</td>
+            </tr>`;
             });
             html += "</table>";
-            $('#inquiry-list').html(html); // 테이블에 출력
+            $('#inquiry-list').html(html); // 테이블에 데이터 출력
         }
 
         // 페이지네이션 설정
@@ -769,21 +775,6 @@
             }
 
             $pagination.html(paginationHtml); // 페이지네이션 출력
-        }
-
-        // 상품 세부 정보 로드
-        function loadProductDetails() {
-            const proId = $('#productId').data('proId'); // 상품 ID
-            $.ajax({
-                url: `/product/detail/${proId}`,
-                method: 'GET',
-                success: function (data) {
-                    $('#product-detail-section').html(data); // 상품 세부정보를 업데이트
-                },
-                error: function (error) {
-                    console.error('Error loading product details:', error);
-                }
-            });
         }
     });
 
