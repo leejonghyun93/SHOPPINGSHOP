@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -29,27 +32,27 @@ public class ProductController {
     private InquiryService inquiryService;
 
     // 인텔리제이에서 사용할 수 있는 이미지 베이스 경로
-    private static final String IMAGE_BASE_PATH = "/src/main/resources/static/img/products/";
+    private static final String IMAGE_BASE_PATH = "/resources/img/products/";
 
     @GetMapping("/detail/{proId}")
     public String productDetail(@PathVariable int proId, Model model,
                                 @RequestParam(value = "page", defaultValue = "1") int page,
                                 @RequestParam(value = "size", defaultValue = "5") int size) throws Exception {
+
         // 상품 상세 정보 가져오기
         ProductDto detail = productService.getProductDetail(proId);
 
+        // 모델에 product 객체 추가
+        model.addAttribute("product", detail);  // product 객체를 JSP에서 사용 가능하게 만듦
+
         // 이미지 디렉토리 설정
         String productImagePath = IMAGE_BASE_PATH + proId;
-
-        // 해당 상품 이미지 파일 목록 가져오기
         File folder = Paths.get(productImagePath).toFile();
+
         List<String> imagePaths = new ArrayList<>();
-        System.out.println("디렉토리 경로: " + folder.getAbsolutePath());
 
         if (folder.exists() && folder.isDirectory()) {
             for (File file : folder.listFiles()) {
-                System.out.println("파일 이름: " + file.getName());
-
                 if (file.isFile() && (file.getName().toLowerCase().endsWith(".JPG") || file.getName().toLowerCase().endsWith(".jpeg") || file.getName().toLowerCase().endsWith(".png"))) {
                     imagePaths.add("/img/products/" + proId + "/" + file.getName());
                 }
@@ -70,6 +73,7 @@ public class ProductController {
 
         return "product/productDetail";
     }
+
 
     @GetMapping("/current")
     public ResponseEntity<ProductDto> getCurrentProduct(@RequestParam("proId") int proId) {

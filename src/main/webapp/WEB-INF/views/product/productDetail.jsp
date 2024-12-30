@@ -337,7 +337,19 @@
         #rating-popup div {
             margin-bottom: 10px;
         }
+        /************************** 상세보기 이미지 *********************************/
 
+        .product-item img {
+            width: 100%; /* 이미지가 컨테이너에 맞게 크기 조절 */
+            height: auto; /* 비율 유지 */
+            /*margin-bottom: 10px; !* 이미지 간격 조정 *!*/
+            margin: 30px auto 0;
+            max-width: 1200px;
+        }
+        .product-item {
+            display: flex; /* 부모 컨테이너에서 이미지가 세로로 정렬되도록 */
+            flex-wrap: wrap; /* 이미지가 세로로 잘린 경우 다시 줄을 넘기도록 설정 */
+        }
 
         /************************* 문의 상세보기 스타일 ******************************/
         h4 {
@@ -551,14 +563,11 @@
         </div>
     </div>
     <div class="tab-content" id="details">
-
-                <div class="product-item">
-                    <!-- productId에 따라 이미지 경로를 동적으로 설정 -->
-                    <img src="<c:url value='/img/products/${product.proId}/${product.imagePath}'/>"
-                         alt="${product.proName} 이미지"
-                         style="width: 300px; height: auto; margin: 10px;">
-                </div>
-
+        <div class="product-item">
+            <!-- productId에 따라 이미지 경로를 동적으로 설정 -->
+            <img src="<c:url value='${pageContext.request.contextPath}/resources/img/products/${product.proId}/${product.imagePath}'/>"
+                 alt="${product.proName} 이미지">
+        </div>
     </div>
     <div id="inquiry" class="tab-content">
         <!-- 문의 리스트 -->
