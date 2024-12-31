@@ -566,7 +566,8 @@
         <div class="product-item">
             <!-- productId에 따라 이미지 경로를 동적으로 설정 -->
             <img src="<c:url value='${pageContext.request.contextPath}/resources/img/products/${product.proId}/${product.imagePath}'/>"
-                 alt="${product.proName} 이미지">
+                 alt="${product.proName} 이미지"
+                 >
         </div>
     </div>
     <div id="inquiry" class="tab-content">
