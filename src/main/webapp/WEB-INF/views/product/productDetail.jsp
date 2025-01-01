@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page session="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="loginId"
        value="${pageContext.request.getSession(false)==null ? '' : pageContext.request.session.getAttribute('userId')}"/>
 <c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : ''}"/>
@@ -339,16 +339,23 @@
         }
         /************************** 상세보기 이미지 *********************************/
 
-        .product-item img {
-            width: 100%; /* 이미지가 컨테이너에 맞게 크기 조절 */
-            height: auto; /* 비율 유지 */
-            /*margin-bottom: 10px; !* 이미지 간격 조정 *!*/
+        .product-item {
+            display: flex; /* Flexbox 사용 */
+            flex-direction: column; /* 이미지를 세로로 정렬 */
+            align-items: center; /* 이미지 중앙 정렬 */
+            gap: 20px; /* 이미지 간격 */
+            width: 100%; /* 부모 컨테이너 너비 */
             margin: 30px auto 0;
             max-width: 1200px;
         }
-        .product-item {
-            display: flex; /* 부모 컨테이너에서 이미지가 세로로 정렬되도록 */
-            flex-wrap: wrap; /* 이미지가 세로로 잘린 경우 다시 줄을 넘기도록 설정 */
+
+        .product-item img {
+            width: 100%; /* 이미지를 원래 비율로 유지 */
+            margin: 30px auto 0;
+            max-width: 1200px;
+            height: auto; /* 비율 유지 */
+            border: 1px solid #ddd; /* 이미지 테두리 */
+            border-radius: 10px; /* 둥근 모서리 */
         }
 
         /************************* 문의 상세보기 스타일 ******************************/
@@ -564,10 +571,11 @@
     </div>
     <div class="tab-content" id="details">
         <div class="product-item">
-            <!-- productId에 따라 이미지 경로를 동적으로 설정 -->
-            <img src="<c:url value='${pageContext.request.contextPath}/resources/img/products/${product.proId}/${product.imagePath}'/>"
-                 alt="${product.proName} 이미지"
-                 >
+            <c:forEach var="image" items="${fn:split(product.imagePath, ',')}">
+                <!-- 각 이미지에 대해 동적으로 경로 생성 -->
+                <img src="<c:url value='${pageContext.request.contextPath}/resources/img/products/${product.proId}/${image}' />"
+                     alt="${product.proName} 이미지">
+            </c:forEach>
         </div>
     </div>
     <div id="inquiry" class="tab-content">
