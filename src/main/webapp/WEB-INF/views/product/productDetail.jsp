@@ -337,6 +337,7 @@
         #rating-popup div {
             margin-bottom: 10px;
         }
+
         /************************** 상세보기 이미지 *********************************/
 
         .product-item {
@@ -433,6 +434,37 @@
             color: red;
         }
 
+        #inquiry-pagination {
+            display: flex; /* 플렉스 박스를 사용해 정렬 */
+            justify-content: center; /* 가로 정렬을 가운데로 */
+            align-items: center; /* 세로 정렬 (필요시) */
+            margin-top: 20px; /* 위쪽 여백 조정 */
+        }
+
+        #inquiry-pagination a {
+            text-decoration: none; /* 밑줄 제거 */
+            color: #333; /* 기본 글씨 색 */
+            margin: 0 5px; /* 버튼 간격 */
+            padding: 5px 10px; /* 버튼 크기 조정 */
+            border: 1px solid #ddd; /* 버튼 테두리 */
+            border-radius: 4px; /* 버튼 모서리 둥글게 */
+            transition: background-color 0.3s ease; /* 마우스 오버 시 효과 */
+        }
+
+        #inquiry-pagination a.active {
+            background-color: #007bff; /* 활성화된 페이지 배경색 */
+            color: #fff; /* 활성화된 페이지 글씨 색 */
+            border-color: #007bff; /* 활성화된 페이지 테두리 색 */
+        }
+
+        #inquiry-pagination a:hover {
+            background-color: #0056b3; /* 마우스 오버 시 배경색 */
+            color: #fff; /* 마우스 오버 시 글씨 색 */
+            border-color: #0056b3; /* 마우스 오버 시 테두리 색 */
+        }
+        #guide{
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -444,7 +476,7 @@
     <div class="container">
         <!-- 상품 이미지 및 상세 정보 -->
         <div class="product-image">
-            <img src="resources/img/shoes.JPG" alt="상품 이미지">
+            <img src="<c:url value='/resources/img/${product.imageUrl}'/>" alt="${product.proName} 이미지"/>
         </div>
 
         <div class="product-details">
@@ -500,7 +532,7 @@
                     ⭐
                 </div>
                 <div id="total-rating">
-                    <h3>총 별점: <span id="average-rating">4.5</span> / 5</h3>
+                    <h3>총 별점: <span id="average-rating">0</span> / 5</h3>
                 </div>
                 <button id="write-review-button">상품 리뷰 작성하기</button>
             </div>
@@ -514,35 +546,35 @@
                         <div class="bar">
                             <div id="excellent-bar" class="rating-bar"></div>
                         </div>
-                        <span id="excellent-score">30</span>
+                        <span id="excellent-score">0</span>
                     </div>
                     <div class="rating-item">
                         <label>맘에 들어요</label>
                         <div class="bar">
                             <div id="good-bar" class="rating-bar"></div>
                         </div>
-                        <span id="good-score">15</span>
+                        <span id="good-score">0</span>
                     </div>
                     <div class="rating-item">
                         <label>보통이에요</label>
                         <div class="bar">
                             <div id="average-bar" class="rating-bar"></div>
                         </div>
-                        <span id="average-score">10</span>
+                        <span id="average-score">0</span>
                     </div>
                     <div class="rating-item">
                         <label>그냥그래요</label>
                         <div class="bar">
                             <div id="poor-bar" class="rating-bar"></div>
                         </div>
-                        <span id="poor-score">5</span>
+                        <span id="poor-score">0</span>
                     </div>
                     <div class="rating-item">
                         <label>별로에요</label>
                         <div class="bar">
                             <div id="terrible-bar" class="rating-bar"></div>
                         </div>
-                        <span id="terrible-score">2</span>
+                        <span id="terrible-score">0</span>
                     </div>
                 </div>
                 <button id="open-rating-popup">별점 추가</button>
@@ -728,6 +760,159 @@
             selectedTabContent.style.display = ''; // 탭 콘텐츠를 다시 보여줌
         }
     }
+
+    //************************** 리뷰 **********************************//
+    $(document).ready(function () {
+        let proId; // 초기화
+
+        async function getProductIdFromBackend() {
+            try {
+                const response = await $.get(`/product/current?proId=${proId}`);
+                if (!response || !response.proId) {
+                    throw new Error("상품 ID 가져오기 실패");
+                }
+                proId = response.proId; // 프로덕트 ID를 proId로 설정
+                console.log("프로덕트 ID:", proId);
+                await getReviews(proId); // 필수적으로 await 붙이기
+            } catch (error) {
+                console.error("상품 ID 가져오기 실패:", error);
+                if (error.status === 404) {
+                    alert("해당 상품이 존재하지 않습니다. 다시 시도해주세요.");
+                } else {
+                    alert("프로덕트 ID를 가져오는 데 실패했습니다. 다시 시도해주세요.");
+                }
+            }
+        }
+
+        async function getReviews(proId) {
+            try {
+                const response = await $.get(`/product/review/getByProductId/${proId}`);
+                console.log("서버에서 반환된 리뷰 데이터:", response); // 서버 데이터 출력
+
+                if (!response || !Array.isArray(response) || response.length === 0) {
+                    throw new Error("리뷰 데이터가 비어 있습니다.");
+                }
+
+                const calculatedData = calculateRatings(response);
+                updateRatingsOnPage(calculatedData);
+            } catch (error) {
+                console.error("리뷰 데이터 가져오기 실패:", error);
+                alert("리뷰 데이터를 가져오는 데 실패했습니다.");
+            }
+        }
+
+        function calculateRatings(reviews) {
+            let counts = {excellent: 0, good: 0, average: 0, poor: 0, terrible: 0};
+
+            reviews.forEach(review => {
+                const rating = parseInt(review.rating, 10); // 문자열을 숫자로 변환
+                switch (rating) {
+                    case 5:
+                        counts.excellent++;
+                        break;
+                    case 4:
+                        counts.good++;
+                        break;
+                    case 3:
+                        counts.average++;
+                        break;
+                    case 2:
+                        counts.poor++;
+                        break;
+                    case 1:
+                        counts.terrible++;
+                        break;
+                }
+            });
+
+            return counts;
+        }
+
+        function updateRatingsOnPage(data) {
+            console.log("평점 데이터:", data);
+
+            const {excellent, good, average, poor, terrible} = data;
+            const totalRatings = excellent + good + average + poor + terrible;
+
+            if (totalRatings === 0) {
+                console.log("평점 데이터가 없습니다.");
+                return;
+            }
+
+            const calculateWidth = (value) => {
+                if (totalRatings === 0) return '0%'; // 0% 처리
+                const percentage = ((value / totalRatings) * 100).toFixed(2); // 소수점 2자리 고정
+                return `${percentage}%`;
+            };
+
+            // 막대 그래프 업데이트
+            $("#excellent-bar").css("width", calculateWidth(excellent));
+            $("#good-bar").css("width", calculateWidth(good));
+            $("#average-bar").css("width", calculateWidth(average));
+            $("#poor-bar").css("width", calculateWidth(poor));
+            $("#terrible-bar").css("width", calculateWidth(terrible));
+
+            // 평점 및 개수 업데이트
+            $("#average-rating").text(
+                totalRatings > 0
+                    ? ((5 * excellent + 4 * good + 3 * average + 2 * poor + terrible) / totalRatings).toFixed(1)
+                    : "0.0"
+            );
+            $("#excellent-score").text(excellent);
+            $("#good-score").text(good);
+            $("#average-score").text(average);
+            $("#poor-score").text(poor);
+            $("#terrible-score").text(terrible);
+        }
+
+        // 리뷰 추가 처리
+        $("#submitRating").on("click", async function () {
+            const ratingValue = $("input[name='rating']:checked").val();
+            const comment = $("#reviewComment").val(); // 추가된 리뷰 코멘트
+
+            if (!ratingValue) {
+                alert("별점을 선택해주세요.");
+                return;
+            }
+
+            try {
+                await $.ajax({
+                    url: "/product/review/add",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        proId: proId,
+                        rating: ratingValue,
+                        comment: comment, // 코멘트 데이터 전송
+                    }),
+                });
+
+                alert("리뷰가 추가되었습니다.");
+                $("#rating-popup").addClass("hidden");
+
+                // 새로운 리뷰 데이터를 다시 가져오고 페이지를 업데이트
+                await getReviews(proId);
+
+            } catch (error) {
+                console.error("리뷰 추가 실패:", error);
+                alert("리뷰 추가에 실패했습니다. 다시 시도해주세요.");
+            }
+        });
+
+        // 별점 추가 팝업 열기 버튼 이벤트 리스너
+        $('#open-rating-popup').on('click', function () {
+            if (!loginId || loginId.trim() === '') { // 로그인 여부 확인
+                alert('로그인 후 이용할 수 있습니다.'); // 경고 메시지 출력
+            } else {
+                $('#rating-popup').removeClass('hidden'); // 팝업 표시
+            }
+        });
+
+        $("#close-popup").on("click", () => $("#rating-popup").addClass("hidden"));
+
+        // 초기 실행
+        getProductIdFromBackend();
+    });
 
     //************************************************************//
     $(document).ready(function () {
