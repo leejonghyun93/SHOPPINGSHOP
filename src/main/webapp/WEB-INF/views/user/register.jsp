@@ -9,6 +9,7 @@
 <html>
 <head>
     <title>회원가입</title>
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <style>
         html, body {
             height: 100%;
@@ -114,8 +115,17 @@
             </div>
             <div class="form-group">
                 <label for="userAddress">주소</label>
-                <input type="text" id="userAddress" name="userAddress" required placeholder="주소를 입력하세요">
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="userAddress" name="userAddress" required placeholder="주소를 입력하세요" readonly style="flex: 3;">
+                    <button type="button" onclick="execDaumPostcode()" style="flex: 1; background-color: #4CAF50; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer;">주소 찾기</button>
+                </div>
             </div>
+            <div class="form-group">
+                <label for="detailAddress">나머지 주소</label>
+                <input type="text" id="detailAddress" name="detailAddress" placeholder="나머지 주소를 입력하세요">
+            </div>
+            <!-- 숨겨진 필드 추가 -->
+            <input type="hidden" id="fullAddress" name="fullAddress">
             <div class="form-group">
                 <label for="userPhone">전화번호</label>
                 <input type="number" id="userPhone" name="userPhone" required placeholder="전화번호를 입력하세요">
@@ -194,6 +204,33 @@
                 e.preventDefault();  // 폼 제출 취소
             }
         });
+    });
+    function execDaumPostcode() {
+        // Daum 주소 찾기 API 호출
+        new daum.Postcode({
+            oncomplete: function (data) {
+                // 도로명 주소나 지번 주소 중 하나를 userAddress에 설정
+                document.getElementById("userAddress").value = data.roadAddress || data.jibunAddress;
+            }
+        }).open();
+    }
+
+    // form이 제출되기 전 fullAddress에 값을 합쳐 넣는 함수
+    function combineAddress() {
+        const userAddress = document.getElementById("userAddress").value.trim();
+        const detailAddress = document.getElementById("detailAddress").value.trim();
+
+        // 숨겨진 필드에 합쳐진 주소를 설정
+        const combined = `${userAddress} ${detailAddress}`.trim();
+        document.getElementById("fullAddress").value = combined;
+
+        // 콘솔 출력 추가
+        console.log("Combined Address: " + combined);
+    }
+
+
+    document.querySelector("form").addEventListener("submit", function (event) {
+        combineAddress(); // 주소 합치기
     });
 </script>
 

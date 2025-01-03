@@ -23,13 +23,16 @@ public class UserController {
     }
 
     @PostMapping("/registerSubmit")
-    public String submitRegisterForm(UserDto userDto, Model model) {
+    public String submitRegisterForm(@RequestParam("fullAddress") String fullAddress,UserDto userDto, Model model) {
+        System.out.println("Full Address: " + userDto.getUserAddress()); // 여기서 출력
+        System.out.println("User DTO: " + userDto); // 전체 DTO 확인
+        System.out.println("Full Address: " + fullAddress);
         boolean success = userService.registerUser(userDto);
         if (success) {
-            return "redirect:/login/login"; // 회원가입 성공 시 로그인 페이지로 리다이렉트
+            return "redirect:/login/login";
         } else {
             model.addAttribute("errorMessage", "회원가입에 실패했습니다. 다시 시도해주세요.");
-            return "register";
+            return "user/register";
         }
     }
     @GetMapping("/findId")

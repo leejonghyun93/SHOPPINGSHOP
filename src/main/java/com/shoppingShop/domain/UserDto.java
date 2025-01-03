@@ -15,11 +15,13 @@ public class UserDto {
     private Date createdAt;
     private Date updatedAt;
 
+    private String fullAddress;
+
     public UserDto(){
 
     }
 
-    public UserDto(String userId, String userPwd, String userName, String userAddress, Integer userPhone, String userEmail, Date createdAt, Date updatedAt) {
+    public UserDto(String userId, String userPwd, String userName, String userAddress, Integer userPhone, String userEmail, Date createdAt, Date updatedAt, String fullAddress, BCryptPasswordEncoder passwordEncoder) {
         this.userId = userId;
         this.userPwd = userPwd;
         this.userName = userName;
@@ -28,7 +30,10 @@ public class UserDto {
         this.userEmail = userEmail;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.fullAddress = fullAddress;
+        this.passwordEncoder = passwordEncoder;
     }
+
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     // 비밀번호 암호화 메소드
@@ -98,6 +103,14 @@ public class UserDto {
         this.updatedAt = updatedAt;
     }
 
+    public String getFullAddress() {
+        return fullAddress;
+    }
+
+    public void setFullAddress(String fullAddress) {
+        this.fullAddress = fullAddress;
+    }
+
     @Override
     public String toString() {
         return "UserDto{" +
@@ -109,6 +122,8 @@ public class UserDto {
                 ", userEmail='" + userEmail + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
+                ", fullAddress='" + fullAddress + '\'' +
+                ", passwordEncoder=" + passwordEncoder +
                 '}';
     }
 }
