@@ -96,7 +96,7 @@
 <div class="content">
     <div class="register-container">
         <h2>회원가입</h2>
-        <form action="<c:url value='/membership/registerSubmit' />" method="post" onsubmit="return showAlert()">
+        <form action="<c:url value='/membership/registerSubmit' />" method="post" onsubmit="return showAlert()" id="registerForm" >
             <div class="form-group">
                 <label for="userId">아이디</label>
                 <input type="text" id="userId" name="userId" required placeholder="아이디를 입력하세요">
@@ -146,11 +146,15 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         function showAlert() {
+            combineAddress();
+
             const username = document.getElementById('userId').value.trim();
             const password = document.getElementById('userPwd').value.trim();
             const confirmPassword = document.getElementById('confirmPwd').value.trim();
             const email = document.getElementById('userEmail').value.trim();
             const phone = document.getElementById('userPhone').value.trim();
+            const userAddress = document.getElementById('userAddress').value.trim();
+            const detailAddress = document.getElementById('detailAddress').value.trim();
 
             // 아이디 유효성 검사
             if (username === "") {
@@ -172,6 +176,16 @@
             // 비밀번호 확인 검사
             if (confirmPassword === "") {
                 alert("비밀번호 확인을 입력해주세요.");
+                return false;
+            }
+
+            if (userAddress === "") {
+                alert("주소를 입력해주세요.");
+                return false;
+            }
+
+            if (detailAddress === "") {
+                alert("상세주소를 입력해주세요.");
                 return false;
             }
 
@@ -199,9 +213,10 @@
             return true; // 폼 제출을 허용
         }
 
-        document.querySelector('form').addEventListener('submit', function(e) {
+        document.getElementById('registerForm').addEventListener('submit', function (e) {
+            combineAddress(); // 주소 합치기 함수 호출
             if (!showAlert()) {
-                e.preventDefault();  // 폼 제출 취소
+                e.preventDefault();  // 유효성 검사가 실패하면 폼 제출을 막음
             }
         });
     });
@@ -211,6 +226,7 @@
             oncomplete: function (data) {
                 // 도로명 주소나 지번 주소 중 하나를 userAddress에 설정
                 document.getElementById("userAddress").value = data.roadAddress || data.jibunAddress;
+                combineAddress(); // 주소 합치기 함수 호출
             }
         }).open();
     }
@@ -220,18 +236,14 @@
         const userAddress = document.getElementById("userAddress").value.trim();
         const detailAddress = document.getElementById("detailAddress").value.trim();
 
-        // 숨겨진 필드에 합쳐진 주소를 설정
-        const combined = `${userAddress} ${detailAddress}`.trim();
-        document.getElementById("fullAddress").value = combined;
-
-        // 콘솔 출력 추가
-        console.log("Combined Address: " + combined);
+        if (userAddress && detailAddress) {
+            const combined = `${userAddress} ${detailAddress}`.trim();
+            document.getElementById("fullAddress").value = combined; // fullAddress에 합친 값을 설정
+        } else {
+            document.getElementById("fullAddress").value = ''; // 비우기
+        }
     }
 
-
-    document.querySelector("form").addEventListener("submit", function (event) {
-        combineAddress(); // 주소 합치기
-    });
 </script>
 
 <%@ include file="/WEB-INF/views/layout/footer/footer.jsp" %>

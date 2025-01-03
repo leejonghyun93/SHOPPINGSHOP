@@ -10,33 +10,28 @@ public class UserDto {
     private String userPwd;
     private String userName;
     private String userAddress;
+    private String detailAddress;
     private Integer userPhone;
     private String userEmail;
     private Date createdAt;
     private Date updatedAt;
 
-    private String fullAddress;
 
     public UserDto(){
 
     }
 
-    public UserDto(String userId, String userPwd, String userName, String userAddress, Integer userPhone, String userEmail, Date createdAt, Date updatedAt, String fullAddress, BCryptPasswordEncoder passwordEncoder) {
+    public UserDto(String userId, String userPwd, String userName, String userAddress, String detailAddress, Integer userPhone, String userEmail, Date createdAt, Date updatedAt) {
         this.userId = userId;
         this.userPwd = userPwd;
         this.userName = userName;
         this.userAddress = userAddress;
+        this.detailAddress = detailAddress;
         this.userPhone = userPhone;
         this.userEmail = userEmail;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.fullAddress = fullAddress;
-        this.passwordEncoder = passwordEncoder;
     }
-
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-    // 비밀번호 암호화 메소드
 
     public String getUserId() {
         return userId;
@@ -51,8 +46,7 @@ public class UserDto {
     }
 
     public void setUserPwd(String userPwd) {
-
-        this.userPwd = passwordEncoder.encode(userPwd);
+        this.userPwd = userPwd;
     }
 
     public String getUserName() {
@@ -69,6 +63,14 @@ public class UserDto {
 
     public void setUserAddress(String userAddress) {
         this.userAddress = userAddress;
+    }
+
+    public String getDetailAddress() {
+        return detailAddress;
+    }
+
+    public void setDetailAddress(String detailAddress) {
+        this.detailAddress = detailAddress;
     }
 
     public Integer getUserPhone() {
@@ -103,14 +105,6 @@ public class UserDto {
         this.updatedAt = updatedAt;
     }
 
-    public String getFullAddress() {
-        return fullAddress;
-    }
-
-    public void setFullAddress(String fullAddress) {
-        this.fullAddress = fullAddress;
-    }
-
     @Override
     public String toString() {
         return "UserDto{" +
@@ -118,12 +112,11 @@ public class UserDto {
                 ", userPwd='" + userPwd + '\'' +
                 ", userName='" + userName + '\'' +
                 ", userAddress='" + userAddress + '\'' +
+                ", detailAddress='" + detailAddress + '\'' +
                 ", userPhone=" + userPhone +
                 ", userEmail='" + userEmail + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", fullAddress='" + fullAddress + '\'' +
-                ", passwordEncoder=" + passwordEncoder +
                 '}';
     }
 }
