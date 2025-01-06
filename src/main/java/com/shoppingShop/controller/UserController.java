@@ -3,12 +3,13 @@ package com.shoppingShop.controller;
 import com.shoppingShop.domain.UserDto;
 import com.shoppingShop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/membership")
@@ -34,6 +35,17 @@ public class UserController {
             model.addAttribute("errorMessage", "회원가입에 실패했습니다. 다시 시도해주세요.");
             return "user/register";
         }
+    }
+
+    @PostMapping("/checkUserId")
+    public ResponseEntity<Map<String, Boolean>> checkUserId(@RequestBody Map<String, String> requestData) {
+        String userId = requestData.get("userId");
+        boolean isAvailable = !userService.isUserIdDuplicate(userId);
+
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("available", isAvailable);
+
+        return ResponseEntity.ok(response);
     }
     @GetMapping("/findId")
     public String showFindIdForm() {

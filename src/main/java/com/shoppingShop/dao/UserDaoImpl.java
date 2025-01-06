@@ -25,7 +25,11 @@ public class UserDaoImpl implements UserDao {
     public UserDto selectUser(String userId) throws Exception {
         return sqlSession.selectOne(NAMESPACE + ".selectUser", userId);
     }
-
+    @Override
+    public boolean checkUserIdExists(String userId) {
+        Integer result = sqlSession.selectOne(NAMESPACE + ".checkUserIdExists", userId);
+        return result != null && result > 0;
+    }
     @Override
     public UserDto findByUserIdAndPassword(String userId, String userPwd) {
         Map<String, Object> params = new HashMap<>();

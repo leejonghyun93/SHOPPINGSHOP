@@ -3,14 +3,10 @@ package com.shoppingShop.service;
 import com.shoppingShop.dao.UserDao;
 import com.shoppingShop.domain.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -63,7 +59,10 @@ public class UserServiceImpl implements UserService {
         }
         return false;
     }
-
+    @Override
+    public boolean isUserIdDuplicate(String userId) {
+        return userDao.checkUserIdExists(userId);
+    }
     @Override
     public String findIdByNameAndEmail(String userName, String userEmail) {
         return userDao.findIdByNameAndEmail(userName, userEmail);

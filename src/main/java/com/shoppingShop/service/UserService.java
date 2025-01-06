@@ -11,6 +11,8 @@ public interface UserService {
     boolean validateUser(String userId, String userPwd);
 
 
+    boolean isUserIdDuplicate(String userId);
+
     String findIdByNameAndEmail(String userName, String userEmail);
 
     String findPasswordByNameEmailAndId(String userName, String userEmail, String userId);
