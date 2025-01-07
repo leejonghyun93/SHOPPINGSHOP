@@ -99,7 +99,10 @@
         <form action="<c:url value='/membership/registerSubmit' />" method="post" onsubmit="return showAlert()" id="registerForm" >
             <div class="form-group">
                 <label for="userId">아이디</label>
-                <input type="text" id="userId" name="userId" required placeholder="아이디를 입력하세요">
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="userId" name="userId" required placeholder="아이디를 입력하세요" style="flex: 3;">
+                    <button type="button" id="checkIdButton" style="flex: 1; background-color: #4CAF50; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer;">중복 확인</button>
+                </div>
             </div>
             <div class="form-group">
                 <label for="userPwd">비밀번호</label>
@@ -155,6 +158,8 @@
             const phone = document.getElementById('userPhone').value.trim();
             const userAddress = document.getElementById('userAddress').value.trim();
             const detailAddress = document.getElementById('detailAddress').value.trim();
+
+
 
             // 아이디 유효성 검사
             if (username === "") {
@@ -218,6 +223,35 @@
             if (!showAlert()) {
                 e.preventDefault();  // 유효성 검사가 실패하면 폼 제출을 막음
             }
+        });
+        document.getElementById('checkIdButton').addEventListener('click', function () {
+            const userId = document.getElementById('userId').value.trim();
+
+            if (userId === "") {
+                alert("아이디를 입력해주세요.");
+                return;
+            }
+
+            // AJAX 요청 (예: jQuery 또는 Fetch API 사용)
+            fetch('/membership/checkUserId', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId: userId }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.available) {
+                        alert("사용 가능한 아이디입니다.");
+                    } else {
+                        alert("이미 사용 중인 아이디입니다.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("아이디 중복 확인 중 오류가 발생했습니다.");
+                });
         });
     });
     function execDaumPostcode() {
