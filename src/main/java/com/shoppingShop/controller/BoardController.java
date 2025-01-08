@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -27,7 +30,10 @@ public class BoardController {
             @RequestParam(value = "sort", defaultValue = "latest") String sort,
             Model model) {
 
+        // 게시글 목록을 가져오고 생성일 및 수정일을 Date로 변환
         List<BoardDto> boardList = boardService.getBoardList(pageNum, pageSize, search, sort);
+
+        // 총 게시글 수 계산
         int totalRecords = boardService.getBoardCount(search);
 
         // 페이지 정보 및 게시글 총 건수 추가
@@ -40,7 +46,6 @@ public class BoardController {
 
         return "board/list";
     }
-
 
     @GetMapping("/view/{noticeId}")
     public String viewNotice(
@@ -57,5 +62,10 @@ public class BoardController {
         model.addAttribute("nextNotice", nextNotice);
 
         return "board/view";
+    }
+
+    // LocalDateTime을 Date로 변환하는 메서드
+    private Date convertToDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 }

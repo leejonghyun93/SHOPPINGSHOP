@@ -3,35 +3,38 @@ package com.shoppingShop.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 public class BoardDto {
     private Integer noticeId;
     private String userId;
     private String title;
     private String content;
-    private LocalDateTime createdAt;
-    private LocalDate updatedAt;
-    private LocalDateTime updateAt;
+    private Date createdAt;
+    private Date updatedAt;
+    private Date createdDate;
+    private Date updatedDate;
 
-    public BoardDto(int noticeId, String userId, String title, String content, LocalDateTime createdAt, LocalDate updatedAt, LocalDateTime updateAt) {
+    public BoardDto() {
+    }
+
+    public BoardDto(Integer noticeId, String userId, String title, String content, Date createdAt, Date updatedAt, Date createdDate, Date updatedDate) {
         this.noticeId = noticeId;
         this.userId = userId;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.updateAt = updateAt;
+        this.createdDate = createdDate;
+        this.updatedDate = updatedDate;
     }
 
-    public BoardDto(){
-
-    }
-
-    public int getNoticeId() {
+    public Integer getNoticeId() {
         return noticeId;
     }
 
-    public void setNoticeId(int noticeId) {
+    public void setNoticeId(Integer noticeId) {
         this.noticeId = noticeId;
     }
 
@@ -59,28 +62,36 @@ public class BoardDto {
         this.content = content;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDate getUpdatedAt() {
+    public Date getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDate updatedAt) {
+    public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    public LocalDateTime getUpdateAt() {
-        return updateAt;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setUpdateAt(LocalDateTime updateAt) {
-        this.updateAt = updateAt;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Date getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(Date updatedDate) {
+        this.updatedDate = updatedDate;
     }
 
     @Override
@@ -92,7 +103,8 @@ public class BoardDto {
                 ", content='" + content + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", updateAt=" + updateAt +
+                ", createdDate=" + createdDate +
+                ", updatedDate=" + updatedDate +
                 '}';
     }
 }
