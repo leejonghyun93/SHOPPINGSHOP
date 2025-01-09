@@ -26,7 +26,7 @@ public class CartController {
         String userId = (String) session.getAttribute("userId");
         if (userId == null) {
             model.addAttribute("message", "로그인 후 이용해 주세요.");
-            return "login"; // 로그인 페이지로 리다이렉트
+            return "login/login"; // 로그인 페이지로 리다이렉트
         }
 
         List<CartDto> cartItems = cartService.getCartByUserId(userId);

@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page session="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <c:set var="loginId" value="${pageContext.request.getSession(false) == null ? '' : pageContext.request.session.getAttribute('userId')}"/>
 <c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : '/login/logout'}"/>
 <c:set var="logout" value="${loginId == '' ? 'Login' : loginId}"/>
@@ -157,7 +157,7 @@
                 <td>${board.noticeId}</td>
                 <td><a href="/board/view/${board.noticeId}">${board.title}</a></td>
                 <td>${board.userId}</td>
-                <td>${board.createdAt}</td>
+                <td><fmt:formatDate value="${board.createdAt}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
             </tr>
         </c:forEach>
         </tbody>

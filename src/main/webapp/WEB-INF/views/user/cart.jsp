@@ -95,6 +95,13 @@
         .action-buttons button:last-child:hover {
             background-color: #0056b3;
         }
+
+        .empty-cart-message {
+            text-align: center;
+            font-size: 18px;
+            color: #ff0000;
+            margin-top: 20px;
+        }
     </style>
     <script>
         function submitSelected() {
@@ -122,47 +129,56 @@
 <jsp:include page="/WEB-INF/views/layout/header/header.jsp" />
 <jsp:include page="/WEB-INF/views/layout/categoryBar/categoryBar.jsp" />
 <div class="content">
-    <!-- 상품 상세 -->
-    <h1>장바구니</h1>
-    <table class="cart-table">
-        <thead>
-        <tr>
-            <th>선택</th>
-            <th>상품명</th>
-            <th>색상</th>
-            <th>사이즈</th>
-            <th>수량</th>
-            <th>가격</th>
-            <th>삭제</th>
-        </tr>
-        </thead>
-        <tbody>
-        <c:forEach var="cartItem" items="${cartItems}">
-            <tr>
-                <td><input type="checkbox" name="selectedItems" value="${cartItem.cartId}"></td>
-                <td>${cartItem.proName}</td>
-                <td>${cartItem.proColor}</td>
-                <td>${cartItem.proSize}</td>
-                <td>${cartItem.quantity}</td>
-                <td>${cartItem.totalPrice}</td>
-                <td>
-                    <form action="/cart/delete/${cartItem.cartId}" method="post">
-                        <button type="submit" class="delete-button">삭제</button>
-                    </form>
-                </td>
-            </tr>
-        </c:forEach>
-        </tbody>
-    </table>
+    <!-- 로그인 여부 확인 후 메시지 출력 -->
+    <c:if test="${empty cartItems}">
+        <div class="empty-cart-message">
+            장바구니에 아무 상품이 없습니다. 로그인하여 사용 해주세요.
+        </div>
+    </c:if>
 
-    <div class="action-buttons">
-        <form action="/clearCart" method="post">
-            <button type="submit">장바구니 비우기</button>
-        </form>
-        <form id="checkoutForm" action="/orders/checkout" method="post">
-            <button type="button" onclick="submitSelected()">선택상품 주문</button>
-        </form>
-    </div>
+    <!-- 상품 상세 -->
+    <c:if test="${not empty cartItems}">
+        <h1>장바구니</h1>
+        <table class="cart-table">
+            <thead>
+            <tr>
+                <th>선택</th>
+                <th>상품명</th>
+                <th>색상</th>
+                <th>사이즈</th>
+                <th>수량</th>
+                <th>가격</th>
+                <th>삭제</th>
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach var="cartItem" items="${cartItems}">
+                <tr>
+                    <td><input type="checkbox" name="selectedItems" value="${cartItem.cartId}"></td>
+                    <td>${cartItem.proName}</td>
+                    <td>${cartItem.proColor}</td>
+                    <td>${cartItem.proSize}</td>
+                    <td>${cartItem.quantity}</td>
+                    <td>${cartItem.totalPrice}</td>
+                    <td>
+                        <form action="/cart/delete/${cartItem.cartId}" method="post">
+                            <button type="submit" class="delete-button">삭제</button>
+                        </form>
+                    </td>
+                </tr>
+            </c:forEach>
+            </tbody>
+        </table>
+
+        <div class="action-buttons">
+            <form action="/clearCart" method="post">
+                <button type="submit">장바구니 비우기</button>
+            </form>
+            <form id="checkoutForm" action="/orders/checkout" method="post">
+                <button type="button" onclick="submitSelected()">선택상품 주문</button>
+            </form>
+        </div>
+    </c:if>
 </div>
 <jsp:include page="/WEB-INF/views/layout/footer/footer.jsp" />
 </body>

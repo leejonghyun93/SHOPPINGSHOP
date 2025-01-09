@@ -2,7 +2,7 @@
 <%@ page session="false"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<c:set var="loginId" value="${pageContext.request.getSession(false)==null ? '' : pageContext.request.session.getAttribute('userId')}"/>
+<c:set var="loginId" value="${pageContext.request.getSession(false) != null && pageContext.request.session.getAttribute('userId') != null ? pageContext.request.session.getAttribute('userId') : ''}"/>
 <c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : ''}" />
 <c:set var="logout" value="${loginId == '' ? 'Login' : loginId}" />
 <html>
@@ -120,16 +120,14 @@
             <li class="login-out">
                 <a href="<c:url value='${loginOutLink}'/>">${logout}</a>
             </li>
-            <c:if test="${loginId == ''}">
-                <!-- 로그인되지 않았을 때 -->
-                <li class="login-out">
-                    <a href="<c:url value='/membership/register'/>">회원가입</a> <!-- 회원가입 버튼 -->
-                </li>
-            </c:if>
-            <c:if test="${loginId != ''}">
-                <!-- 로그인되었을 때 -->
+            <c:if test="${not empty loginId}">
                 <li class="logged-in"><!-- 로그인한 아이디 표시 -->
                     <a href="<c:url value='/login/logout'/>">로그아웃</a> <!-- 로그아웃 링크 -->
+                </li>
+            </c:if>
+            <c:if test="${empty loginId}">
+                <li class="login-out">
+                    <a href="<c:url value='/membership/register'/>">회원가입</a> <!-- 회원가입 버튼 -->
                 </li>
             </c:if>
             <li><a href="<c:url value='/orders/list'/>">주문/배송조회</a></li>
