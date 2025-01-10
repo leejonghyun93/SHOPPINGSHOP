@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -99,5 +100,31 @@ public class UserController {
     @GetMapping("/myPage")
     public String myPage(){
         return "/user/myPage";
+    }
+
+    @GetMapping("/edit")
+    public String showUpdateForm(HttpSession session, Model model) throws Exception{
+        String userId = (String) session.getAttribute("userId");
+
+        UserDto userDto = userService.getUserById(userId); // userId로 회원 정보를 가져옴
+        if (userDto != null) {
+            model.addAttribute("userDto", userDto);
+            return "user/edit"; // update.jsp 페이지를 반환
+        } else {
+            model.addAttribute("errorMessage", "해당 사용자를 찾을 수 없습니다.");
+            return "user/myPage"; // 사용자 정보가 없으면 마이페이지로 리다이렉트
+        }
+    }
+
+    // 회원정보 수정 처리
+    @PostMapping("/updateSubmit")
+    public String submitUpdateForm(UserDto userDto, Model model) throws Exception{
+        boolean success = userService.updateUser(userDto); // 수정된 회원 정보를 업데이트
+        if (success) {
+            return "redirect:/membership/myPage"; // 수정 성공 후 마이페이지로 리다이렉트
+        } else {
+            model.addAttribute("errorMessage", "회원정보 수정에 실패했습니다. 다시 시도해주세요.");
+            return "user/update"; // 수정 실패 시 다시 수정 폼으로 돌아감
+        }
     }
 }

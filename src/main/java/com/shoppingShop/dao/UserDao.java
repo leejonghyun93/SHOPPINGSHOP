@@ -20,4 +20,7 @@ public interface UserDao {
     String findIdByNameAndEmail(String userName, String userEmail);
 
     String findPasswordByNameEmailAndId(String userName, String userEmail, String userId);
+
+
+    void updateUser(UserDto userDto);
 }

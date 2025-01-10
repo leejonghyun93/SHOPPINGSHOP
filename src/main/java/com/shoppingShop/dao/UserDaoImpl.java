@@ -59,4 +59,10 @@ public class UserDaoImpl implements UserDao {
         params.put("userId", userId);
         return sqlSession.selectOne(NAMESPACE + ".findPasswordByNameEmailAndId", params);
     }
+
+
+    @Override
+    public void updateUser(UserDto userDto) {
+        sqlSession.update(NAMESPACE + ".updateUser", userDto);
+    }
 }

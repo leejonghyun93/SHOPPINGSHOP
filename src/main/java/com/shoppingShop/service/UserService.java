@@ -16,4 +16,8 @@ public interface UserService {
     String findIdByNameAndEmail(String userName, String userEmail);
 
     String findPasswordByNameEmailAndId(String userName, String userEmail, String userId);
+
+    UserDto getUserById(String userId)throws Exception;
+
+    boolean updateUser(UserDto userDto)throws Exception;
 }

@@ -75,5 +75,20 @@ public class UserServiceImpl implements UserService {
     public boolean checkPassword(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
+    @Override
+    public UserDto getUserById(String userId) throws Exception{
+        // 사용자 정보를 조회하여 반환
+        return userDao.selectUser(userId);
+    }
 
+    @Override
+    public boolean updateUser(UserDto userDto) {
+        try {
+            userDao.updateUser(userDto);  // 사용자 정보 업데이트
+            return true;  // 성공 시 true 반환
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;  // 실패 시 false 반환
+        }
+    }
 }
