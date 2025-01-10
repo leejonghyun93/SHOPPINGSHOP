@@ -96,4 +96,8 @@ public class UserController {
         return "user/findPassword"; // findPassword.jsp로 반환
     }
 
+    @GetMapping("/myPage")
+    public String myPage(){
+        return "/user/myPage";
+    }
 }
