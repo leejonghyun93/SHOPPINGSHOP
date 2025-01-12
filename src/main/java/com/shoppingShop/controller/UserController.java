@@ -103,16 +103,34 @@ public class UserController {
     }
 
     @GetMapping("/edit")
-    public String showUpdateForm(HttpSession session, Model model) throws Exception{
-        String userId = (String) session.getAttribute("userId");
+    public String showUpdateForm(HttpSession session, Model model) {
+        try {
+            // 세션에서 userId를 가져옴
+            String userId = (String) session.getAttribute("userId");
 
-        UserDto userDto = userService.getUserById(userId); // userId로 회원 정보를 가져옴
-        if (userDto != null) {
+            // userId가 없을 경우 처리
+            if (userId == null || userId.isEmpty()) {
+                model.addAttribute("errorMessage", "로그인이 필요합니다.");
+                return "login/login"; // 로그인 페이지로 리다이렉트
+            }
+
+            // userId로 회원 정보를 가져옴
+            UserDto userDto = userService.getUserById(userId);
+
+            // 회원 정보가 존재하지 않을 경우 처리
+            if (userDto == null) {
+                model.addAttribute("errorMessage", "해당 사용자를 찾을 수 없습니다.");
+                return "user/myPage"; // 마이페이지로 리다이렉트
+            }
+
+            // 회원 정보를 모델에 추가하고 수정 페이지로 이동
             model.addAttribute("userDto", userDto);
-            return "user/edit"; // update.jsp 페이지를 반환
-        } else {
-            model.addAttribute("errorMessage", "해당 사용자를 찾을 수 없습니다.");
-            return "user/myPage"; // 사용자 정보가 없으면 마이페이지로 리다이렉트
+            return "user/edit";
+
+        } catch (Exception e) {
+            // 예외 처리
+            model.addAttribute("errorMessage", "오류가 발생했습니다. 다시 시도해주세요.");
+            return "user/myPage"; // 오류 발생 시 마이페이지로 리다이렉트
         }
     }
 
