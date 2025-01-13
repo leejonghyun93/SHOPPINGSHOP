@@ -114,8 +114,14 @@ public class UserController {
                 return "login/login"; // 로그인 페이지로 리다이렉트
             }
 
+            // 디버깅용 로그 추가
+            System.out.println("Session userId: " + userId);
+
             // userId로 회원 정보를 가져옴
             UserDto userDto = userService.getUserById(userId);
+
+            // 디버깅용 로그 추가
+            System.out.println("Fetched UserDto: " + userDto);
 
             // 회원 정보가 존재하지 않을 경우 처리
             if (userDto == null) {
@@ -128,7 +134,8 @@ public class UserController {
             return "user/edit";
 
         } catch (Exception e) {
-            // 예외 처리
+            // 예외 처리 및 디버깅용 로그
+            e.printStackTrace();
             model.addAttribute("errorMessage", "오류가 발생했습니다. 다시 시도해주세요.");
             return "user/myPage"; // 오류 발생 시 마이페이지로 리다이렉트
         }
@@ -136,13 +143,29 @@ public class UserController {
 
     // 회원정보 수정 처리
     @PostMapping("/updateSubmit")
-    public String submitUpdateForm(UserDto userDto, Model model) throws Exception{
-        boolean success = userService.updateUser(userDto); // 수정된 회원 정보를 업데이트
-        if (success) {
-            return "redirect:/membership/myPage"; // 수정 성공 후 마이페이지로 리다이렉트
-        } else {
-            model.addAttribute("errorMessage", "회원정보 수정에 실패했습니다. 다시 시도해주세요.");
-            return "user/update"; // 수정 실패 시 다시 수정 폼으로 돌아감
+    public String submitUpdateForm(UserDto userDto, HttpSession session, Model model) {
+        try {
+            // 세션에서 userId 가져오기
+            String userId = (String) session.getAttribute("userId");
+
+            // 디버깅용 로그 추가
+            System.out.println("Session userId: " + userId);
+            System.out.println("Received UserDto: " + userDto);
+
+            // 회원 정보 업데이트
+            boolean success = userService.updateUser(userDto);
+
+            if (success) {
+                return "redirect:/membership/myPage"; // 수정 성공 후 마이페이지로 리다이렉트
+            } else {
+                model.addAttribute("errorMessage", "회원정보 수정에 실패했습니다. 다시 시도해주세요.");
+                return "user/edit"; // 수정 실패 시 다시 수정 폼으로 돌아감
+            }
+        } catch (Exception e) {
+            // 예외 처리 및 디버깅용 로그
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "오류가 발생했습니다. 다시 시도해주세요.");
+            return "user/edit"; // 오류 발생 시 수정 페이지로 돌아감
         }
     }
 }

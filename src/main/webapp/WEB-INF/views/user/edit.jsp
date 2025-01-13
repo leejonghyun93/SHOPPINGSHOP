@@ -87,7 +87,7 @@
         <form action="<c:url value='/membership/updateSubmit' />" method="post" id="updateForm">
             <div class="form-group">
                 <label for="userId">아이디</label>
-                <input type="text" id="userId" name="userId" value="${user.userId}" readonly>
+                <input type="text" id="userId" name="userId" value="${userDto.userId}" readonly>
             </div>
             <div class="form-group">
                 <label for="userPwd">비밀번호</label>
@@ -99,32 +99,32 @@
             </div>
             <div class="form-group">
                 <label for="userName">이름</label>
-                <input type="text" id="userName" name="userName" value="${user.userName}" required>
+                <input type="text" id="userName" name="userName" value="${userDto.userName}" required>
             </div>
             <div class="form-group">
                 <label for="userAddress">주소</label>
                 <div style="display: flex; gap: 10px;">
-                    <input type="text" id="userAddress" name="userAddress" value="${user.userAddress}" readonly>
+                    <input type="text" id="userAddress" name="userAddress" value="${userDto.userAddress}" readonly>
                     <button type="button" onclick="execDaumPostcode()">주소 찾기</button>
                 </div>
             </div>
             <div class="form-group">
                 <label for="detailAddress">나머지 주소</label>
-                <input type="text" id="detailAddress" name="detailAddress" value="${user.detailAddress}">
+                <input type="text" id="detailAddress" name="detailAddress" value="${userDto.detailAddress}">
             </div>
             <input type="hidden" id="fullAddress" name="fullAddress">
             <div class="form-group">
                 <label for="userPhone">전화번호</label>
-                <input type="number" id="userPhone" name="userPhone" value="${user.userPhone}" required>
+                <input type="number" id="userPhone" name="userPhone" value="${userDto.userPhone}" required>
             </div>
             <div class="form-group">
                 <label for="userEmail">이메일</label>
-                <input type="email" id="userEmail" name="userEmail" value="${user.userEmail}" required>
+                <input type="email" id="userEmail" name="userEmail" value="${userDto.userEmail}" required>
             </div>
             <button type="submit" class="register-button">회원 수정</button>
         </form>
         <div class="login-link">
-            <p>변경을 취소하려면 <a href="<c:url value='/profile' />">프로필 페이지</a>로 돌아가세요.</p>
+            <p>변경을 취소하려면 <a href="<c:url value='/membership/myPage' />">마이페이지</a>로 돌아가세요.</p>
         </div>
     </div>
 </div>

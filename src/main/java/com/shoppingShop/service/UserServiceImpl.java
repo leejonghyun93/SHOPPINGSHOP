@@ -84,6 +84,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean updateUser(UserDto userDto) {
         try {
+            // 비밀번호가 변경되었을 경우만 암호화 처리
+            if (userDto.getUserPwd() != null && !userDto.getUserPwd().isEmpty()) {
+                System.out.println("평문 비밀번호: " + userDto.getUserPwd());  // 평문 비밀번호
+                String encodedPassword = passwordEncoder.encode(userDto.getUserPwd());  // BCrypt 인코딩
+                System.out.println("암호화된 비밀번호: " + encodedPassword);  // 인코딩된 비밀번호 출력
+
+                userDto.setUserPwd(encodedPassword); // 암호화된 비밀번호 저장
+            }
             userDao.updateUser(userDto);  // 사용자 정보 업데이트
             return true;  // 성공 시 true 반환
         } catch (Exception e) {
