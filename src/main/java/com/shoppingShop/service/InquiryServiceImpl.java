@@ -16,17 +16,18 @@ public class InquiryServiceImpl implements InquiryService {
     private InquiryDao inquiryDao;
 
     @Override
-    public List<InquiryDto> getInquiriesByPage(int page, int pageSize) {
+    public List<InquiryDto> getInquiriesByProductId(int proId, int page, int pageSize) {
         int offset = (page - 1) * pageSize;
-        Map<String, Integer> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
+        params.put("proId", proId);
         params.put("limit", pageSize);
         params.put("offset", offset);
-        return inquiryDao.selectInquiries(params);
+        return inquiryDao.selectInquiriesByProductId(params);
     }
 
     @Override
-    public int getTotalPages(int pageSize) {
-        int totalCount = inquiryDao.getInquiryCount();
+    public int getTotalPagesByProductId(int proId, int pageSize) {
+        int totalCount = inquiryDao.getInquiryCountByProductId(proId);
         return (int) Math.ceil((double) totalCount / pageSize);
     }
 

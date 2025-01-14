@@ -7,9 +7,9 @@ import java.util.Map;
 
 public interface InquiryDao {
 
-    List<InquiryDto> selectInquiries(Map<String, Integer> params);
+    List<InquiryDto> selectInquiriesByProductId(Map<String, Object> params);
 
-    int getInquiryCount();
+    int getInquiryCountByProductId(int proId);
 
     void addInquiry(InquiryDto inquiryDto);
 }

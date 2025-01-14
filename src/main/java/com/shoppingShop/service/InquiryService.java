@@ -6,9 +6,8 @@ import java.util.List;
 
 public interface InquiryService {
 
-    List<InquiryDto> getInquiriesByPage(int page, int pageSize);
-
-    int getTotalPages(int pageSize);
+    List<InquiryDto> getInquiriesByProductId(int proId, int page, int size);
+    int getTotalPagesByProductId(int proId, int size);
 
     void addInquiry(InquiryDto inquiryDto);
 }

@@ -45,14 +45,22 @@ public class ProductReviewController {
         }
     }
     @GetMapping("/getByProductId/{proId}")
-    public List<ProductReviewDto> getReviewsByProductId(@PathVariable("proId") int proId) {
+    public ResponseEntity<List<ProductReviewDto>> getReviewsByProductId(@PathVariable("proId") int proId) {
         System.out.println("Received proId: " + proId);
-        List<ProductReviewDto> reviews = productReviewService.getReviewsByProductId(proId);
-        System.out.println("Fetched reviews: " + reviews);
-        if (reviews == null || reviews.isEmpty()) {
-            System.out.println("No reviews found for proId: " + proId);
-            return new ArrayList<>(); // 빈 리스트 반환
+
+        try {
+            List<ProductReviewDto> reviews = productReviewService.getReviewsByProductId(proId);
+            System.out.println("Fetched reviews: " + reviews);
+
+            // 리뷰가 없을 경우 빈 리스트 반환
+            if (reviews == null || reviews.isEmpty()) {
+                System.out.println("No reviews found for proId: " + proId);
+                return ResponseEntity.ok(new ArrayList<>());
+            }
+            return ResponseEntity.ok(reviews);
+        } catch (Exception e) {
+            System.err.println("Error occurred while fetching reviews: " + e.getMessage());
+            return ResponseEntity.status(500).body(new ArrayList<>());
         }
-        return reviews;
     }
 }

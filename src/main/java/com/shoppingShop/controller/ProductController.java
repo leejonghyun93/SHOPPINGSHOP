@@ -67,8 +67,8 @@ public class ProductController {
         // 모델에 데이터 추가
         model.addAttribute("productDetail", detail);
         model.addAttribute("imagePaths", imagePaths);
-        model.addAttribute("inquiries", inquiryService.getInquiriesByPage(page, size));
-        model.addAttribute("totalPages", inquiryService.getTotalPages(size));
+        model.addAttribute("inquiries", inquiryService.getInquiriesByProductId(proId, page, size));
+        model.addAttribute("totalPages", inquiryService.getTotalPagesByProductId(proId, size));
         model.addAttribute("currentPage", page);
 
         return "product/productDetail";

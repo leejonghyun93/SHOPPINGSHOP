@@ -17,13 +17,13 @@ public class InquiryDaoImpl implements InquiryDao {
     private static final String NAMESPACE = "com.shoppingShop.dao.InquiryDao";
 
     @Override
-    public List<InquiryDto> selectInquiries(Map<String, Integer> params) {
-        return sqlSession.selectList(NAMESPACE + ".selectInquiries", params);
+    public List<InquiryDto> selectInquiriesByProductId(Map<String, Object> params) {
+        return sqlSession.selectList(NAMESPACE + ".selectInquiriesByProductId", params);
     }
 
     @Override
-    public int getInquiryCount() {
-        return sqlSession.selectOne(NAMESPACE + ".getInquiryCount");
+    public int getInquiryCountByProductId(int proId) {
+        return sqlSession.selectOne(NAMESPACE + ".getInquiryCountByProductId", proId);
     }
 
     @Override
