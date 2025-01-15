@@ -27,6 +27,9 @@ public class OrdersController {
     public String checkout(@RequestParam("cartIds") List<Long> cartIds, HttpSession session) {
         String userId = (String) session.getAttribute("userId");
 
+        // cartIds 값 확인
+        System.out.println("주문할 장바구니 ID들: " + cartIds);  // cartIds 값 출력
+
         // 단순히 주문 데이터를 서비스에 넘겨 저장
         ordersService.placeOrder(userId, cartIds);
 

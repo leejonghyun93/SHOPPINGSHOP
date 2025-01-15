@@ -4,11 +4,13 @@ import java.time.LocalDateTime;
 
 public class OrdersDto {
 
-    private int orderId;
+    private Long orderId;
     private Long cartId;
     private String userId;
     private String proName;
     private String proColor;
+
+    private int proId;
     private String proSize;
     private int quantity;
     private int unitPrice;
@@ -20,12 +22,13 @@ public class OrdersDto {
 
     public OrdersDto() {}
 
-    public OrdersDto(int orderId, Long cartId, String userId, String proName, String proColor, String proSize, int quantity, int unitPrice, int shippingFee, int odTotalPrice, String odStatus, LocalDateTime createdAt) {
+    public OrdersDto(Long orderId, Long cartId, String userId, String proName, String proColor, int proId, String proSize, int quantity, int unitPrice, int shippingFee, int odTotalPrice, String odStatus, LocalDateTime createdAt) {
         this.orderId = orderId;
         this.cartId = cartId;
         this.userId = userId;
         this.proName = proName;
         this.proColor = proColor;
+        this.proId = proId;
         this.proSize = proSize;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
@@ -35,11 +38,11 @@ public class OrdersDto {
         this.createdAt = createdAt;
     }
 
-    public int getOrderId() {
+    public Long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(int orderId) {
+    public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
 
@@ -73,6 +76,14 @@ public class OrdersDto {
 
     public void setProColor(String proColor) {
         this.proColor = proColor;
+    }
+
+    public int getProId() {
+        return proId;
+    }
+
+    public void setProId(int proId) {
+        this.proId = proId;
     }
 
     public String getProSize() {
@@ -139,13 +150,14 @@ public class OrdersDto {
                 ", userId='" + userId + '\'' +
                 ", proName='" + proName + '\'' +
                 ", proColor='" + proColor + '\'' +
+                ", proId=" + proId +
                 ", proSize='" + proSize + '\'' +
                 ", quantity=" + quantity +
                 ", unitPrice=" + unitPrice +
                 ", shippingFee=" + shippingFee +
                 ", odTotalPrice=" + odTotalPrice +
                 ", odStatus='" + odStatus + '\'' +
-                ", createdAt='" + createdAt + '\'' +
+                ", createdAt=" + createdAt +
                 '}';
     }
 }

@@ -661,6 +661,7 @@
     const selectedSizeElement = document.getElementById('selectedSize');
     const selectedProductInfo = document.getElementById('selectedProductInfo');
     const totalPriceElement = document.getElementById('totalPrice');
+
     const pricePerItem = ${productDetail.proPrice};
     let selectedColor = '';
     let selectedSize = '';
@@ -703,35 +704,46 @@
             proSize: selectedSize,
             proName: "${productDetail.proName}",
             quantity: 1,
-            totalPrice: "${productDetail.totalPrice}"
+            totalPrice: parseInt(totalPriceElement.textContent) || 0
         };
 
-        fetch('/cart/add', {
+        // 장바구니에 이미 상품이 있는지 확인
+        fetch('/cart/checkCartItem', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(cartData), // JSON 형식으로 변환
+            body: JSON.stringify(cartData) // JSON 형식으로 변환
         })
             .then(response => {
                 if (!response.ok) {
-                    return response.text().then(text => {
-                        throw new Error(text);
+                    return response.json().then(data => {
+                        throw new Error(data.message); // 이미 장바구니에 있는 경우 메시지 추출
                     });
                 }
                 return response.json(); // JSON으로 응답 처리
             })
             .then(data => {
-                console.log('서버 응답:', data);
-                alert(data.message); // 서버가 반환한 메시지 표시
-                window.location.assign('/cart/cart'); // cart.jsp로 이동
+                // 장바구니에 없으면 추가 처리
+                console.log(data.message);  // 장바구니에 추가 가능
+                // 상품을 장바구니에 추가하는 로직을 추가
+                return fetch('/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(cartData) // 장바구니에 상품 추가
+                });
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('장바구니에 상품이 추가되었습니다.');
+                window.location.assign('/cart/cart'); // 장바구니 페이지로 이동
             })
             .catch(error => {
-                console.error('오류:', error.message);
-                alert('오류 발생: ' + error.message);
+                alert(error.message);  // 이미 장바구니에 있을 경우 메시지 출력
             });
     }
-
     // 탭 기능
     function showTab(tabId) {
         // 모든 탭 콘텐츠 숨기기

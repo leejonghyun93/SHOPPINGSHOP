@@ -5,7 +5,9 @@ import com.shoppingShop.dao.OrdersDao;
 import com.shoppingShop.domain.OrdersDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,29 +21,35 @@ public class OrdersServiceImpl implements OrdersService {
     private CartDao cartDao; // CartDao를 사용하여 장바구니 정보 조회
 
     @Override
-    public void placeOrder(String userId, List<Long> cartIds) {
-        // cartIds를 기반으로 장바구니 항목을 조회 (OrdersDto를 사용)
-        List<OrdersDto> cartItems = cartDao.getCartItemsByIds(cartIds);
-
+    @Transactional
+    public void placeOrder(String userId, List<Long> cartIds) {  // cartId -> cartIds
+        List<OrdersDto> cartItems = cartDao.getCartItemsByIds(cartIds);  // cartId -> cartIds
         List<OrdersDto> orders = new ArrayList<>();
 
         for (OrdersDto cartItem : cartItems) {
             OrdersDto order = new OrdersDto();
             order.setUserId(userId);
-            order.setCartId(cartItem.getCartId());
             order.setOdStatus("결제완료");
-            order.setQuantity(cartItem.getQuantity()); // 장바구니에서 가져온 수량
-            order.setUnitPrice(cartItem.getUnitPrice()); // 장바구니에서 가져온 단가
-            order.setShippingFee(cartItem.getShippingFee()); // 장바구니에서 가져온 배송비
+            order.setQuantity(cartItem.getQuantity());
+            order.setUnitPrice(cartItem.getUnitPrice());
+            order.setShippingFee(cartItem.getShippingFee());
             order.setOdTotalPrice(order.getQuantity() * order.getUnitPrice() + order.getShippingFee());
-            orders.add(order);
+            order.setCartId(cartItem.getCartId());
+            order.setProId(cartItem.getProId());
+            order.setCreatedAt(LocalDateTime.now());
+
+            // 주문 DB에 저장
+            try {
+                ordersDao.createOrder(order);
+                System.out.println("주문 저장 후 orderId: " + order.getOrderId()); // 확인용 로그
+            } catch (Exception e) {
+                e.printStackTrace(); // 예외 발생 시 출력
+                throw e; // 예외를 던져서 트랜잭션 롤백
+            }
         }
 
-        // DAO를 통해 주문 저장
-        for (OrdersDto order : orders) {
-            ordersDao.createOrder(order);
-        }
-        cartDao.deleteCartItems(cartIds);
+        // 장바구니 항목 삭제
+        cartDao.deleteCartItems(cartIds);  // cartId -> cartIds
     }
 
     @Override

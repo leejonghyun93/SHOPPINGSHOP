@@ -26,17 +26,25 @@ public class CartServiceImpl implements CartService {
             cartDto.setCartCount(1);  // 기본값 설정
         }
 
-        // 상품 가격을 가져오기 위해 productDto에서 값을 설정 (예: productId로 DB에서 정보 조회)
-        ProductDto productDto = cartDto.getProductDto();  // CartDto에 ProductDto가 포함되어 있다고 가정
+        // 상품이 이미 장바구니에 존재하는지 확인
+        if (cartDao.checkProductInCart(cartDto) > 0) {
+            throw new IllegalArgumentException("이미 장바구니에 존재하는 상품입니다.");
+        }
 
+        // 상품 가격 계산
+        ProductDto productDto = cartDto.getProductDto();
         if (productDto != null) {
-            // 상품 가격 계산
             int totalPrice = cartDto.getCartCount() * productDto.getProPrice();
             cartDto.setTotalPrice(totalPrice);
         }
 
-        // DB에 삽입하는 로직
+        // DB에 삽입
         cartDao.insertCart(cartDto);
+    }
+    @Override
+    public boolean isItemInCart(CartDto cartDto) {
+        // CartDao에서 상품이 이미 장바구니에 존재하는지 확인하는 로직 추가
+        return cartDao.existsByUserIdAndProductId(cartDto.getUserId(), cartDto.getProId());
     }
 
     @Override

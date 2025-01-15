@@ -29,16 +29,31 @@ public class CartDaoImpl implements CartDao {
     }
 
     @Override
+    public int checkProductInCart(CartDto cartDto) {
+        return sqlSession.selectOne(NAMESPACE + "checkProductInCart", cartDto);
+    }
+
+    @Override
     public int deleteCart(Long cartId) {
         return sqlSession.delete(NAMESPACE + "deleteCart", cartId);
     }
+    @Override
+    public boolean existsByUserIdAndProductId(String userId, int proId) {
+        // userId와 proId를 파라미터로 넘겨서 쿼리 실행
+        int count = sqlSession.selectOne(NAMESPACE + "existsByUserIdAndProductId", new HashMap<String, Object>() {{
+            put("userId", userId);
+            put("proId", proId);
+        }});
 
+        return count > 0;  // 존재하면 true, 존재하지 않으면 false
+    }
     @Override
     public List<OrdersDto> getCartItemsByIds(List<Long> cartIds) {
         Map<String, Object> params = new HashMap<>();
         params.put("cartIds", cartIds);
         return sqlSession.selectList(NAMESPACE + "getCartItemsByIds", params);
     }
+
 
     @Override
     public int deleteCartItems(List<Long> cartIds) {

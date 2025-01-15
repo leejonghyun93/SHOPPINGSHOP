@@ -38,29 +38,52 @@ public class CartController {
     @PostMapping("/add")
     public ResponseEntity<Map<String, Object>> addToCart(@RequestBody CartDto cartDto, HttpSession session) {
         String userId = (String) session.getAttribute("userId");
+        Map<String, Object> response = new HashMap<>();
 
         if (userId == null) {
-            Map<String, Object> response = new HashMap<>();
             response.put("message", "로그인이 필요합니다.");
             return ResponseEntity.status(401).body(response);
         }
 
-        // 사용자 ID 추가
         cartDto.setUserId(userId);
-        // 장바구니 서비스에 상품 추가
-        cartService.addCart(cartDto);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "장바구니에 상품이 추가되었습니다.");
-        response.put("cart", cartDto); // 추가된 데이터 반환
-        return ResponseEntity.ok(response);
+        try {
+            cartService.addCart(cartDto);
+            response.put("message", "장바구니에 상품이 추가되었습니다.");
+            response.put("cart", cartDto);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(400).body(response);
+        }
     }
+    @PostMapping("/checkCartItem")
+    public ResponseEntity<Map<String, Object>> checkCartItem(@RequestBody CartDto cartDto, HttpSession session) {
+        String userId = (String) session.getAttribute("userId");
+        Map<String, Object> response = new HashMap<>();
 
+        if (userId == null) {
+            response.put("message", "로그인이 필요합니다.");
+            return ResponseEntity.status(401).body(response);
+        }
+
+        cartDto.setUserId(userId);
+
+        boolean isExist = cartService.isItemInCart(cartDto);
+
+        if (isExist) {
+            response.put("message", "이미 장바구니에 추가된 상품입니다.");
+            return ResponseEntity.status(409).body(response); // 409 Conflict
+        } else {
+            response.put("message", "장바구니에 상품을 추가할 수 있습니다.");
+            return ResponseEntity.ok(response);
+        }
+    }
     // 장바구니에서 상품 삭제
-    @DeleteMapping("/remove/{cartId}")
-    public ResponseEntity<Map<String, Object>> removeFromCart(@PathVariable Long cartId) {
+    @PostMapping ("/delete/{cartId}")
+    public String deleteCartItem(@PathVariable Long cartId) {
         cartService.removeCart(cartId);
-        return ResponseEntity.ok(Map.of("message", "장바구니에서 상품이 삭제되었습니다."));
+        return "redirect:/cart/cart"; // 장바구니 페이지로 리다이렉트
     }
 }
 

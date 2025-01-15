@@ -12,6 +12,9 @@ public interface CartService {
     // 장바구니에 상품 추가
     void addCart(CartDto cartDto); // 장바구니에 상품 추가
 
+    boolean isItemInCart(CartDto cartDto);
+
     // 장바구니에서 상품 삭제
     void removeCart(Long cartId);
+
 }

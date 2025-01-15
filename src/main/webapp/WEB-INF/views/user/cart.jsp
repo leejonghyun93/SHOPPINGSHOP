@@ -100,7 +100,6 @@
             text-align: center;
             font-size: 18px;
             color: #ff0000;
-            margin-top: 20px;
         }
     </style>
     <script>
@@ -116,10 +115,12 @@
             checkboxes.forEach(checkbox => {
                 const input = document.createElement('input');
                 input.type = 'hidden';
-                input.name = 'cartIds';
+                input.name = 'cartIds';  // 이름을 'cartIds'로 수정
                 input.value = checkbox.value;
                 form.appendChild(input);
             });
+
+            console.log("전송되는 cartIds: ", Array.from(form.elements).filter(e => e.name === 'cartIds').map(e => e.value)); // 전달되는 cartIds 로그 추가
 
             form.submit();
         }
@@ -131,9 +132,9 @@
 <div class="content">
     <!-- 로그인 여부 확인 후 메시지 출력 -->
     <c:if test="${empty cartItems}">
-        <div class="empty-cart-message">
-            장바구니에 아무 상품이 없습니다. 로그인하여 사용 해주세요.
-        </div>
+        <a class="empty-cart-message">
+            장바구니에 아무 상품이 없습니다.
+        </a>
     </c:if>
 
     <!-- 상품 상세 -->

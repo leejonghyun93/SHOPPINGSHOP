@@ -4,9 +4,9 @@
 
 <mapper namespace="com.shoppingShop.dao.OrdersDao">
 
-    <insert id="createOrder" parameterType="com.shoppingShop.domain.OrdersDto">
-        INSERT INTO orders (user_id, cart_id, od_status, quantity, unit_price, shipping_fee, od_total_price, created_at)
-        VALUES (#{userId}, #{cartId}, #{odStatus}, #{quantity}, #{unitPrice}, #{shippingFee}, #{odTotalPrice}, NOW());
+    <insert id="createOrder" useGeneratedKeys="true" keyProperty="orderId">
+        INSERT INTO orders (user_id, od_status, od_total_price, created_at, cart_id, pro_id, quantity, shipping_fee, unit_price)
+        VALUES (#{userId}, #{odStatus}, #{odTotalPrice}, NOW(), #{cartId}, #{proId}, #{quantity}, #{shippingFee}, #{unitPrice})
     </insert>
 
     <select id="getOrderHistoryByUserId" parameterType="string" resultType="com.shoppingShop.domain.OrdersDto">

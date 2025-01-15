@@ -12,11 +12,16 @@ public interface CartDao {
     // 장바구니에 상품 추가
     int insertCart(CartDto cartDto);
 
+    int checkProductInCart(CartDto cartDto);
+
     // 개별 장바구니 항목 삭제
     int deleteCart(Long cartId);
 
+    boolean existsByUserIdAndProductId(String userId, int proId);
+
     // 장바구니 ID 목록으로 상품 조회
     List<OrdersDto> getCartItemsByIds(List<Long> cartIds);
+
 
     // 여러 장바구니 항목 삭제
     int deleteCartItems(List<Long> cartIds);

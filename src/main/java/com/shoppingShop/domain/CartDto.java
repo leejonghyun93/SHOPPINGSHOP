@@ -9,7 +9,7 @@ public class CartDto {
     private Long cartId;
     private String userId;
 
-    private Long proId;
+    private int proId;
     private Integer cartCount;
     private String imageUrl;
     private String productInfo;
@@ -24,7 +24,7 @@ public class CartDto {
     public CartDto() {}
     @JsonCreator
     public CartDto(
-            @JsonProperty("proId") Long proId,
+            @JsonProperty("proId") int proId,
             @JsonProperty("proColor") String proColor,
             @JsonProperty("proSize") String proSize,
             @JsonProperty("quantity") int quantity,
@@ -53,11 +53,11 @@ public class CartDto {
         this.userId = userId;
     }
 
-    public Long getProId() {
+    public int getProId() {
         return proId;
     }
 
-    public void setProId(Long proId) {
+    public void setProId(int proId) {
         this.proId = proId;
     }
 

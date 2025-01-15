@@ -55,4 +55,20 @@
             #{cartId}
         </foreach>
     </delete>
+
+    <select id="checkProductInCart" parameterType="com.shoppingShop.domain.CartDto" resultType="int">
+        SELECT COUNT(*)
+        FROM cart
+        WHERE user_id = #{userId}
+          AND pro_id = #{proId}
+          AND pro_color = #{proColor}
+          AND pro_size = #{proSize}
+    </select>
+
+    <select id="existsByUserIdAndProductId" resultType="int">
+        SELECT COUNT(*)
+        FROM cart
+        WHERE user_id = #{userId}
+          AND pro_id = #{proId}
+    </select>
 </mapper>
