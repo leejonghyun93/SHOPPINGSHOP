@@ -2,9 +2,10 @@
 <%@ page session="false"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<c:set var="loginId" value="${pageContext.request.getSession(false)==null ? '' : pageContext.request.session.getAttribute('userId')}"/>
+<c:set var="loginId" value="${pageContext.request.getSession(false) == null ? '' : pageContext.request.session.getAttribute('userId')}"/>
 <c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : ''}" />
 <c:set var="logout" value="${loginId == '' ? 'Login' : loginId}" />
+
 <html>
 <head>
     <title>장바구니</title>
@@ -100,28 +101,36 @@
             text-align: center;
             font-size: 18px;
             color: #ff0000;
-            margin-top: 20px;
         }
     </style>
     <script>
         function submitSelected() {
-            const form = document.getElementById('checkoutForm');
             const checkboxes = document.querySelectorAll('input[name="selectedItems"]:checked');
-
             if (checkboxes.length === 0) {
                 alert('결제할 상품을 선택하세요.');
                 return;
             }
 
-            checkboxes.forEach(checkbox => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'cartIds';
-                input.value = checkbox.value;
-                form.appendChild(input);
-            });
+            // 선택된 항목의 cartId를 배열로 만들기
+            const cartIds = Array.from(checkboxes).map(checkbox => checkbox.value);
 
-            form.submit();
+            // AJAX 요청을 통해 서버에 데이터 전송
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/orders/checkout', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');  // JSON 형태로 데이터 전송
+
+            // 서버 응답 처리
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    // 성공 시 페이지 리다이렉트 (주문 완료 페이지 등)
+                    window.location.href = '/orders/history';
+                } else {
+                    alert('주문 처리에 실패했습니다. 다시 시도해 주세요.');
+                }
+            };
+
+            // JSON 데이터 전송
+            xhr.send(JSON.stringify({ cartIds: cartIds }));
         }
     </script>
 </head>
@@ -131,9 +140,9 @@
 <div class="content">
     <!-- 로그인 여부 확인 후 메시지 출력 -->
     <c:if test="${empty cartItems}">
-        <div class="empty-cart-message">
-            장바구니에 아무 상품이 없습니다. 로그인하여 사용 해주세요.
-        </div>
+        <a class="empty-cart-message">
+            장바구니에 아무 상품이 없습니다.
+        </a>
     </c:if>
 
     <!-- 상품 상세 -->

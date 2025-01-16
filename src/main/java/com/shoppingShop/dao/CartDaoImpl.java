@@ -51,7 +51,14 @@ public class CartDaoImpl implements CartDao {
     public List<OrdersDto> getCartItemsByIds(List<Long> cartIds) {
         Map<String, Object> params = new HashMap<>();
         params.put("cartIds", cartIds);
-        return sqlSession.selectList(NAMESPACE + "getCartItemsByIds", params);
+
+        // MyBatis로부터 반환된 데이터
+        List<OrdersDto> cartItems = sqlSession.selectList(NAMESPACE + "getCartItemsByIds", params);
+
+        // 데이터 확인용 로그 출력
+        System.out.println("장바구니 항목: " + cartItems);
+
+        return cartItems;
     }
 
 

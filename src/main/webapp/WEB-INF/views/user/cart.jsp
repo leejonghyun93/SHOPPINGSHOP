@@ -2,9 +2,10 @@
 <%@ page session="false"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<c:set var="loginId" value="${pageContext.request.getSession(false)==null ? '' : pageContext.request.session.getAttribute('userId')}"/>
+<c:set var="loginId" value="${pageContext.request.getSession(false) == null ? '' : pageContext.request.session.getAttribute('userId')}"/>
 <c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : ''}" />
 <c:set var="logout" value="${loginId == '' ? 'Login' : loginId}" />
+
 <html>
 <head>
     <title>장바구니</title>
@@ -104,25 +105,32 @@
     </style>
     <script>
         function submitSelected() {
-            const form = document.getElementById('checkoutForm');
             const checkboxes = document.querySelectorAll('input[name="selectedItems"]:checked');
-
             if (checkboxes.length === 0) {
                 alert('결제할 상품을 선택하세요.');
                 return;
             }
 
-            checkboxes.forEach(checkbox => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'cartIds';  // 이름을 'cartIds'로 수정
-                input.value = checkbox.value;
-                form.appendChild(input);
-            });
+            // 선택된 항목의 cartId를 배열로 만들기
+            const cartIds = Array.from(checkboxes).map(checkbox => checkbox.value);
 
-            console.log("전송되는 cartIds: ", Array.from(form.elements).filter(e => e.name === 'cartIds').map(e => e.value)); // 전달되는 cartIds 로그 추가
+            // AJAX 요청을 통해 서버에 데이터 전송
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/orders/checkout', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');  // JSON 형태로 데이터 전송
 
-            form.submit();
+            // 서버 응답 처리
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    // 성공 시 페이지 리다이렉트 (주문 완료 페이지 등)
+                    window.location.href = '/orders/history';
+                } else {
+                    alert('주문 처리에 실패했습니다. 다시 시도해 주세요.');
+                }
+            };
+
+            // JSON 데이터 전송
+            xhr.send(JSON.stringify({ cartIds: cartIds }));
         }
     </script>
 </head>

@@ -3,12 +3,11 @@ package com.shoppingShop.controller;
 import com.shoppingShop.domain.OrdersDto;
 import com.shoppingShop.service.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -24,17 +23,30 @@ public class OrdersController {
     private OrdersService ordersService;
 
     @PostMapping("/checkout")
-    public String checkout(@RequestParam("cartIds") List<Long> cartIds, HttpSession session) {
+    @ResponseBody
+    public ResponseEntity<String> checkout(@RequestBody Map<String, List<Long>> payload, HttpSession session) {
+        // 세션에서 userId를 가져옵니다.
         String userId = (String) session.getAttribute("userId");
 
-        // cartIds 값 확인
-        System.out.println("주문할 장바구니 ID들: " + cartIds);  // cartIds 값 출력
+        // 세션에 userId가 없으면 주문을 처리할 수 없으므로 400 오류를 반환합니다.
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 상태가 아닙니다.");
+        }
 
-        // 단순히 주문 데이터를 서비스에 넘겨 저장
-        ordersService.placeOrder(userId, cartIds);
+        List<Long> cartIds = payload.get("cartIds");
 
-        // 주문 완료 후 주문 내역 페이지로 리다이렉트
-        return "redirect:/orders/history";
+        // cartIds가 비어있지 않다면 주문을 처리
+        if (cartIds != null && !cartIds.isEmpty()) {
+            try {
+                // 주문 처리 메서드 호출, userId와 cartIds를 함께 전달
+                ordersService.placeOrder(userId, cartIds);
+                return ResponseEntity.ok("주문이 완료되었습니다.");
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("주문 처리에 실패했습니다.");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("선택된 상품이 없습니다.");
+        }
     }
 
     @GetMapping("/history")

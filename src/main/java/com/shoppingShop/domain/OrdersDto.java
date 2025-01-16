@@ -12,7 +12,7 @@ public class OrdersDto {
 
     private int proId;
     private String proSize;
-    private int quantity;
+    private Integer quantity;
     private int unitPrice;
     private int shippingFee;
     private int odTotalPrice;
@@ -22,7 +22,7 @@ public class OrdersDto {
 
     public OrdersDto() {}
 
-    public OrdersDto(Long orderId, Long cartId, String userId, String proName, String proColor, int proId, String proSize, int quantity, int unitPrice, int shippingFee, int odTotalPrice, String odStatus, LocalDateTime createdAt) {
+    public OrdersDto(Long orderId, Long cartId, String userId, String proName, String proColor, int proId, String proSize, Integer quantity, int unitPrice, int shippingFee, int odTotalPrice, String odStatus, LocalDateTime createdAt) {
         this.orderId = orderId;
         this.cartId = cartId;
         this.userId = userId;
@@ -94,11 +94,11 @@ public class OrdersDto {
         this.proSize = proSize;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 

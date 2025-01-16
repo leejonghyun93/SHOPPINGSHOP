@@ -32,13 +32,14 @@
 
     <!-- 장바구니 ID 목록으로 상품 조회 -->
     <select id="getCartItemsByIds" resultType="com.shoppingShop.domain.OrdersDto">
-        SELECT cart_id, pro_name, pro_color, pro_size, cart_count AS quantity, total_price AS unit_price
+        SELECT *
         FROM cart
         WHERE cart_id IN
-        <foreach item="cartId" collection="cartIds" open="(" separator="," close=")">
+        <foreach collection="cartIds" item="cartId" open="(" separator="," close=")">
             #{cartId}
         </foreach>
     </select>
+
     <delete id="deleteDeliveryByCartIds" parameterType="map">
         DELETE FROM delivery
         WHERE order_id IN
@@ -55,4 +56,20 @@
             #{cartId}
         </foreach>
     </delete>
+
+    <select id="checkProductInCart" parameterType="com.shoppingShop.domain.CartDto" resultType="int">
+        SELECT COUNT(*)
+        FROM cart
+        WHERE user_id = #{userId}
+          AND pro_id = #{proId}
+          AND pro_color = #{proColor}
+          AND pro_size = #{proSize}
+    </select>
+
+    <select id="existsByUserIdAndProductId" resultType="int">
+        SELECT COUNT(*)
+        FROM cart
+        WHERE user_id = #{userId}
+          AND pro_id = #{proId}
+    </select>
 </mapper>
