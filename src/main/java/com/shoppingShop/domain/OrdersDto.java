@@ -15,14 +15,14 @@ public class OrdersDto {
     private Integer quantity;
     private int unitPrice;
     private int shippingFee;
-    private int odTotalPrice;
+    private Integer totalPrice;
     private String odStatus;
 
     private LocalDateTime createdAt;
 
     public OrdersDto() {}
 
-    public OrdersDto(Long orderId, Long cartId, String userId, String proName, String proColor, int proId, String proSize, Integer quantity, int unitPrice, int shippingFee, int odTotalPrice, String odStatus, LocalDateTime createdAt) {
+    public OrdersDto(Long orderId, Long cartId, String userId, String proName, String proColor, int proId, String proSize, Integer quantity, int unitPrice, int shippingFee, Integer totalPrice, String odStatus, LocalDateTime createdAt) {
         this.orderId = orderId;
         this.cartId = cartId;
         this.userId = userId;
@@ -33,7 +33,7 @@ public class OrdersDto {
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.shippingFee = shippingFee;
-        this.odTotalPrice = odTotalPrice;
+        this.totalPrice = totalPrice;
         this.odStatus = odStatus;
         this.createdAt = createdAt;
     }
@@ -118,12 +118,12 @@ public class OrdersDto {
         this.shippingFee = shippingFee;
     }
 
-    public int getOdTotalPrice() {
-        return odTotalPrice;
+    public Integer getTotalPrice() {
+        return totalPrice;
     }
 
-    public void setOdTotalPrice(int odTotalPrice) {
-        this.odTotalPrice = odTotalPrice;
+    public void setTotalPrice(Integer totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     public String getOdStatus() {
@@ -155,7 +155,7 @@ public class OrdersDto {
                 ", quantity=" + quantity +
                 ", unitPrice=" + unitPrice +
                 ", shippingFee=" + shippingFee +
-                ", odTotalPrice=" + odTotalPrice +
+                ", totalPrice=" + totalPrice +
                 ", odStatus='" + odStatus + '\'' +
                 ", createdAt=" + createdAt +
                 '}';

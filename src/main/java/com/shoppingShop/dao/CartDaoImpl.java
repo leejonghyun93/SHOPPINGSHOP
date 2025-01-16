@@ -85,4 +85,14 @@ public class CartDaoImpl implements CartDao {
         // 그 후 orders 테이블에서 데이터를 삭제
         return sqlSession.delete(NAMESPACE + "deleteOrdersByCartIds", params);
     }
+
+    @Override
+    public void clearCartByUserId(String userId) {
+        // MyBatis에 전달할 파라미터 준비
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+
+        // 그 후 cart 테이블에서 userId와 연관된 데이터를 삭제
+        sqlSession.delete(NAMESPACE + "clearCartByUserId", params);
+    }
 }

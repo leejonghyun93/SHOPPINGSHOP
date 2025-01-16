@@ -28,4 +28,6 @@ public interface CartDao {
 
     // 장바구니 항목에 해당하는 주문 삭제
     int deleteOrdersByCartIds(List<Long> cartIds);
+
+    void clearCartByUserId(String userId);
 }

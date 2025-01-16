@@ -38,35 +38,11 @@
             margin: 10px 0;
         }
 
-        .order-summary {
-            margin-top: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            width: 80%;
-            background-color: #f9f9f9;
-        }
-
-        .order-summary table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .order-summary th, .order-summary td {
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #ddd;
-            font-size: 16px;
-        }
-
-        .order-summary th {
-            background-color: #007bff;
-            color: white;
-            font-weight: bold;
-        }
-
         .action-buttons {
             margin-top: 30px;
+            display: flex;
+            justify-content: center; /* 버튼을 가로로 가운데 배치 */
+            width: 100%; /* 부모 컨테이너의 전체 너비 사용 */
         }
 
         .action-buttons button {
@@ -89,30 +65,7 @@
 <%@ include file="/WEB-INF/views/layout/categoryBar/categoryBar.jsp" %>
 <div class="content">
     <h1>주문이 완료되었습니다!</h1>
-    <p>주문 내역은 아래를 참고하세요.</p>
-    <div class="order-summary">
-        <table>
-            <thead>
-            <tr>
-                <th>상품명</th>
-                <th>색상</th>
-                <th>사이즈</th>
-                <th>수량</th>
-                <th>총 가격</th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:forEach var="orderItem" items="${orderHistory}">
-                <tr>
-                    <td>${orderItem.proName}</td>
-                    <td>${orderItem.proColor}</td>
-                    <td>${orderItem.proSize}</td>
-                    <td>${orderItem.quantity}</td>
-                    <td>${orderItem.odTotalPrice}</td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
+    <p>주문 내역은 마이페이지에서 확인하세요.</p>
     </div>
     <div class="action-buttons">
         <button onclick="location.href='/'">홈으로</button>

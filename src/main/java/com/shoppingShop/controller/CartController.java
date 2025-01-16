@@ -85,6 +85,19 @@ public class CartController {
         cartService.removeCart(cartId);
         return "redirect:/cart/cart"; // 장바구니 페이지로 리다이렉트
     }
+
+    @PostMapping("/clearCart")
+    public String deleteAllCart(HttpSession session) {
+        String userId = (String) session.getAttribute("userId");
+
+        if (userId == null) {
+            return "redirect:/login/login"; // 로그인 페이지로 리다이렉트
+        }
+
+        cartService.clearCartByUserId(userId);
+        return "redirect:/cart/cart"; // 장바구니 페이지로 리다이렉트
+    }
+
 }
 
 

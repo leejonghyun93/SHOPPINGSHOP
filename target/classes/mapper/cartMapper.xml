@@ -72,4 +72,8 @@
         WHERE user_id = #{userId}
           AND pro_id = #{proId}
     </select>
+
+    <delete id="clearCartByUserId">
+        DELETE FROM cart WHERE user_id = #{userId}
+    </delete>
 </mapper>

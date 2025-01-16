@@ -27,7 +27,6 @@ public class OrdersServiceImpl implements OrdersService {
      * @param cartIds 장바구니 항목 ID 목록
      */
     @Override
-    @Transactional
     public void placeOrder(String userId, List<Long> cartIds) {
         // 1. 장바구니 항목 조회
         List<OrdersDto> cartItems = cartDao.getCartItemsByIds(cartIds);
@@ -42,9 +41,9 @@ public class OrdersServiceImpl implements OrdersService {
             order.setUserId(userId);
             order.setOdStatus("결제완료");
             order.setQuantity(1); // 수량 기본값 설정
-            order.setUnitPrice(cartItem.getUnitPrice());
+            order.setUnitPrice(cartItem.getTotalPrice());
             order.setShippingFee(cartItem.getShippingFee());
-            order.setOdTotalPrice(order.getQuantity() * order.getUnitPrice() + order.getShippingFee());
+            order.setTotalPrice(order.getQuantity() * order.getUnitPrice() + order.getShippingFee());
             order.setCartId(cartItem.getCartId());
             order.setProId(cartItem.getProId());
             order.setCreatedAt(LocalDateTime.now());
@@ -62,35 +61,13 @@ public class OrdersServiceImpl implements OrdersService {
             } catch (Exception e) {
                 System.err.println("Error inserting order for Cart Item ID: " + cartItem.getCartId() + ". " + e.getMessage());
                 e.printStackTrace();
+                throw e; // 주문 생성 실패 시 롤백
             }
         }
 
-        // 3. 장바구니 항목 삭제
-        try {
-            deleteCartItemsAfterOrder(cartIds);
-        } catch (Exception e) {
-            System.err.println("Error during cart item deletion: " + e.getMessage());
-            e.printStackTrace();
-        }
     }
 
 
-    /**
-     * 주문 생성 후 장바구니 항목 삭제 (별도의 트랜잭션에서 처리)
-     *
-     * @param cartIds 장바구니 항목 ID 목록
-     */
-    @Transactional(propagation = Propagation.REQUIRES_NEW)  // 새로운 트랜잭션에서 실행
-    public void deleteCartItemsAfterOrder(List<Long> cartIds) {
-        try {
-            cartDao.deleteCartItems(cartIds);
-            System.out.println("Cart items deleted successfully.");
-        } catch (Exception e) {
-            System.err.println("Error deleting cart items: " + e.getMessage());
-            e.printStackTrace();
-            throw e; // 트랜잭션 롤백을 위해 예외 다시 던짐
-        }
-    }
 
     @Override
     public List<OrdersDto> getOrderHistory(String userId) {

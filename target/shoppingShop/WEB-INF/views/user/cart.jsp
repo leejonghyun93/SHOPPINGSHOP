@@ -98,9 +98,10 @@
         }
 
         .empty-cart-message {
-            text-align: center;
+            text-align: center; /* 텍스트 중앙 정렬 */
             font-size: 18px;
             color: #ff0000;
+            margin: auto; /* 가로로 중앙 정렬 */
         }
     </style>
     <script>
@@ -180,7 +181,7 @@
         </table>
 
         <div class="action-buttons">
-            <form action="/clearCart" method="post">
+            <form action="/cart/clearCart" method="post">
                 <button type="submit">장바구니 비우기</button>
             </form>
             <form id="checkoutForm" action="/orders/checkout" method="post">

@@ -51,4 +51,9 @@ public class CartServiceImpl implements CartService {
     public void removeCart(Long cartId) {
         cartDao.deleteCart(cartId);
     }
+
+    @Override
+    public void clearCartByUserId(String userId) {
+        cartDao.clearCartByUserId(userId);
+    }
 }
