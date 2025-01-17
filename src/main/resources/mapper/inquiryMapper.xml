@@ -28,7 +28,7 @@
 
     <!-- 문의 등록 -->
     <insert id="addInquiry" parameterType="com.shoppingShop.domain.InquiryDto">
-        INSERT INTO product_inquiry (pro_id, content, created_at)
-        VALUES (#{proId}, #{content}, NOW())
+        INSERT INTO product_inquiry (user_id, pro_id, content, created_at)
+        VALUES (#{userId}, #{proId}, #{content}, NOW())
     </insert>
 </mapper>

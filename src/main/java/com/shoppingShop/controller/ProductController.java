@@ -1,5 +1,6 @@
 package com.shoppingShop.controller;
 
+import com.shoppingShop.domain.InquiryDto;
 import com.shoppingShop.domain.ProductDto;
 import com.shoppingShop.service.CartService;
 import com.shoppingShop.service.InquiryService;
@@ -8,15 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/product")
@@ -82,5 +83,45 @@ public class ProductController {
             return ResponseEntity.notFound().build();  // 404 응답으로 변경
         }
         return ResponseEntity.ok(product);  // 정상적으로 상품 정보를 반환
+    }
+    @PostMapping("/inquiry/write")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> writeInquiry(
+            @RequestParam("proId") int proId,
+            @RequestBody InquiryDto inquiryDto,
+            HttpSession session) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // 디버깅: proId 확인
+            System.out.println("Received proId: " + proId);
+            System.out.println("Received InquiryDto: " + inquiryDto);
+
+            // 세션에서 userId 가져오기
+            String userId = (String) session.getAttribute("userId");
+            if (userId == null || userId.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "로그인이 필요합니다.");
+                return ResponseEntity.status(401).body(response);
+            }
+
+            // userId와 proId 설정
+            inquiryDto.setUserId(userId);
+            inquiryDto.setProId(proId);
+
+            // Inquiry 저장
+            inquiryService.addInquiry(inquiryDto);
+
+            response.put("success", true);
+            response.put("inquiryId", inquiryDto.getInquiryId());
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", "문의 등록 중 오류가 발생했습니다.");
+            return ResponseEntity.status(500).body(response);
+        }
     }
 }

@@ -465,6 +465,131 @@
         #guide{
             text-align: center;
         }
+        /* 모달 배경 */
+        /* 글쓰기 버튼 */
+        .write-btn {
+            background-color: #4CAF50; /* 초록색 버튼 */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .write-btn:hover {
+            background-color: #45a049;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .write-btn:active {
+            background-color: #3e8e41;
+            box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
+            transform: translateY(1px);
+        }
+
+        /* 모달 배경 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background: rgba(0, 0, 0, 0.7); /* 배경 투명도 증가 */
+            backdrop-filter: blur(5px); /* 배경 흐림 효과 */
+        }
+
+        /* 모달 컨텐츠 */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border: none;
+            width: 40%;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        /* 모달 애니메이션 */
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* 닫기 버튼 */
+        .close-btn {
+            color: #666;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #000;
+        }
+
+        /* 입력 필드 */
+        #writeForm input[type="text"],
+        #writeForm textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        #writeForm input[type="text"]:focus,
+        #writeForm textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        /* 등록 버튼 */
+        #writeForm button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        #writeForm button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        #writeForm button[type="submit"]:active {
+            background-color: #3e8e41;
+            transform: scale(0.98);
+        }
+
+        /* 모달 제목 스타일 */
+        .modal-content h2 {
+            text-align: center;
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
     </style>
 </head>
 
@@ -641,6 +766,26 @@
             <c:if test="${currentPage < totalPages}">
                 <a href="?page=${currentPage + 1}">▶</a>
             </c:if>
+        </div>
+
+        <!-- 글쓰기 버튼 -->
+        <button id="write-btn" class="write-btn">글쓰기</button>
+
+        <!-- 글쓰기 모달 -->
+        <div id="write-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2>문의 글쓰기</h2>
+                <form id="writeForm">
+                    <label for="title">제목</label>
+                    <input type="text" id="title" name="title" required>
+
+                    <label for="content">내용</label>
+                    <textarea id="content" name="content" rows="5" required></textarea>
+
+                    <button type="submit">등록</button>
+                </form>
+            </div>
         </div>
     </div>
     <script src="pagination.js"></script>
@@ -926,7 +1071,7 @@
         getProductIdFromBackend();
     });
 
-    //************************************************************//
+    //**************************상품문의**********************************//
     $(document).ready(function () {
         // 페이지네이션 클릭 이벤트 처리
         $('#inquiry-pagination').on('click', '.page-link', function (e) {
@@ -991,7 +1136,72 @@
 
             $pagination.html(paginationHtml); // 페이지네이션 출력
         }
+
+        // 모달 관련 코드
+        const writeBtn = document.getElementById('write-btn');
+        const modal = document.getElementById('write-modal');
+        const closeBtn = document.querySelector('.close-btn');
+        const writeForm = document.getElementById('writeForm');
+
+        // 상품 번호 가져오기
+        const proId = writeBtn.getAttribute('data-pro-id');
+
+        // 모달 열기
+        writeBtn.addEventListener('click', () => {
+            modal.style.display = 'block';
+        });
+
+        // 모달 닫기
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        // 모달 외부 클릭 시 닫기
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // 글쓰기 폼 제출
+        writeForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+
+            // 비동기 요청
+            fetch(`/product/inquiry/write?proId=${proId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title,
+                    content,
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        alert('문의가 등록되었습니다.');
+                        modal.style.display = 'none';
+
+                        // 글 등록 후 새로고침 없이 새 글을 목록에 추가
+                        // 여기서 페이지를 새로 로드하여 글을 목록에 반영
+                        const currentPage = 1;  // 원하는 페이지로 설정 (예: 글쓰기 후 1페이지로 돌아가기)
+                        loadInquiryList(currentPage); // 새로 등록된 글을 포함한 목록을 다시 로드
+                    } else {
+                        alert('등록에 실패했습니다.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('오류가 발생했습니다.');
+                });
+        });
     });
+
 
 </script>
 </body>

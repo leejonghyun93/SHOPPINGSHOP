@@ -122,7 +122,7 @@
                                 <td>${order.proColor}</td>
                                 <td>${order.proSize}</td>
                                 <td>${order.quantity}</td>
-                                <td>${order.odTotalPrice}</td>
+                                <td>${order.totalPrice}</td>
                             </tr>
                         </c:forEach>
                         </tbody>

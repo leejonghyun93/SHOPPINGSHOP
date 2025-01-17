@@ -33,6 +33,7 @@ public class InquiryServiceImpl implements InquiryService {
 
     @Override
     public void addInquiry(InquiryDto inquiryDto) {
+        System.out.println("Saving Inquiry: " + inquiryDto);
         inquiryDao.addInquiry(inquiryDto);
     }
 }

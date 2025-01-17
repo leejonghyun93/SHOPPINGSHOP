@@ -11,6 +11,8 @@ public class InquiryDto {
     private String author;
     private LocalDateTime createdAt;
 
+    private String userId;
+
     // Getters and Setters
 
     public int getInquiryId() {
@@ -59,5 +61,28 @@ public class InquiryDto {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+
+
+    @Override
+    public String toString() {
+        return "InquiryDto{" +
+                "inquiryId=" + inquiryId +
+                ", proId=" + proId +
+                ", content='" + content + '\'' +
+                ", userName='" + userName + '\'' +
+                ", author='" + author + '\'' +
+                ", createdAt=" + createdAt +
+                ", userId='" + userId + '\'' +
+                '}';
     }
 }
