@@ -462,9 +462,11 @@
             color: #fff; /* 마우스 오버 시 글씨 색 */
             border-color: #0056b3; /* 마우스 오버 시 테두리 색 */
         }
-        #guide{
+
+        #guide {
             text-align: center;
         }
+
         /* 모달 배경 */
         /* 글쓰기 버튼 */
         .write-btn {
@@ -747,7 +749,11 @@
                 <c:forEach var="inquiry" items="${inquiries}">
                     <tr>
                         <td>${inquiry.inquiryId}</td>
-                        <td>${inquiry.content}</td>
+                        <td>
+                             <span class="inquiry-title" data-inquiry-id="${inquiry.inquiryId}">
+                              ${inquiry.content}
+                             </span>
+                        </td>
                         <td>${inquiry.author}</td>
                     </tr>
                 </c:forEach>
@@ -785,6 +791,17 @@
 
                     <button type="submit">등록</button>
                 </form>
+            </div>
+        </div>
+
+        <!-- 상세보기 모달 -->
+        <div id="detail-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-detail-btn">&times;</span>
+                <h2>문의 상세보기</h2>
+                <div id="detail-content">
+                    <!-- 제목, 내용, 작성자, 등록일 등을 표시 -->
+                </div>
             </div>
         </div>
     </div>
@@ -889,6 +906,7 @@
                 alert(error.message);  // 이미 장바구니에 있을 경우 메시지 출력
             });
     }
+
     // 탭 기능
     function showTab(tabId) {
         // 모든 탭 콘텐츠 숨기기
@@ -1201,7 +1219,99 @@
                 });
         });
     });
+    $(document).ready(function () {
+        // 제목 클릭 시 상세보기 열기/닫기
+        $('#inquiry-list').on('click', '.inquiry-title', function () {
+            const inquiryId = $(this).data('inquiry-id'); // inquiryId 가져오기
+            const contentDiv = $(`#content-${inquiryId}`); // 상세내용 div 선택
 
+            if (!inquiryId) {
+                alert("문의 ID를 찾을 수 없습니다.");
+                return; // inquiryId가 없으면 동작 중단
+            }
+
+            // 내용 열기/닫기
+            contentDiv.slideToggle();
+
+            // 상세보기 데이터 요청 (내용을 아직 불러오지 않은 경우)
+            if (contentDiv.is(':empty')) {
+                fetch(`/product/inquiry/detail/${inquiryId}`, { method: 'GET' })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error('네트워크 응답이 잘못되었습니다.');
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        if (data.success) {
+                            const inquiry = data.inquiry;
+                            const html = `
+                            <p><strong>내용:</strong> ${inquiry.content}</p>
+                            <p><strong>작성자:</strong> ${inquiry.author}</p>
+                            <p><strong>등록일:</strong> ${inquiry.createdAt}</p>
+                        `;
+                            contentDiv.html(html); // 데이터를 동적으로 삽입
+                        } else {
+                            alert('상세보기 데이터를 불러오는 데 실패했습니다.');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        alert('오류가 발생했습니다.');
+                    });
+            }
+        });
+
+        // 상세보기 모달 열기
+        $('#inquiry-list').on('click', '.inquiry-title', function () {
+            const inquiryId = $(this).data('inquiry-id');
+            const modal = $('#detail-modal');
+
+            if (!inquiryId) {
+                alert("문의 ID를 찾을 수 없습니다.");
+                return;
+            }
+
+            fetch(`/product/inquiry/detail/${inquiryId}`, { method: 'GET' })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('네트워크 응답이 잘못되었습니다.');
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    if (data.success) {
+                        const inquiry = data.inquiry;
+                        const modalContent = `
+                        <h2>${inquiry.title}</h2>
+                        <p><strong>내용:</strong> ${inquiry.content}</p>
+                        <p><strong>작성자:</strong> ${inquiry.author}</p>
+                        <p><strong>등록일:</strong> ${inquiry.createdAt}</p>
+                    `;
+                        $('#detail-content').html(modalContent); // 모달에 데이터 삽입
+                        modal.fadeIn(); // 모달 보이기
+                    } else {
+                        alert('상세보기 데이터를 불러오는 데 실패했습니다.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('오류가 발생했습니다.');
+                });
+        });
+
+        // 상세보기 모달 닫기
+        $('.close-detail-btn').on('click', function () {
+            $('#detail-modal').fadeOut(); // 모달 숨기기
+        });
+
+        // 모달 외부 클릭 시 닫기
+        $(window).on('click', function (event) {
+            if ($(event.target).is('#detail-modal')) {
+                $('#detail-modal').fadeOut(); // 모달 숨기기
+            }
+        });
+    });
 
 </script>
 </body>

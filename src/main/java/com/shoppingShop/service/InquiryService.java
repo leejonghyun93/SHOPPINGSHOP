@@ -10,4 +10,6 @@ public interface InquiryService {
     int getTotalPagesByProductId(int proId, int size);
 
     void addInquiry(InquiryDto inquiryDto);
+
+    InquiryDto getInquiryDetail(int inquiryId);
 }

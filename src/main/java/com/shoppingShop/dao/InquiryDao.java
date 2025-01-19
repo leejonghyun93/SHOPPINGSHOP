@@ -12,4 +12,6 @@ public interface InquiryDao {
     int getInquiryCountByProductId(int proId);
 
     void addInquiry(InquiryDto inquiryDto);
+
+    InquiryDto selectInquiryById(int inquiryId);
 }

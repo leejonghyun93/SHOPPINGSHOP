@@ -30,4 +30,8 @@ public class InquiryDaoImpl implements InquiryDao {
     public void addInquiry(InquiryDto inquiryDto) {
         sqlSession.insert(NAMESPACE + ".addInquiry", inquiryDto);
     }
+    @Override
+    public InquiryDto selectInquiryById(int inquiryId) {
+        return sqlSession.selectOne(NAMESPACE + ".selectInquiryById", inquiryId);
+    }
 }

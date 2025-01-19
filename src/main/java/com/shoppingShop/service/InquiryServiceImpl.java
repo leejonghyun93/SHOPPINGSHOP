@@ -36,4 +36,10 @@ public class InquiryServiceImpl implements InquiryService {
         System.out.println("Saving Inquiry: " + inquiryDto);
         inquiryDao.addInquiry(inquiryDto);
     }
+
+    @Override
+    public InquiryDto getInquiryDetail(int inquiryId) {
+        return inquiryDao.selectInquiryById(inquiryId);
+
+    }
 }

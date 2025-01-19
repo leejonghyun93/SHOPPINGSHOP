@@ -16,6 +16,7 @@
         <typeAlias alias="BoardDto" type="com.shoppingShop.domain.BoardDto"/>
         <typeAlias alias="OrdersDto" type="com.shoppingShop.domain.OrdersDto"/>
         <typeAlias alias="ProductReviewDto" type="com.shoppingShop.domain.ProductReviewDto"/>
+        <typeAlias alias="InquiryDto" type="com.shoppingShop.domain.InquiryDto"/>
     </typeAliases>
 
 </configuration>

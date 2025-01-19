@@ -124,4 +124,25 @@ public class ProductController {
             return ResponseEntity.status(500).body(response);
         }
     }
+
+    @GetMapping("/inquiry/detail/{inquiryId}")
+    @ResponseBody
+    public Map<String, Object> getInquiryDetail(
+            @PathVariable("inquiryId") int inquiryId) {   // URL 경로에서 inquiryId 받기
+
+        Map<String, Object> response = new HashMap<>();
+        System.out.println("GET inquiry detail - inquiryId: " + inquiryId); // 로그 추가
+
+        try {
+            InquiryDto inquiry = inquiryService.getInquiryDetail(inquiryId); // 서비스에서 해당 문의글의 상세 정보 가져오기
+            response.put("success", true);
+            response.put("inquiry", inquiry);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("error", e.getMessage());
+        }
+
+        return response;
+    }
+
 }
