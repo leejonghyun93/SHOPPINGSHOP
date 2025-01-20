@@ -127,14 +127,12 @@ public class ProductController {
 
     @GetMapping("/inquiry/detail/{inquiryId}")
     @ResponseBody
-    public Map<String, Object> getInquiryDetail(
-            @PathVariable("inquiryId") int inquiryId) {   // URL 경로에서 inquiryId 받기
-
+    public Map<String, Object> getInquiryDetail(@PathVariable("inquiryId") int inquiryId) {
+        System.out.println("Received inquiryId: " + inquiryId); // 디버깅용 출력
         Map<String, Object> response = new HashMap<>();
-        System.out.println("GET inquiry detail - inquiryId: " + inquiryId); // 로그 추가
 
         try {
-            InquiryDto inquiry = inquiryService.getInquiryDetail(inquiryId); // 서비스에서 해당 문의글의 상세 정보 가져오기
+            InquiryDto inquiry = inquiryService.getInquiryDetail(inquiryId);
             response.put("success", true);
             response.put("inquiry", inquiry);
         } catch (Exception e) {
@@ -144,5 +142,7 @@ public class ProductController {
 
         return response;
     }
+
+
 
 }

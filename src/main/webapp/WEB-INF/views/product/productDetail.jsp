@@ -749,11 +749,8 @@
                 <c:forEach var="inquiry" items="${inquiries}">
                     <tr>
                         <td>${inquiry.inquiryId}</td>
-                        <td>
-                             <span class="inquiry-title" data-inquiry-id="${inquiry.inquiryId}">
-                              ${inquiry.content}
-                             </span>
-                        </td>
+                        <!-- inquiryId로 수정된 부분 -->
+                        <td><a href="#" class="view-inquiry" data-inquiry-id="${inquiry.inquiryId}">${inquiry.title}</a></td>
                         <td>${inquiry.author}</td>
                     </tr>
                 </c:forEach>
@@ -795,13 +792,10 @@
         </div>
 
         <!-- 상세보기 모달 -->
-        <div id="detail-modal" class="modal">
-            <div class="modal-content">
+        <div id="detail-modal" style="display:none;">
+            <div id="modal-content">
                 <span class="close-detail-btn">&times;</span>
-                <h2>문의 상세보기</h2>
-                <div id="detail-content">
-                    <!-- 제목, 내용, 작성자, 등록일 등을 표시 -->
-                </div>
+                <div id="detail-content"></div>
             </div>
         </div>
     </div>
@@ -1121,12 +1115,13 @@
         // 테이블로 데이터를 출력하는 함수
         function setupInquiryList(content) {
             let html = "<table class='inquiry-table'>";
-            html += "<tr><th>번호</th><th>제목</th><th>작성자</th></tr>";
+            html += "<tr><th>번호</th><th>제목</th><th>작성자</th><th>상세보기</th></tr>";
             $.each(content, function (index, obj) {
                 html += `<tr>
                 <td>${obj.inquiryId}</td>
-                <td>${obj.content}</td>
+                <td>${obj.title}</td>
                 <td>${obj.author}</td>
+                <td><button class="view-inquiry" data-inquiry-id="${obj.inquiryId}">상세보기</button></td>
             </tr>`;
             });
             html += "</table>";
@@ -1154,6 +1149,28 @@
 
             $pagination.html(paginationHtml); // 페이지네이션 출력
         }
+
+        // 상세보기 클릭 시 해당 문의의 상세 정보를 로드
+        $(document).on('click', '.view-inquiry', function () {
+            const inquiryId = $(this).data('inquiry-id'); // 선택한 문의의 ID
+
+            $.ajax({
+                url: '/product/inquiry/detail/' + inquiryId, // 상세 보기 URL
+                method: 'GET',
+                success: function (data) {
+                    if (data.success && data.inquiry) {
+                        const inquiry = data.inquiry;
+                        alert(`제목: ${inquiry.title}\n내용: ${inquiry.content}\n작성자: ${inquiry.author}`);
+                    } else {
+                        alert('문의 정보를 불러오는데 실패했습니다.');
+                    }
+                },
+                error: function (error) {
+                    console.error('Error loading inquiry details:', error);
+                    alert('문의 상세 정보를 불러오는 데 오류가 발생했습니다.');
+                }
+            });
+        });
 
         // 모달 관련 코드
         const writeBtn = document.getElementById('write-btn');
@@ -1206,7 +1223,6 @@
                         modal.style.display = 'none';
 
                         // 글 등록 후 새로고침 없이 새 글을 목록에 추가
-                        // 여기서 페이지를 새로 로드하여 글을 목록에 반영
                         const currentPage = 1;  // 원하는 페이지로 설정 (예: 글쓰기 후 1페이지로 돌아가기)
                         loadInquiryList(currentPage); // 새로 등록된 글을 포함한 목록을 다시 로드
                     } else {
@@ -1218,100 +1234,12 @@
                     alert('오류가 발생했습니다.');
                 });
         });
+
+        // 초기 문의 목록을 로드 (페이지 1)
+        loadInquiryList(1);
     });
-    $(document).ready(function () {
-        // 제목 클릭 시 상세보기 열기/닫기
-        $('#inquiry-list').on('click', '.inquiry-title', function () {
-            const inquiryId = $(this).data('inquiry-id'); // inquiryId 가져오기
-            const contentDiv = $(`#content-${inquiryId}`); // 상세내용 div 선택
 
-            if (!inquiryId) {
-                alert("문의 ID를 찾을 수 없습니다.");
-                return; // inquiryId가 없으면 동작 중단
-            }
 
-            // 내용 열기/닫기
-            contentDiv.slideToggle();
-
-            // 상세보기 데이터 요청 (내용을 아직 불러오지 않은 경우)
-            if (contentDiv.is(':empty')) {
-                fetch(`/product/inquiry/detail/${inquiryId}`, { method: 'GET' })
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error('네트워크 응답이 잘못되었습니다.');
-                        }
-                        return response.json();
-                    })
-                    .then((data) => {
-                        if (data.success) {
-                            const inquiry = data.inquiry;
-                            const html = `
-                            <p><strong>내용:</strong> ${inquiry.content}</p>
-                            <p><strong>작성자:</strong> ${inquiry.author}</p>
-                            <p><strong>등록일:</strong> ${inquiry.createdAt}</p>
-                        `;
-                            contentDiv.html(html); // 데이터를 동적으로 삽입
-                        } else {
-                            alert('상세보기 데이터를 불러오는 데 실패했습니다.');
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                        alert('오류가 발생했습니다.');
-                    });
-            }
-        });
-
-        // 상세보기 모달 열기
-        $('#inquiry-list').on('click', '.inquiry-title', function () {
-            const inquiryId = $(this).data('inquiry-id');
-            const modal = $('#detail-modal');
-
-            if (!inquiryId) {
-                alert("문의 ID를 찾을 수 없습니다.");
-                return;
-            }
-
-            fetch(`/product/inquiry/detail/${inquiryId}`, { method: 'GET' })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error('네트워크 응답이 잘못되었습니다.');
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    if (data.success) {
-                        const inquiry = data.inquiry;
-                        const modalContent = `
-                        <h2>${inquiry.title}</h2>
-                        <p><strong>내용:</strong> ${inquiry.content}</p>
-                        <p><strong>작성자:</strong> ${inquiry.author}</p>
-                        <p><strong>등록일:</strong> ${inquiry.createdAt}</p>
-                    `;
-                        $('#detail-content').html(modalContent); // 모달에 데이터 삽입
-                        modal.fadeIn(); // 모달 보이기
-                    } else {
-                        alert('상세보기 데이터를 불러오는 데 실패했습니다.');
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    alert('오류가 발생했습니다.');
-                });
-        });
-
-        // 상세보기 모달 닫기
-        $('.close-detail-btn').on('click', function () {
-            $('#detail-modal').fadeOut(); // 모달 숨기기
-        });
-
-        // 모달 외부 클릭 시 닫기
-        $(window).on('click', function (event) {
-            if ($(event.target).is('#detail-modal')) {
-                $('#detail-modal').fadeOut(); // 모달 숨기기
-            }
-        });
-    });
 
 </script>
 </body>

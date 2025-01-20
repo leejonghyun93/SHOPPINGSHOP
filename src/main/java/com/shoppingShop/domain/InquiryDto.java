@@ -1,5 +1,8 @@
 package com.shoppingShop.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
 
 public class InquiryDto {
@@ -7,13 +10,39 @@ public class InquiryDto {
     private int proId;
     private String content;
 
-    private String userName;
+    private String title;
+
+
     private String author;
     private LocalDateTime createdAt;
-
+    private String userName;
     private String userId;
 
     // Getters and Setters
+    public InquiryDto() {
+    }
+
+
+    @JsonCreator
+    public InquiryDto(
+            @JsonProperty("inquiryId") int inquiryId,
+            @JsonProperty("proId") int proId,
+            @JsonProperty("content") String content,
+            @JsonProperty("title") String title,
+            @JsonProperty("author") String author,
+            @JsonProperty("createdAt") LocalDateTime createdAt,
+            @JsonProperty("userName") String userName,
+            @JsonProperty("userId") String userId
+    ) {
+        this.inquiryId = inquiryId;
+        this.proId = proId;
+        this.content = content;
+        this.title = title;
+        this.author = author;
+        this.createdAt = createdAt;
+        this.userName = userName;
+        this.userId = userId;
+    }
 
     public int getInquiryId() {
         return inquiryId;
@@ -37,6 +66,14 @@ public class InquiryDto {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getUserName() {
@@ -71,18 +108,4 @@ public class InquiryDto {
         this.userId = userId;
     }
 
-
-
-    @Override
-    public String toString() {
-        return "InquiryDto{" +
-                "inquiryId=" + inquiryId +
-                ", proId=" + proId +
-                ", content='" + content + '\'' +
-                ", userName='" + userName + '\'' +
-                ", author='" + author + '\'' +
-                ", createdAt=" + createdAt +
-                ", userId='" + userId + '\'' +
-                '}';
-    }
 }
