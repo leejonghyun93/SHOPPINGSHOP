@@ -591,6 +591,79 @@
             color: #333;
             margin-bottom: 20px;
         }
+        #detail-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            border-radius: 8px;
+        }
+
+        #modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .close-detail-btn {
+            cursor: pointer;
+            float: right;
+            font-size: 20px;
+            color: gray;
+        }
+        .detail-row {
+            background-color: #f9f9f9;
+        }
+
+        .detail-content {
+            padding: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        #detail-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 50%;
+            max-width: 500px;
+        }
+
+        #modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .close-detail-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
 
     </style>
 </head>
@@ -745,13 +818,18 @@
                     <th>번호</th>
                     <th>제목</th>
                     <th>작성자</th>
+                    <th>날짜</th>
                 </tr>
                 <c:forEach var="inquiry" items="${inquiries}">
-                    <tr>
+                    <tr class="inquiry-row">
                         <td>${inquiry.inquiryId}</td>
-                        <!-- inquiryId로 수정된 부분 -->
-                        <td><a href="#" class="view-inquiry" data-inquiry-id="${inquiry.inquiryId}">${inquiry.title}</a></td>
+                        <td>
+                            <a href="#" class="view-inquiry" data-inquiry-id="${inquiry.inquiryId}">
+                                    ${inquiry.title}
+                            </a>
+                        </td>
                         <td>${inquiry.author}</td>
+                        <td>${inquiry.createdAt}</td>
                     </tr>
                 </c:forEach>
             </table>
@@ -792,12 +870,21 @@
         </div>
 
         <!-- 상세보기 모달 -->
-        <div id="detail-modal" style="display:none;">
+        <div id="detail-modal">
             <div id="modal-content">
                 <span class="close-detail-btn">&times;</span>
-                <div id="detail-content"></div>
+                <div id="detail-container">
+                    <p><strong>제목:</strong> <span id="detail-title">제목 없음</span></p>
+                    <p><strong>내용:</strong> <span id="detail-content-text">내용 없음</span></p>
+                    <p><strong>작성자:</strong> <span id="detail-author">작성자 없음</span></p>
+                    <p><strong>작성일:</strong> <span id="detail-date">작성일 없음</span></p>
+                </div>
             </div>
         </div>
+
+        <!-- 모달 배경 (optional) -->
+        <div id="modal-overlay"></div>
+
     </div>
     <script src="pagination.js"></script>
     <div class="tab-content" id="guide">
@@ -1115,12 +1202,13 @@
         // 테이블로 데이터를 출력하는 함수
         function setupInquiryList(content) {
             let html = "<table class='inquiry-table'>";
-            html += "<tr><th>번호</th><th>제목</th><th>작성자</th><th>상세보기</th></tr>";
+            html += "<tr><th>번호</th><th>제목</th><th>작성자</th><th>날짜</th><th>상세보기</th></tr>";
             $.each(content, function (index, obj) {
                 html += `<tr>
                 <td>${obj.inquiryId}</td>
                 <td>${obj.title}</td>
                 <td>${obj.author}</td>
+                <td>${obj.createdAt}</td>
                 <td><button class="view-inquiry" data-inquiry-id="${obj.inquiryId}">상세보기</button></td>
             </tr>`;
             });
@@ -1151,26 +1239,69 @@
         }
 
         // 상세보기 클릭 시 해당 문의의 상세 정보를 로드
-        $(document).on('click', '.view-inquiry', function () {
-            const inquiryId = $(this).data('inquiry-id'); // 선택한 문의의 ID
+        $(document).ready(function () {
+            // 제목 클릭 이벤트
+            $(document).on('click', '.view-inquiry', function (event) {
+                event.preventDefault(); // 기본 동작 방지
 
-            $.ajax({
-                url: '/product/inquiry/detail/' + inquiryId, // 상세 보기 URL
-                method: 'GET',
-                success: function (data) {
-                    if (data.success && data.inquiry) {
-                        const inquiry = data.inquiry;
-                        alert(`제목: ${inquiry.title}\n내용: ${inquiry.content}\n작성자: ${inquiry.author}`);
-                    } else {
-                        alert('문의 정보를 불러오는데 실패했습니다.');
-                    }
-                },
-                error: function (error) {
-                    console.error('Error loading inquiry details:', error);
-                    alert('문의 상세 정보를 불러오는 데 오류가 발생했습니다.');
+                const inquiryId = $(this).data('inquiry-id'); // 클릭한 문의 ID
+                const $currentRow = $(this).closest('tr'); // 현재 클릭된 행
+
+                // 이미 상세보기가 열려있다면 닫기
+                if ($currentRow.next('.detail-row').length) {
+                    $currentRow.next('.detail-row').remove();
+                    return;
                 }
+
+                // 기존에 열려있는 상세보기 닫기
+                $('.detail-row').remove();
+
+                // AJAX 요청으로 상세보기 데이터 가져오기
+                $.ajax({
+                    url: `/product/inquiry/detail/`+inquiryId, // 요청 URL
+                    method: 'GET',
+                    success: function (data) {
+                        console.log(data); // 응답 데이터 확인
+
+                        if (data.success && data.inquiry) {
+                            const inquiry = data.inquiry;
+
+                            // 데이터 값 확인 및 기본값 설정
+                            const title = inquiry.title || '제목 없음';
+                            const content = inquiry.content || '내용 없음';
+                            const author = inquiry.author || '작성자 없음';
+
+                            // createdAt 배열 처리
+                            const createdAtArray = inquiry.createdAt || [];
+                            const createdAt = createdAtArray.length === 6
+                                ? `${createdAtArray[0]}-${createdAtArray[1].toString().padStart(2, '0')}-${createdAtArray[2].toString().padStart(2, '0')} ${createdAtArray[3].toString().padStart(2, '0')}:${createdAtArray[4].toString().padStart(2, '0')}:${createdAtArray[5].toString().padStart(2, '0')}`
+                                : '작성일 없음';
+
+                            // 상세보기 HTML 생성 (jQuery 방식)
+                            const $detailRow = $('<tr>').addClass('detail-row');
+                            const $detailTd = $('<td>').attr('colspan', 4).appendTo($detailRow);
+                            const $detailContent = $('<div>').addClass('detail-content').appendTo($detailTd);
+
+                            // 상세 내용 추가
+                            $('<p>').html(`<strong>제목:</strong> ${title}`).appendTo($detailContent);
+                            $('<p>').html(`<strong>내용:</strong> ${content}`).appendTo($detailContent);
+                            $('<p>').html(`<strong>작성자:</strong> ${author}`).appendTo($detailContent);
+                            $('<p>').html(`<strong>작성일:</strong> ${createdAt}`).appendTo($detailContent);
+
+                            // 클릭한 제목 아래에 상세보기 추가
+                            $currentRow.after($detailRow);
+                        } else {
+                            alert('문의 정보를 불러오는데 실패했습니다.');
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Error loading inquiry details:', error);
+                        alert('문의 상세 정보를 불러오는 데 오류가 발생했습니다.');
+                    }
+                });
             });
         });
+
 
         // 모달 관련 코드
         const writeBtn = document.getElementById('write-btn');
@@ -1238,8 +1369,6 @@
         // 초기 문의 목록을 로드 (페이지 1)
         loadInquiryList(1);
     });
-
-
 
 </script>
 </body>
