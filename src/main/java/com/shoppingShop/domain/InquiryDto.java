@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 public class InquiryDto {
     private int inquiryId;
@@ -14,7 +15,7 @@ public class InquiryDto {
 
 
     private String author;
-    private LocalDateTime createdAt;
+    private Date createdAt;
     private String userName;
     private String userId;
 
@@ -30,7 +31,7 @@ public class InquiryDto {
             @JsonProperty("content") String content,
             @JsonProperty("title") String title,
             @JsonProperty("author") String author,
-            @JsonProperty("createdAt") LocalDateTime createdAt,
+            @JsonProperty("createdAt") Date createdAt,
             @JsonProperty("userName") String userName,
             @JsonProperty("userId") String userId
     ) {
@@ -92,11 +93,11 @@ public class InquiryDto {
         this.author = author;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 

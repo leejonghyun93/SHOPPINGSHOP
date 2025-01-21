@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page session="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="loginId"
        value="${pageContext.request.getSession(false)==null ? '' : pageContext.request.session.getAttribute('userId')}"/>
@@ -628,9 +629,10 @@
 
         .detail-content {
             padding: 10px;
-            font-size: 14px;
-            line-height: 1.5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
+
         #detail-modal {
             position: fixed;
             top: 50%;
@@ -644,7 +646,6 @@
             width: 50%;
             max-width: 500px;
         }
-
         #modal-overlay {
             position: fixed;
             top: 0;
@@ -654,7 +655,6 @@
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 999;
         }
-
         .close-detail-btn {
             position: absolute;
             top: 10px;
@@ -664,7 +664,6 @@
             font-weight: bold;
             color: #333;
         }
-
     </style>
 </head>
 
@@ -829,7 +828,7 @@
                             </a>
                         </td>
                         <td>${inquiry.author}</td>
-                        <td>${inquiry.createdAt}</td>
+                        <td><fmt:formatDate value="${inquiry.createdAt}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
                     </tr>
                 </c:forEach>
             </table>
@@ -882,7 +881,7 @@
             </div>
         </div>
 
-        <!-- 모달 배경 (optional) -->
+        <!-- 모달 배경 -->
         <div id="modal-overlay"></div>
 
     </div>
@@ -1239,66 +1238,58 @@
         }
 
         // 상세보기 클릭 시 해당 문의의 상세 정보를 로드
-        $(document).ready(function () {
-            // 제목 클릭 이벤트
-            $(document).on('click', '.view-inquiry', function (event) {
-                event.preventDefault(); // 기본 동작 방지
+        // 제목 클릭 이벤트
+        $(document).on('click', '.view-inquiry', function (event) {
+            event.preventDefault(); // 기본 동작 방지
 
-                const inquiryId = $(this).data('inquiry-id'); // 클릭한 문의 ID
-                const $currentRow = $(this).closest('tr'); // 현재 클릭된 행
+            const inquiryId = $(this).data('inquiry-id'); // 클릭한 문의 ID 가져오기
+            const currentRow = $(this).closest('tr'); // 현재 클릭한 행 가져오기
+            const nextRow = currentRow.next('.detail-row'); // 현재 행 다음에 있는 상세보기 행 확인
 
-                // 이미 상세보기가 열려있다면 닫기
-                if ($currentRow.next('.detail-row').length) {
-                    $currentRow.next('.detail-row').remove();
-                    return;
-                }
+            // 열려 있는 상세보기 행이 있을 경우 닫기
+            if (nextRow.length > 0) {
+                nextRow.remove();
+                return; // 닫기만 수행하고 종료
+            }
 
-                // 기존에 열려있는 상세보기 닫기
-                $('.detail-row').remove();
+            // 기존 모든 상세보기 행 제거
+            $('.detail-row').remove();
 
-                // AJAX 요청으로 상세보기 데이터 가져오기
-                $.ajax({
-                    url: `/product/inquiry/detail/`+inquiryId, // 요청 URL
-                    method: 'GET',
-                    success: function (data) {
-                        console.log(data); // 응답 데이터 확인
+            // AJAX 요청으로 데이터 가져오기
+            $.ajax({
+                url: `/product/inquiry/detail/` + inquiryId,
+                method: 'GET',
+                success: function (data) {
+                    if (data.success && data.inquiry) {
+                        const inquiry = data.inquiry;
+                        const title = inquiry.title || '제목 없음';
+                        const content = inquiry.content || '내용 없음';
+                        const author = inquiry.author || '작성자 없음';
+                        const createdAt = inquiry.createdAt || '작성일 없음';
 
-                        if (data.success && data.inquiry) {
-                            const inquiry = data.inquiry;
+                        // 상세보기 내용을 += 방식으로 추가
+                        let detailContent = '';
+                        detailContent += '<tr class="detail-row">';
+                        detailContent += '    <td colspan="4">';
+                        detailContent += '        <div class="detail-content">';
+                        detailContent += '            <p><strong>제목:</strong> ' + title + '</p>';
+                        detailContent += '            <p><strong>내용:</strong> '  + content + '</p>';
+                        detailContent += '            <p><strong>작성자:</strong> '  + author + '</p>';
+                        detailContent += '            <p><strong>작성일:</strong> '  + createdAt + '</p>';
+                        detailContent += '        </div>';
+                        detailContent += '    </td>';
+                        detailContent += '</tr>';
 
-                            // 데이터 값 확인 및 기본값 설정
-                            const title = inquiry.title || '제목 없음';
-                            const content = inquiry.content || '내용 없음';
-                            const author = inquiry.author || '작성자 없음';
-
-                            // createdAt 배열 처리
-                            const createdAtArray = inquiry.createdAt || [];
-                            const createdAt = createdAtArray.length === 6
-                                ? `${createdAtArray[0]}-${createdAtArray[1].toString().padStart(2, '0')}-${createdAtArray[2].toString().padStart(2, '0')} ${createdAtArray[3].toString().padStart(2, '0')}:${createdAtArray[4].toString().padStart(2, '0')}:${createdAtArray[5].toString().padStart(2, '0')}`
-                                : '작성일 없음';
-
-                            // 상세보기 HTML 생성 (jQuery 방식)
-                            const $detailRow = $('<tr>').addClass('detail-row');
-                            const $detailTd = $('<td>').attr('colspan', 4).appendTo($detailRow);
-                            const $detailContent = $('<div>').addClass('detail-content').appendTo($detailTd);
-
-                            // 상세 내용 추가
-                            $('<p>').html(`<strong>제목:</strong> ${title}`).appendTo($detailContent);
-                            $('<p>').html(`<strong>내용:</strong> ${content}`).appendTo($detailContent);
-                            $('<p>').html(`<strong>작성자:</strong> ${author}`).appendTo($detailContent);
-                            $('<p>').html(`<strong>작성일:</strong> ${createdAt}`).appendTo($detailContent);
-
-                            // 클릭한 제목 아래에 상세보기 추가
-                            $currentRow.after($detailRow);
-                        } else {
-                            alert('문의 정보를 불러오는데 실패했습니다.');
-                        }
-                    },
-                    error: function (error) {
-                        console.error('Error loading inquiry details:', error);
-                        alert('문의 상세 정보를 불러오는 데 오류가 발생했습니다.');
+                        // 현재 행 아래에 추가
+                        currentRow.after(detailContent);
+                    } else {
+                        alert('문의 데이터를 가져오지 못했습니다.');
                     }
-                });
+                },
+                error: function (error) {
+                    console.error("AJAX 요청 오류:", error);
+                    alert('오류가 발생했습니다. 다시 시도해주세요.');
+                }
             });
         });
 
