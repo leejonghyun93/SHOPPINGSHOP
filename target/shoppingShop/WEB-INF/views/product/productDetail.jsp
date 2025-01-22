@@ -623,13 +623,9 @@
             font-size: 20px;
             color: gray;
         }
-        .detail-row {
-            background-color: #f9f9f9;
-        }
 
         .detail-content {
             padding: 10px;
-            border: 1px solid #ddd;
             border-radius: 4px;
         }
 
@@ -663,6 +659,37 @@
             font-size: 20px;
             font-weight: bold;
             color: #333;
+        }
+        .fixed-table {
+            table-layout: fixed; /* 테이블 레이아웃 고정 */
+            width: 100%; /* 테이블 전체 너비 */
+            border-collapse: collapse; /* 테이블 경계선 합치기 */
+        }
+
+        .fixed-table th, .fixed-table td {
+            padding: 8px; /* 셀 여백 */
+            text-align: center; /* 텍스트 가운데 정렬 */
+        }
+
+        .fixed-table th {
+            background-color: #f4f4f4; /* 헤더 배경색 */
+            font-weight: bold; /* 헤더 글씨 굵게 */
+        }
+
+        .fixed-table th:nth-child(1) {
+            width: 10%; /* 번호 */
+        }
+
+        .fixed-table th:nth-child(2) {
+            width: 50%; /* 제목 */
+        }
+
+        .fixed-table th:nth-child(3) {
+            width: 20%; /* 작성자 */
+        }
+
+        .fixed-table th:nth-child(4) {
+            width: 20%; /* 날짜 */
         }
     </style>
 </head>
@@ -812,7 +839,7 @@
     <div id="inquiry" class="tab-content">
         <!-- 문의 리스트 -->
         <div id="inquiry-list">
-            <table class="inquiry-table">
+            <table class="inquiry-table fixed-table">
                 <tr>
                     <th>번호</th>
                     <th>제목</th>
@@ -828,7 +855,7 @@
                             </a>
                         </td>
                         <td>${inquiry.author}</td>
-                        <td><fmt:formatDate value="${inquiry.createdAt}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
+                        <td><fmt:formatDate value="${inquiry.createdAt}" pattern="yyyy-MM-dd" /></td>
                     </tr>
                 </c:forEach>
             </table>
@@ -1265,8 +1292,9 @@
                         const title = inquiry.title || '제목 없음';
                         const content = inquiry.content || '내용 없음';
                         const author = inquiry.author || '작성자 없음';
-                        const createdAt = inquiry.createdAt || '작성일 없음';
 
+
+                        console.log(data.inquiry);
                         // 상세보기 내용을 += 방식으로 추가
                         let detailContent = '';
                         detailContent += '<tr class="detail-row">';
@@ -1275,7 +1303,6 @@
                         detailContent += '            <p><strong>제목:</strong> ' + title + '</p>';
                         detailContent += '            <p><strong>내용:</strong> '  + content + '</p>';
                         detailContent += '            <p><strong>작성자:</strong> '  + author + '</p>';
-                        detailContent += '            <p><strong>작성일:</strong> '  + createdAt + '</p>';
                         detailContent += '        </div>';
                         detailContent += '    </td>';
                         detailContent += '</tr>';
