@@ -912,7 +912,7 @@
         <div id="modal-overlay"></div>
 
     </div>
-    <script src="pagination.js"></script>
+
     <div class="tab-content" id="guide">
         <h3>구매 안내</h3>
         <p>배송, 교환, 환불 정책에 대한 안내가 표시됩니다.</p>
@@ -993,8 +993,6 @@
                 return response.json(); // JSON으로 응답 처리
             })
             .then(data => {
-                // 장바구니에 없으면 추가 처리
-                console.log(data.message);  // 장바구니에 추가 가능
                 // 상품을 장바구니에 추가하는 로직을 추가
                 return fetch('/cart/add', {
                     method: 'POST',
@@ -1054,10 +1052,10 @@
                     throw new Error("상품 ID 가져오기 실패");
                 }
                 proId = response.proId; // 프로덕트 ID를 proId로 설정
-                console.log("프로덕트 ID:", proId);
+
                 await getReviews(proId); // 필수적으로 await 붙이기
             } catch (error) {
-                console.error("상품 ID 가져오기 실패:", error);
+
                 if (error.status === 404) {
                     alert("해당 상품이 존재하지 않습니다. 다시 시도해주세요.");
                 } else {
@@ -1069,16 +1067,10 @@
         async function getReviews(proId) {
             try {
                 const response = await $.get(`/product/review/getByProductId/${proId}`);
-                console.log("서버에서 반환된 리뷰 데이터:", response); // 서버 데이터 출력
-
-                if (!response || !Array.isArray(response) || response.length === 0) {
-                    throw new Error("리뷰 데이터가 비어 있습니다.");
-                }
 
                 const calculatedData = calculateRatings(response);
                 updateRatingsOnPage(calculatedData);
             } catch (error) {
-                console.error("리뷰 데이터 가져오기 실패:", error);
                 alert("리뷰 데이터를 가져오는 데 실패했습니다.");
             }
         }
@@ -1111,13 +1103,11 @@
         }
 
         function updateRatingsOnPage(data) {
-            console.log("평점 데이터:", data);
 
             const {excellent, good, average, poor, terrible} = data;
             const totalRatings = excellent + good + average + poor + terrible;
 
             if (totalRatings === 0) {
-                console.log("평점 데이터가 없습니다.");
                 return;
             }
 
@@ -1176,7 +1166,6 @@
                 await getReviews(proId);
 
             } catch (error) {
-                console.error("리뷰 추가 실패:", error);
                 alert("리뷰 추가에 실패했습니다. 다시 시도해주세요.");
             }
         });
@@ -1206,7 +1195,6 @@
             if (page) {
                 loadInquiryList(page); // 해당 페이지 데이터를 비동기로 로드
             } else {
-                console.error('Invalid page number:', page);
             }
         });
 
@@ -1220,7 +1208,6 @@
                     setupPagination(data, page); // 페이지네이션 설정
                 },
                 error: function (error) {
-                    console.error('Error loading inquiry list:', error);
                 }
             });
         }
@@ -1293,8 +1280,6 @@
                         const content = inquiry.content || '내용 없음';
                         const author = inquiry.author || '작성자 없음';
 
-
-                        console.log(data.inquiry);
                         // 상세보기 내용을 += 방식으로 추가
                         let detailContent = '';
                         detailContent += '<tr class="detail-row">';
@@ -1314,7 +1299,6 @@
                     }
                 },
                 error: function (error) {
-                    console.error("AJAX 요청 오류:", error);
                     alert('오류가 발생했습니다. 다시 시도해주세요.');
                 }
             });
@@ -1379,7 +1363,6 @@
                     }
                 })
                 .catch((error) => {
-                    console.error('Error:', error);
                     alert('오류가 발생했습니다.');
                 });
         });
