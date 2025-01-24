@@ -153,47 +153,7 @@
             </c:forEach>
         </ul>
     </div>
-    <script>
-        let socket;
 
-        // 웹소켓 서버 연결
-        function connectWebSocket() {
-            if (!socket || socket.readyState !== WebSocket.OPEN) {
-                socket = new WebSocket('ws://localhost:8087/chat');
-            }
-
-            socket.onopen = function() {
-                console.log('웹소켓 연결 성공');
-            };
-
-            socket.onmessage = function(event) {
-                console.log('메시지 수신:', event.data);
-                document.getElementById('messages').innerHTML += `<p>${event.data}</p>`;
-            };
-
-            socket.onerror = function(error) {
-                console.error('웹소켓 오류:', error);
-            };
-
-            socket.onclose = function() {
-                console.log('웹소켓 연결 종료');
-            };
-        }
-
-
-        window.onload = function() {
-            connectWebSocket(); // 페이지 로드 시 웹소켓 연결
-        };
-
-        // 채팅 팝업 창 열기
-        function openChatWindow() {
-            const chatWindow = window.open('/chat-popup', 'chat', 'width=400,height=400');
-            chatWindow.onload = function() {
-                // 팝업 창에서 웹소켓 연결 시작
-                chatWindow.connectWebSocket();
-            };
-        }
-    </script>
 </head>
 
 </html>
