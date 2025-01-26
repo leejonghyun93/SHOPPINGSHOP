@@ -157,7 +157,7 @@
                 <td>${board.noticeId}</td>
                 <td><a href="/board/view/${board.noticeId}">${board.title}</a></td>
                 <td>${board.userId}</td>
-                <td><fmt:formatDate value="${board.createdAt}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
+                <td><fmt:formatDate value="${board.createdAt}" pattern="yyyy-MM-dd" /></td>
             </tr>
         </c:forEach>
         </tbody>

@@ -924,122 +924,141 @@
 
 
 <script>
+    // 색상 버튼과 사이즈 버튼 요소를 모두 선택
     const colorButtons = document.querySelectorAll('.color-button');
     const sizeButtons = document.querySelectorAll('.size-button');
+
+    // 선택된 색상과 사이즈를 표시할 HTML 요소 선택
     const selectedColorElement = document.getElementById('selectedColor');
     const selectedSizeElement = document.getElementById('selectedSize');
+
+    // 선택된 상품 정보와 총 가격을 표시할 요소 선택
     const selectedProductInfo = document.getElementById('selectedProductInfo');
     const totalPriceElement = document.getElementById('totalPrice');
 
+    // 상품의 개별 가격을 설정 (백틱으로 변수를 JS에 주입)
     const pricePerItem = ${productDetail.proPrice};
+
+    // 선택된 색상과 사이즈를 저장할 변수 초기화
     let selectedColor = '';
     let selectedSize = '';
 
+    // 사용자 로그인 ID 저장
     const loginId = "${loginId}";
+
+    // 색상 버튼에 클릭 이벤트 추가
     colorButtons.forEach(button => {
         button.addEventListener('click', () => {
-            selectedColor = button.dataset.value;
-            selectedColorElement.textContent = selectedColor;
+            selectedColor = button.dataset.value; // 클릭된 버튼의 색상 값 저장
+            selectedColorElement.textContent = selectedColor; // 선택된 색상을 화면에 표시
 
+            // 모든 버튼의 'active' 클래스 제거 후 클릭된 버튼에만 추가
             colorButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
         });
     });
 
+    // 사이즈 버튼에 클릭 이벤트 추가
     sizeButtons.forEach(button => {
         button.addEventListener('click', () => {
-            selectedSize = button.dataset.value;
-            selectedSizeElement.textContent = selectedSize;
+            selectedSize = button.dataset.value; // 클릭된 버튼의 사이즈 값 저장
+            selectedSizeElement.textContent = selectedSize; // 선택된 사이즈를 화면에 표시
 
+            // 모든 버튼의 'active' 클래스 제거 후 클릭된 버튼에만 추가
             sizeButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
 
+            // 색상과 사이즈가 모두 선택되었을 때만 상품 정보를 표시
             if (selectedColor && selectedSize) {
-                selectedProductInfo.style.display = 'block';
-                totalPriceElement.textContent = pricePerItem;
+                selectedProductInfo.style.display = 'block'; // 선택된 상품 정보 영역 표시
+                totalPriceElement.textContent = pricePerItem; // 상품 가격을 화면에 표시
             }
         });
     });
 
+    // 장바구니에 상품을 추가하는 함수
     function addToCart() {
+        // 색상과 사이즈가 선택되지 않은 경우 경고 메시지 표시
         if (!selectedColor || !selectedSize) {
             alert("색상과 사이즈를 모두 선택해주세요.");
             return;
         }
 
+        // 장바구니에 추가할 상품 데이터를 객체로 생성
         const cartData = {
             proId: "${productDetail.proId}",
             proColor: selectedColor,
             proSize: selectedSize,
             proName: "${productDetail.proName}",
-            quantity: 1,
-            totalPrice: parseInt(totalPriceElement.textContent) || 0
+            quantity: 1, // 기본 수량 1
+            totalPrice: parseInt(totalPriceElement.textContent) || 0 // 총 가격 계산
         };
 
-        // 장바구니에 이미 상품이 있는지 확인
+        // 장바구니에 상품이 이미 있는지 서버에 요청
         fetch('/cart/checkCartItem', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(cartData) // JSON 형식으로 변환
+            body: JSON.stringify(cartData) // JSON 형식으로 데이터 전송
         })
             .then(response => {
                 if (!response.ok) {
                     return response.json().then(data => {
-                        throw new Error(data.message); // 이미 장바구니에 있는 경우 메시지 추출
+                        throw new Error(data.message); // 장바구니에 이미 있을 경우 에러 메시지 추출
                     });
                 }
-                return response.json(); // JSON으로 응답 처리
+                return response.json(); // 성공적인 응답 처리
             })
             .then(data => {
-                // 상품을 장바구니에 추가하는 로직을 추가
+                // 상품을 장바구니에 추가하는 요청 전송
                 return fetch('/cart/add', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(cartData) // 장바구니에 상품 추가
+                    body: JSON.stringify(cartData) // JSON 형식으로 데이터 전송
                 });
             })
             .then(response => response.json())
             .then(data => {
-                alert('장바구니에 상품이 추가되었습니다.');
+                alert('장바구니에 상품이 추가되었습니다.'); // 성공 메시지 표시
                 window.location.assign('/cart/cart'); // 장바구니 페이지로 이동
             })
             .catch(error => {
-                alert(error.message);  // 이미 장바구니에 있을 경우 메시지 출력
+                alert(error.message); // 에러 메시지 출력 (예: 이미 장바구니에 존재)
             });
     }
 
-    // 탭 기능
+    // 탭을 전환하는 함수
     function showTab(tabId) {
-        // 모든 탭 콘텐츠 숨기기
+        // 모든 탭 콘텐츠를 숨김
         const allTabs = document.querySelectorAll('.tab-content');
         allTabs.forEach(tab => {
             tab.classList.remove('active');
-            tab.style.display = 'none'; // 탭 콘텐츠는 숨김
+            tab.style.display = 'none'; // 탭 콘텐츠 숨김
         });
 
-        // 모든 탭에서 'active' 클래스 제거
+        // 모든 탭 버튼에서 'active' 클래스 제거
         const allTabButtons = document.querySelectorAll('.tab');
         allTabButtons.forEach(tabButton => {
             tabButton.classList.remove('active');
         });
 
-        // 선택한 탭 버튼에 'active' 클래스 추가
+        // 선택된 탭 버튼에 'active' 클래스 추가
         const selectedTabButton = document.querySelector(`[onclick="showTab('${tabId}')"]`);
         if (selectedTabButton) {
             selectedTabButton.classList.add('active');
         }
 
-        // 선택한 탭 콘텐츠 보여주기
+        // 선택된 탭 콘텐츠 표시
         const selectedTabContent = document.getElementById(tabId);
         if (selectedTabContent) {
             selectedTabContent.classList.add('active');
-            selectedTabContent.style.display = ''; // 탭 콘텐츠를 다시 보여줌
+            selectedTabContent.style.display = ''; // 콘텐츠 다시 표시
         }
     }
+
 
     //************************** 리뷰 **********************************//
     $(document).ready(function () {
