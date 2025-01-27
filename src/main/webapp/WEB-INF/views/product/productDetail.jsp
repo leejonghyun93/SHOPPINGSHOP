@@ -1062,92 +1062,100 @@
 
     //************************** 리뷰 **********************************//
     $(document).ready(function () {
-        let proId; // 초기화
+        let proId; // 상품 ID를 저장할 변수를 선언합니다.
 
+        // 백엔드에서 현재 상품 ID를 가져오는 비동기 함수
         async function getProductIdFromBackend() {
             try {
+                // 서버에 현재 상품 ID를 요청합니다.
                 const response = await $.get(`/product/current?proId=${proId}`);
                 if (!response || !response.proId) {
-                    throw new Error("상품 ID 가져오기 실패");
+                    throw new Error("상품 ID 가져오기 실패"); // 실패 시 예외를 던집니다.
                 }
-                proId = response.proId; // 프로덕트 ID를 proId로 설정
+                proId = response.proId; // 서버로부터 받은 상품 ID를 설정합니다.
 
-                await getReviews(proId); // 필수적으로 await 붙이기
+                await getReviews(proId); // 해당 상품 ID로 리뷰 데이터를 가져옵니다.
             } catch (error) {
-
+                // 에러 유형에 따라 다른 메시지를 출력합니다.
                 if (error.status === 404) {
-                    alert("해당 상품이 존재하지 않습니다. 다시 시도해주세요.");
+                    alert("해당 상품이 존재하지 않습니다. 다시 시도해주세요."); // 404 에러 처리
                 } else {
-                    alert("프로덕트 ID를 가져오는 데 실패했습니다. 다시 시도해주세요.");
+                    alert("프로덕트 ID를 가져오는 데 실패했습니다. 다시 시도해주세요."); // 일반 에러 처리
                 }
             }
         }
 
+        // 주어진 상품 ID로 리뷰 데이터를 가져오는 비동기 함수
         async function getReviews(proId) {
             try {
+                // 서버로부터 리뷰 데이터를 가져옵니다.
                 const response = await $.get(`/product/review/getByProductId/${proId}`);
 
-                const calculatedData = calculateRatings(response);
-                updateRatingsOnPage(calculatedData);
+                const calculatedData = calculateRatings(response); // 평점 데이터를 계산합니다.
+                updateRatingsOnPage(calculatedData); // 계산된 데이터를 페이지에 반영합니다.
             } catch (error) {
-                alert("리뷰 데이터를 가져오는 데 실패했습니다.");
+                alert("리뷰 데이터를 가져오는 데 실패했습니다."); // 리뷰 가져오기 실패 시 메시지 출력
             }
         }
 
+        // 리뷰 데이터에서 평점별 개수를 계산하는 함수
         function calculateRatings(reviews) {
+            // 평점별로 초기 개수를 0으로 설정합니다.
             let counts = {excellent: 0, good: 0, average: 0, poor: 0, terrible: 0};
 
+            // 각 리뷰 데이터를 순회하며 평점별로 개수를 카운트합니다.
             reviews.forEach(review => {
-                const rating = parseInt(review.rating, 10); // 문자열을 숫자로 변환
+                const rating = parseInt(review.rating, 10); // 문자열 평점을 숫자로 변환
                 switch (rating) {
                     case 5:
-                        counts.excellent++;
+                        counts.excellent++; // 평점 5
                         break;
                     case 4:
-                        counts.good++;
+                        counts.good++; // 평점 4
                         break;
                     case 3:
-                        counts.average++;
+                        counts.average++; // 평점 3
                         break;
                     case 2:
-                        counts.poor++;
+                        counts.poor++; // 평점 2
                         break;
                     case 1:
-                        counts.terrible++;
+                        counts.terrible++; // 평점 1
                         break;
                 }
             });
 
-            return counts;
+            return counts; // 계산된 평점 데이터를 반환합니다.
         }
 
+        // 계산된 평점 데이터를 페이지에 반영하는 함수
         function updateRatingsOnPage(data) {
-
-            const {excellent, good, average, poor, terrible} = data;
-            const totalRatings = excellent + good + average + poor + terrible;
+            const {excellent, good, average, poor, terrible} = data; // 평점 데이터를 구조 분해 할당
+            const totalRatings = excellent + good + average + poor + terrible; // 총 평점 개수를 계산
 
             if (totalRatings === 0) {
-                return;
+                return; // 평점 데이터가 없으면 종료
             }
 
+            // 각 평점의 비율을 계산하는 함수
             const calculateWidth = (value) => {
-                if (totalRatings === 0) return '0%'; // 0% 처리
-                const percentage = ((value / totalRatings) * 100).toFixed(2); // 소수점 2자리 고정
+                if (totalRatings === 0) return '0%'; // 평점 데이터가 없으면 0%
+                const percentage = ((value / totalRatings) * 100).toFixed(2); // 백분율 계산
                 return `${percentage}%`;
             };
 
-            // 막대 그래프 업데이트
+            // 막대 그래프의 너비를 업데이트
             $("#excellent-bar").css("width", calculateWidth(excellent));
             $("#good-bar").css("width", calculateWidth(good));
             $("#average-bar").css("width", calculateWidth(average));
             $("#poor-bar").css("width", calculateWidth(poor));
             $("#terrible-bar").css("width", calculateWidth(terrible));
 
-            // 평점 및 개수 업데이트
+            // 평균 평점 및 평점 개수를 업데이트
             $("#average-rating").text(
                 totalRatings > 0
                     ? ((5 * excellent + 4 * good + 3 * average + 2 * poor + terrible) / totalRatings).toFixed(1)
-                    : "0.0"
+                    : "0.0" // 총 평점이 0일 경우
             );
             $("#excellent-score").text(excellent);
             $("#good-score").text(good);
@@ -1156,17 +1164,18 @@
             $("#terrible-score").text(terrible);
         }
 
-        // 리뷰 추가 처리
+        // 리뷰를 추가하는 버튼 클릭 이벤트 핸들러
         $("#submitRating").on("click", async function () {
-            const ratingValue = $("input[name='rating']:checked").val();
-            const comment = $("#reviewComment").val(); // 추가된 리뷰 코멘트
+            const ratingValue = $("input[name='rating']:checked").val(); // 선택한 평점 값을 가져옵니다.
+            const comment = $("#reviewComment").val(); // 입력된 리뷰 코멘트를 가져옵니다.
 
             if (!ratingValue) {
-                alert("별점을 선택해주세요.");
+                alert("별점을 선택해주세요."); // 평점이 선택되지 않으면 경고 메시지를 출력
                 return;
             }
 
             try {
+                // 서버에 리뷰를 추가 요청
                 await $.ajax({
                     url: "/product/review/add",
                     type: "POST",
@@ -1174,22 +1183,22 @@
                     data: JSON.stringify({
                         proId: proId,
                         rating: ratingValue,
-                        comment: comment, // 코멘트 데이터 전송
+                        comment: comment, // 코멘트 데이터 포함
                     }),
                 });
 
-                alert("리뷰가 추가되었습니다.");
-                $("#rating-popup").addClass("hidden");
+                alert("리뷰가 추가되었습니다."); // 성공 메시지
+                $("#rating-popup").addClass("hidden"); // 팝업 닫기
 
-                // 새로운 리뷰 데이터를 다시 가져오고 페이지를 업데이트
+                // 리뷰 데이터를 다시 가져와서 업데이트
                 await getReviews(proId);
 
             } catch (error) {
-                alert("리뷰 추가에 실패했습니다. 다시 시도해주세요.");
+                alert("리뷰 추가에 실패했습니다. 다시 시도해주세요."); // 실패 시 메시지 출력
             }
         });
 
-        // 별점 추가 팝업 열기 버튼 이벤트 리스너
+        // 별점 추가 팝업 열기 버튼 클릭 이벤트 핸들러
         $('#open-rating-popup').on('click', function () {
             if (!loginId || loginId.trim() === '') { // 로그인 여부 확인
                 alert('로그인 후 이용할 수 있습니다.'); // 경고 메시지 출력
@@ -1198,43 +1207,51 @@
             }
         });
 
+        // 팝업 닫기 버튼 이벤트 핸들러
         $("#close-popup").on("click", () => $("#rating-popup").addClass("hidden"));
 
-        // 초기 실행
+        // 페이지 로드 시 초기 실행
         getProductIdFromBackend();
     });
 
+
     //**************************상품문의**********************************//
     $(document).ready(function () {
+        // 페이지가 로드되면 실행될 함수 정의
+
         // 페이지네이션 클릭 이벤트 처리
         $('#inquiry-pagination').on('click', '.page-link', function (e) {
             e.preventDefault(); // 기본 링크 동작 방지
-            const page = $(this).data('page'); // 클릭한 페이지 번호
+            const page = $(this).data('page'); // 클릭한 페이지 번호를 가져옴
 
             if (page) {
-                loadInquiryList(page); // 해당 페이지 데이터를 비동기로 로드
+                loadInquiryList(page); // 해당 페이지의 데이터를 비동기로 로드
             } else {
+                // 페이지 번호가 없을 경우 처리 (현재 비어 있음)
             }
         });
 
         // 문의 리스트 비동기 로드 함수
         function loadInquiryList(page) {
             $.ajax({
-                url: `/product/inquiries?page=${page}&size=5`, // 비동기 요청 URL
-                method: 'GET',
+                url: `/product/inquiries?page=${page}&size=5`, // 서버에 비동기 요청을 보낼 URL
+                method: 'GET', // HTTP GET 요청
                 success: function (data) {
-                    setupInquiryList(data.content); // 테이블에 데이터 출력
+                    setupInquiryList(data.content); // 응답 데이터를 테이블로 출력
                     setupPagination(data, page); // 페이지네이션 설정
                 },
                 error: function (error) {
+                    // 요청 실패 시 처리 (현재 비어 있음)
                 }
             });
         }
 
         // 테이블로 데이터를 출력하는 함수
         function setupInquiryList(content) {
-            let html = "<table class='inquiry-table'>";
-            html += "<tr><th>번호</th><th>제목</th><th>작성자</th><th>날짜</th><th>상세보기</th></tr>";
+            let html = "<table class='inquiry-table'>"; // 테이블 시작 태그 생성
+            html += "<tr><th>번호</th><th>제목</th><th>작성자</th><th>날짜</th><th>상세보기</th></tr>"; // 테이블 헤더 추가
+
+            // 서버로부터 받은 데이터를 테이블 행으로 추가
             $.each(content, function (index, obj) {
                 html += `<tr>
                 <td>${obj.inquiryId}</td>
@@ -1244,63 +1261,65 @@
                 <td><button class="view-inquiry" data-inquiry-id="${obj.inquiryId}">상세보기</button></td>
             </tr>`;
             });
-            html += "</table>";
-            $('#inquiry-list').html(html); // 테이블에 데이터 출력
+
+            html += "</table>"; // 테이블 닫는 태그 추가
+            $('#inquiry-list').html(html); // 완성된 테이블을 HTML 요소에 추가
         }
 
         // 페이지네이션 설정
         function setupPagination(data, currentPage) {
-            const $pagination = $('#inquiry-pagination');
-            $pagination.empty();
+            const $pagination = $('#inquiry-pagination'); // 페이지네이션 요소를 가져옴
+            $pagination.empty(); // 기존 페이지네이션을 초기화
 
-            let paginationHtml = '';
+            let paginationHtml = ''; // 페이지네이션 HTML을 담을 변수
+
+            // 이전 페이지 버튼 추가
             if (currentPage > 1) {
                 paginationHtml += `<span class="page-link" data-page="${currentPage - 1}">◀</span>`;
             }
 
+            // 각 페이지 번호 버튼 추가
             for (let i = 1; i <= data.totalPages; i++) {
-                const activeClass = i === currentPage ? 'active' : '';
+                const activeClass = i === currentPage ? 'active' : ''; // 현재 페이지는 활성화 표시
                 paginationHtml += `<span class="page-link ${activeClass}" data-page="${i}">${i}</span>`;
             }
 
+            // 다음 페이지 버튼 추가
             if (currentPage < data.totalPages) {
                 paginationHtml += `<span class="page-link" data-page="${currentPage + 1}">▶</span>`;
             }
 
-            $pagination.html(paginationHtml); // 페이지네이션 출력
+            $pagination.html(paginationHtml); // 페이지네이션 요소에 HTML 추가
         }
 
-        // 상세보기 클릭 시 해당 문의의 상세 정보를 로드
-        // 제목 클릭 이벤트
+        // 상세보기 클릭 이벤트 처리
         $(document).on('click', '.view-inquiry', function (event) {
             event.preventDefault(); // 기본 동작 방지
 
-            const inquiryId = $(this).data('inquiry-id'); // 클릭한 문의 ID 가져오기
-            const currentRow = $(this).closest('tr'); // 현재 클릭한 행 가져오기
-            const nextRow = currentRow.next('.detail-row'); // 현재 행 다음에 있는 상세보기 행 확인
+            const inquiryId = $(this).data('inquiry-id'); // 클릭한 문의 ID를 가져옴
+            const currentRow = $(this).closest('tr'); // 클릭한 버튼의 부모 행을 가져옴
+            const nextRow = currentRow.next('.detail-row'); // 상세보기 행이 이미 있는지 확인
 
-            // 열려 있는 상세보기 행이 있을 경우 닫기
             if (nextRow.length > 0) {
-                nextRow.remove();
-                return; // 닫기만 수행하고 종료
+                nextRow.remove(); // 상세보기 행이 열려 있다면 닫음
+                return; // 이후 로직 실행 중단
             }
 
-            // 기존 모든 상세보기 행 제거
-            $('.detail-row').remove();
+            $('.detail-row').remove(); // 기존에 열려 있는 모든 상세보기 행 제거
 
-            // AJAX 요청으로 데이터 가져오기
+            // 서버로 상세보기 데이터 요청
             $.ajax({
-                url: `/product/inquiry/detail/` + inquiryId,
-                method: 'GET',
+                url: `/product/inquiry/detail/` + inquiryId, // 상세보기 데이터 요청 URL
+                method: 'GET', // HTTP GET 요청
                 success: function (data) {
                     if (data.success && data.inquiry) {
+                        // 데이터가 성공적으로 반환되었을 때 처리
                         const inquiry = data.inquiry;
                         const title = inquiry.title || '제목 없음';
                         const content = inquiry.content || '내용 없음';
                         const author = inquiry.author || '작성자 없음';
 
-                        // 상세보기 내용을 += 방식으로 추가
-                        let detailContent = '';
+                        let detailContent = ''; // 상세보기 내용 HTML 생성
                         detailContent += '<tr class="detail-row">';
                         detailContent += '    <td colspan="4">';
                         detailContent += '        <div class="detail-content">';
@@ -1311,34 +1330,31 @@
                         detailContent += '    </td>';
                         detailContent += '</tr>';
 
-                        // 현재 행 아래에 추가
-                        currentRow.after(detailContent);
+                        currentRow.after(detailContent); // 상세보기 행을 테이블에 추가
                     } else {
-                        alert('문의 데이터를 가져오지 못했습니다.');
+                        alert('문의 데이터를 가져오지 못했습니다.'); // 데이터가 없을 경우 경고
                     }
                 },
                 error: function (error) {
-                    alert('오류가 발생했습니다. 다시 시도해주세요.');
+                    alert('오류가 발생했습니다. 다시 시도해주세요.'); // 요청 실패 시 경고
                 }
             });
         });
 
+        // 글쓰기 모달 관련 코드
+        const writeBtn = document.getElementById('write-btn'); // 글쓰기 버튼 요소
+        const modal = document.getElementById('write-modal'); // 모달 요소
+        const closeBtn = document.querySelector('.close-btn'); // 모달 닫기 버튼
+        const writeForm = document.getElementById('writeForm'); // 글쓰기 폼 요소
 
-        // 모달 관련 코드
-        const writeBtn = document.getElementById('write-btn');
-        const modal = document.getElementById('write-modal');
-        const closeBtn = document.querySelector('.close-btn');
-        const writeForm = document.getElementById('writeForm');
+        const proId = writeBtn.getAttribute('data-pro-id'); // 상품 번호 가져오기
 
-        // 상품 번호 가져오기
-        const proId = writeBtn.getAttribute('data-pro-id');
-
-        // 모달 열기
+        // 모달 열기 이벤트
         writeBtn.addEventListener('click', () => {
             modal.style.display = 'block';
         });
 
-        // 모달 닫기
+        // 모달 닫기 이벤트
         closeBtn.addEventListener('click', () => {
             modal.style.display = 'none';
         });
@@ -1350,45 +1366,39 @@
             }
         });
 
-        // 글쓰기 폼 제출
+        // 글쓰기 폼 제출 이벤트 처리
         writeForm.addEventListener('submit', (event) => {
-            event.preventDefault();
+            event.preventDefault(); // 기본 폼 제출 동작 방지
 
-            const title = document.getElementById('title').value;
-            const content = document.getElementById('content').value;
+            const title = document.getElementById('title').value; // 제목 값 가져오기
+            const content = document.getElementById('content').value; // 내용 값 가져오기
 
-            // 비동기 요청
+            // 서버에 데이터 전송
             fetch(`/product/inquiry/write?proId=${proId}`, {
-                method: 'POST',
+                method: 'POST', // HTTP POST 요청
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json', // 요청 데이터 타입 지정
                 },
-                body: JSON.stringify({
-                    title,
-                    content,
-                }),
+                body: JSON.stringify({ title, content }), // 요청 본문에 JSON 데이터 포함
             })
-                .then((response) => response.json())
+                .then((response) => response.json()) // 응답 데이터를 JSON으로 변환
                 .then((data) => {
                     if (data.success) {
-                        alert('문의가 등록되었습니다.');
-                        modal.style.display = 'none';
-
-                        // 글 등록 후 새로고침 없이 새 글을 목록에 추가
-                        const currentPage = 1;  // 원하는 페이지로 설정 (예: 글쓰기 후 1페이지로 돌아가기)
-                        loadInquiryList(currentPage); // 새로 등록된 글을 포함한 목록을 다시 로드
+                        alert('문의가 등록되었습니다.'); // 성공 메시지 출력
+                        modal.style.display = 'none'; // 모달 닫기
+                        loadInquiryList(1); // 첫 페이지로 리스트 다시 로드
                     } else {
-                        alert('등록에 실패했습니다.');
+                        alert('등록에 실패했습니다.'); // 실패 메시지 출력
                     }
                 })
                 .catch((error) => {
-                    alert('오류가 발생했습니다.');
+                    alert('오류가 발생했습니다.'); // 네트워크 오류 메시지 출력
                 });
         });
 
-        // 초기 문의 목록을 로드 (페이지 1)
-        loadInquiryList(1);
+        loadInquiryList(1); // 페이지가 처음 로드되면 첫 페이지 데이터 로드
     });
+
 
 </script>
 </body>
