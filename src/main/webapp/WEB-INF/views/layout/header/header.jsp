@@ -115,37 +115,59 @@
         }
     </style>
 
+    <!-- 사이드바 시작 -->
     <div class="sidebar">
         <ul class="headerSidebar">
+            <!-- 로그인/로그아웃 링크 -->
             <li class="login-out">
-                <a href="<c:url value='${loginOutLink}'/>">${logout}</a>
+                <a href="<c:url value='${loginOutLink}'/>">${logout}</a> <!-- 로그인 또는 로그아웃 상태에 따라 링크 표시 -->
             </li>
+
+            <!-- 로그인한 경우 로그아웃 버튼 표시 -->
             <c:if test="${not empty loginId}">
-                <li class="logged-in"><!-- 로그인한 아이디 표시 -->
+                <li class="logged-in">
                     <a href="<c:url value='/login/logout'/>">로그아웃</a> <!-- 로그아웃 링크 -->
                 </li>
             </c:if>
+
+            <!-- 로그인하지 않은 경우 회원가입 버튼 표시 -->
             <c:if test="${empty loginId}">
                 <li class="login-out">
-                    <a href="<c:url value='/membership/register'/>">회원가입</a> <!-- 회원가입 버튼 -->
+                    <a href="<c:url value='/membership/register'/>">회원가입</a> <!-- 회원가입 링크 -->
                 </li>
             </c:if>
+
+            <!-- 주문/배송 조회 페이지 링크 -->
             <li><a href="<c:url value='/orders/list'/>">주문/배송조회</a></li>
+
+            <!-- 마이페이지 링크 -->
             <li><a href="<c:url value='/membership/myPage'/> ">마이페이지</a></li>
+
+            <!-- 게시판 링크 -->
             <li><a href="<c:url value='/board/list'/>">게시판</a></li>
+
+            <!-- 장바구니 페이지 링크 -->
             <li><a href="<c:url value='/cart/cart'/>">장바구니</a></li>
         </ul>
     </div>
+    <!-- 사이드바 끝 -->
+
+    <!-- 쇼핑몰 메인 제목 -->
     <h1 class="title"><a href="/" class="title-link">shoppingShop</a></h1>
+
+    <!-- 카테고리 컨테이너 -->
     <div class="category-container">
         <ul class="main-category-list">
+            <!-- 대분류 카테고리 목록 반복 출력 -->
             <c:forEach var="category" items="${mainCategories}">
                 <li class="main-category-item">
-                        ${category.categoryName}
+                        ${category.categoryName} <!-- 대분류 카테고리 이름 표시 -->
+
+                    <!-- 중분류 카테고리 목록 -->
                     <ul class="sub-category-list">
                         <c:forEach var="subCategory" items="${category.subCategories}">
                             <li class="sub-category-item" onclick="location.href='/subCategoryId/${subCategory.subCategoryId}'">
-                                    ${subCategory.subCategoryName}
+                                    ${subCategory.subCategoryName} <!-- 중분류 카테고리 이름 표시 -->
                             </li>
                         </c:forEach>
                     </ul>
@@ -153,6 +175,7 @@
             </c:forEach>
         </ul>
     </div>
+
 
 </head>
 
