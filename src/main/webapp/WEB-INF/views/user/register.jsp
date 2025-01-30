@@ -91,7 +91,6 @@
 </head>
 <body>
 <%@ include file="/WEB-INF/views/layout/header/header.jsp" %>
-<%@ include file="/WEB-INF/views/layout/categoryBar/categoryBar.jsp" %>
 
 <div class="content">
     <div class="register-container">
@@ -147,10 +146,14 @@
 </div>
 
 <script>
+    // 문서가 완전히 로드된 후 실행
     document.addEventListener('DOMContentLoaded', function () {
-        function showAlert() {
-            combineAddress();
 
+        // 회원가입 폼 유효성 검사 함수
+        function showAlert() {
+            combineAddress(); // 주소 합치기 함수 호출
+
+            // 입력된 값들을 가져와 공백을 제거한 후 저장
             const username = document.getElementById('userId').value.trim();
             const password = document.getElementById('userPwd').value.trim();
             const confirmPassword = document.getElementById('confirmPwd').value.trim();
@@ -159,88 +162,94 @@
             const userAddress = document.getElementById('userAddress').value.trim();
             const detailAddress = document.getElementById('detailAddress').value.trim();
 
-
-
-            // 아이디 유효성 검사
+            // 아이디 입력 확인
             if (username === "") {
                 alert("아이디를 입력해주세요.");
                 return false;
             }
 
-            // 비밀번호 유효성 검사
+            // 비밀번호 입력 확인
             if (password === "") {
                 alert("비밀번호를 입력해주세요.");
                 return false;
             }
 
+            // 비밀번호 최소 길이 검사
             if (password.length < 6) {
                 alert("비밀번호는 6자 이상이어야 합니다.");
                 return false;
             }
 
-            // 비밀번호 확인 검사
+            // 비밀번호 확인 입력 확인
             if (confirmPassword === "") {
                 alert("비밀번호 확인을 입력해주세요.");
                 return false;
             }
 
+            // 주소 입력 확인
             if (userAddress === "") {
                 alert("주소를 입력해주세요.");
                 return false;
             }
 
+            // 상세 주소 입력 확인
             if (detailAddress === "") {
                 alert("상세주소를 입력해주세요.");
                 return false;
             }
 
+            // 비밀번호 일치 여부 확인
             if (password !== confirmPassword) {
                 alert("비밀번호가 일치하지 않습니다.");
                 return false;
             }
 
-            // 이메일 유효성 검사
+            // 이메일 형식 유효성 검사
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 alert("이메일 주소가 유효하지 않습니다.");
                 return false;
             }
 
-            // 전화번호 유효성 검사 (숫자만 입력 가능)
+            // 전화번호 형식 유효성 검사 (숫자만 입력 가능)
             const phoneRegex = /^[0-9]+$/;
             if (!phoneRegex.test(phone)) {
                 alert("전화번호는 숫자만 입력할 수 있습니다.");
                 return false;
             }
 
-            // 모든 검사가 통과된 경우 성공 알림을 띄운다.
+            // 모든 검사 통과 시 회원가입 성공 메시지 출력
             alert("회원가입이 성공적으로 완료되었습니다.");
-            return true; // 폼 제출을 허용
+            return true; // 폼 제출 허용
         }
 
+        // 회원가입 폼 제출 시 실행되는 이벤트 리스너
         document.getElementById('registerForm').addEventListener('submit', function (e) {
             combineAddress(); // 주소 합치기 함수 호출
             if (!showAlert()) {
-                e.preventDefault();  // 유효성 검사가 실패하면 폼 제출을 막음
+                e.preventDefault(); // 유효성 검사 실패 시 폼 제출 방지
             }
         });
+
+        // 아이디 중복 확인 버튼 클릭 시 실행되는 이벤트 리스너
         document.getElementById('checkIdButton').addEventListener('click', function () {
             const userId = document.getElementById('userId').value.trim();
 
+            // 아이디 입력 확인
             if (userId === "") {
                 alert("아이디를 입력해주세요.");
                 return;
             }
 
-            // AJAX 요청 (예: jQuery 또는 Fetch API 사용)
+            // AJAX 요청을 이용한 아이디 중복 확인
             fetch('/membership/checkUserId', {
-                method: 'POST',
+                method: 'POST', // HTTP 요청 방식
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json', // JSON 형식의 데이터 전송
                 },
-                body: JSON.stringify({ userId: userId }),
+                body: JSON.stringify({ userId: userId }), // 서버로 보낼 데이터
             })
-                .then(response => response.json())
+                .then(response => response.json()) // 응답을 JSON 형태로 변환
                 .then(data => {
                     if (data.available) {
                         alert("사용 가능한 아이디입니다.");
@@ -254,29 +263,31 @@
                 });
         });
     });
+
+    // Daum 주소 찾기 API 실행 함수
     function execDaumPostcode() {
-        // Daum 주소 찾기 API 호출
         new daum.Postcode({
-            oncomplete: function (data) {
-                // 도로명 주소나 지번 주소 중 하나를 userAddress에 설정
+            oncomplete: function (data) { // 주소 검색이 완료되었을 때 실행되는 콜백 함수
+                // 도로명 주소 또는 지번 주소 중 하나를 userAddress 입력 필드에 설정
                 document.getElementById("userAddress").value = data.roadAddress || data.jibunAddress;
                 combineAddress(); // 주소 합치기 함수 호출
             }
-        }).open();
+        }).open(); // 주소 검색창 열기
     }
 
-    // form이 제출되기 전 fullAddress에 값을 합쳐 넣는 함수
+    // 기본 주소와 상세 주소를 결합하여 fullAddress 입력 필드에 저장하는 함수
     function combineAddress() {
-        const userAddress = document.getElementById("userAddress").value.trim();
-        const detailAddress = document.getElementById("detailAddress").value.trim();
+        const userAddress = document.getElementById("userAddress").value.trim(); // 기본 주소 가져오기
+        const detailAddress = document.getElementById("detailAddress").value.trim(); // 상세 주소 가져오기
 
-        if (userAddress && detailAddress) {
-            const combined = `${userAddress} ${detailAddress}`.trim();
-            document.getElementById("fullAddress").value = combined; // fullAddress에 합친 값을 설정
+        if (userAddress && detailAddress) { // 두 입력값이 모두 존재하는 경우
+            const combined = `${userAddress} ${detailAddress}`.trim(); // 주소 결합 후 공백 제거
+            document.getElementById("fullAddress").value = combined; // fullAddress 필드에 설정
         } else {
-            document.getElementById("fullAddress").value = ''; // 비우기
+            document.getElementById("fullAddress").value = ''; // 입력값이 없을 경우 비우기
         }
     }
+
 
 </script>
 

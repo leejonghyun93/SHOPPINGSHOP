@@ -130,19 +130,31 @@
 </div>
 
 <script>
+    // 다음(카카오) 우편번호 API를 실행하는 함수
     function execDaumPostcode() {
         new daum.Postcode({
-            oncomplete: function (data) {
+            oncomplete: function (data) { // 사용자가 주소 선택을 완료했을 때 실행될 콜백 함수
+                // 사용자가 선택한 도로명 주소 또는 지번 주소를 입력 필드에 설정
                 document.getElementById("userAddress").value = data.roadAddress || data.jibunAddress;
+
+                // 상세 주소를 포함한 전체 주소를 업데이트하는 함수 호출
                 combineAddress();
             }
-        }).open();
+        }).open(); // 주소 검색창을 띄움
     }
+
+    // 사용자 주소와 상세 주소를 결합하여 전체 주소 필드에 입력하는 함수
     function combineAddress() {
+        // 기본 주소 입력값 가져오기 (공백 제거)
         const userAddress = document.getElementById("userAddress").value.trim();
+
+        // 상세 주소 입력값 가져오기 (공백 제거)
         const detailAddress = document.getElementById("detailAddress").value.trim();
+
+        // 기본 주소와 상세 주소를 합쳐서 전체 주소 입력 필드에 설정 (공백 중복 방지)
         document.getElementById("fullAddress").value = `${userAddress} ${detailAddress}`.trim();
     }
+
 </script>
 
 <%@ include file="/WEB-INF/views/layout/footer/footer.jsp" %>

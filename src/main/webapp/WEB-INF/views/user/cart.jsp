@@ -1,10 +1,11 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%@ page session="false"%>
+<%@ page session="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<c:set var="loginId" value="${pageContext.request.getSession(false) == null ? '' : pageContext.request.session.getAttribute('userId')}"/>
-<c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : ''}" />
-<c:set var="logout" value="${loginId == '' ? 'Login' : loginId}" />
+<c:set var="loginId"
+       value="${pageContext.request.getSession(false) == null ? '' : pageContext.request.session.getAttribute('userId')}"/>
+<c:set var="loginOutLink" value="${loginId == '' ? '/login/login' : ''}"/>
+<c:set var="logout" value="${loginId == '' ? 'Login' : loginId}"/>
 
 <html>
 <head>
@@ -105,39 +106,45 @@
         }
     </style>
     <script>
+        // 선택된 상품을 주문하는 함수
         function submitSelected() {
+            // 체크된 체크박스 요소들을 모두 가져옴
             const checkboxes = document.querySelectorAll('input[name="selectedItems"]:checked');
+
+            // 선택된 상품이 없을 경우 경고 메시지를 표시하고 함수 종료
             if (checkboxes.length === 0) {
                 alert('결제할 상품을 선택하세요.');
                 return;
             }
 
-            // 선택된 항목의 cartId를 배열로 만들기
+            // 선택된 항목들의 cartId 값을 배열로 저장
             const cartIds = Array.from(checkboxes).map(checkbox => checkbox.value);
 
-            // AJAX 요청을 통해 서버에 데이터 전송
+            // AJAX 요청을 생성하여 서버로 데이터를 전송
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', '/orders/checkout', true);
-            xhr.setRequestHeader('Content-Type', 'application/json');  // JSON 형태로 데이터 전송
+            xhr.open('POST', '/orders/checkout', true); // 서버의 주문 처리 API 호출 (POST 요청)
+            xhr.setRequestHeader('Content-Type', 'application/json'); // 전송할 데이터 형식을 JSON으로 설정
 
-            // 서버 응답 처리
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    // 성공 시 페이지 리다이렉트 (주문 완료 페이지 등)
+            // 서버 응답을 처리하는 이벤트 리스너
+            xhr.onload = function () {
+                if (xhr.status === 200) { // 서버 응답이 성공(200 OK)일 경우
+                    // 주문 완료 페이지로 리다이렉트
                     window.location.href = '/orders/history';
-                } else {
+                } else { // 서버 응답이 실패한 경우
                     alert('주문 처리에 실패했습니다. 다시 시도해 주세요.');
                 }
             };
 
-            // JSON 데이터 전송
-            xhr.send(JSON.stringify({ cartIds: cartIds }));
+            // JSON 형식으로 선택된 cartId 배열을 서버로 전송
+            xhr.send(JSON.stringify({cartIds: cartIds}));
         }
+    </script>
+
     </script>
 </head>
 <body>
-<jsp:include page="/WEB-INF/views/layout/header/header.jsp" />
-<jsp:include page="/WEB-INF/views/layout/categoryBar/categoryBar.jsp" />
+<jsp:include page="/WEB-INF/views/layout/header/header.jsp"/>
+<jsp:include page="/WEB-INF/views/layout/categoryBar/categoryBar.jsp"/>
 <div class="content">
     <!-- 로그인 여부 확인 후 메시지 출력 -->
     <c:if test="${empty cartItems}">
@@ -190,6 +197,6 @@
         </div>
     </c:if>
 </div>
-<jsp:include page="/WEB-INF/views/layout/footer/footer.jsp" />
+<jsp:include page="/WEB-INF/views/layout/footer/footer.jsp"/>
 </body>
 </html>
