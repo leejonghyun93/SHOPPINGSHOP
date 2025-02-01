@@ -9,40 +9,45 @@
                            http://www.springframework.org/schema/mvc
                            http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
+    <!-- @Component, @Service, @Repository, @Controller 등의 빈을 자동으로 스캔 -->
     <context:component-scan base-package="com.shoppingShop.controller"/>
     <context:component-scan base-package="com.shoppingShop.service" />
     <context:component-scan base-package="com.shoppingShop.dao" />
     <context:component-scan base-package="com.shoppingShop.interceptor" />
 
+    <!-- @RequestMapping, @ResponseBody 등의 MVC 관련 어노테이션을 활성화 -->
     <mvc:annotation-driven/>
 
+    <!-- 정적 자원(이미지, CSS, JavaScript 등)의 경로를 설정 -->
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
     <!-- View Resolver 설정 -->
     <bean id="viewResolver"
           class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- JSP 파일이 위치한 기본 경로 설정 -->
         <property name="prefix" value="/WEB-INF/views/" />
+        <!-- JSP 파일의 확장자 설정 -->
         <property name="suffix" value=".jsp" />
     </bean>
 
     <!-- 인터셉터 설정 -->
     <mvc:interceptors>
-        <!-- CategoryInterceptor bean 설정 -->
+        <!-- 모든 요청(/**)에 대해 categoryInterceptor 실행 -->
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
-            <ref bean="categoryInterceptor"/> <!-- ref 사용 -->
+            <ref bean="categoryInterceptor"/> <!-- categoryInterceptor 빈을 참조 -->
         </mvc:interceptor>
     </mvc:interceptors>
 
     <!-- CategoryInterceptor 빈 등록 -->
     <bean id="categoryInterceptor" class="com.shoppingShop.interceptor.CategoryInterceptor"/>
 
+    <!-- BCrypt 해시 알고리즘을 사용한 비밀번호 암호화 설정 -->
     <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
-        <constructor-arg value="10"/> <!-- 코스트 설정 (10 ~ 12 추천) -->
+        <constructor-arg value="10"/> <!-- 암호화 강도 설정 (10~12 추천) -->
     </bean>
 
-
-    <!-- Jackson JSR310 Module 추가 -->
+    <!-- Java 8 날짜 및 시간 API(LocalDateTime 등) 처리를 위한 Jackson 모듈 등록 -->
     <bean id="javaTimeModule" class="com.fasterxml.jackson.datatype.jsr310.JavaTimeModule"/>
 
 </beans>
