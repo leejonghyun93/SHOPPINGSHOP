@@ -19,11 +19,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller
-@RequestMapping("/product")
+@Controller // 이 클래스가 Spring MVC의 컨트롤러임을 나타냅니다.
+@RequestMapping("/product") // 이 컨트롤러의 기본 요청 경로를 "/product"로 설정합니다.
 public class ProductController {
 
-    @Autowired
+    @Autowired // Spring이 자동으로 해당 타입의 빈을 주입하도록 합니다.
     private ProductService productService;
 
     @Autowired
@@ -35,7 +35,7 @@ public class ProductController {
     // 인텔리제이에서 사용할 수 있는 이미지 베이스 경로
     private static final String IMAGE_BASE_PATH = "/resources/img/products/";
 
-    @GetMapping("/detail/{proId}")
+    @GetMapping("/detail/{proId}") // HTTP GET 요청이 "/detail/{proId}"로 올 때 이 메서드가 호출됩니다.
     public String productDetail(@PathVariable int proId, Model model,
                                 @RequestParam(value = "page", defaultValue = "1") int page,
                                 @RequestParam(value = "size", defaultValue = "5") int size) throws Exception {
@@ -54,7 +54,7 @@ public class ProductController {
 
         if (folder.exists() && folder.isDirectory()) {
             for (File file : folder.listFiles()) {
-                if (file.isFile() && (file.getName().toLowerCase().endsWith(".JPG") || file.getName().toLowerCase().endsWith(".jpeg") || file.getName().toLowerCase().endsWith(".png"))) {
+                if (file.isFile() && (file.getName().toLowerCase().endsWith(".jpg") || file.getName().toLowerCase().endsWith(".jpeg") || file.getName().toLowerCase().endsWith(".png"))) {
                     imagePaths.add("/img/products/" + proId + "/" + file.getName());
                 }
             }
@@ -72,20 +72,20 @@ public class ProductController {
         model.addAttribute("totalPages", inquiryService.getTotalPagesByProductId(proId, size));
         model.addAttribute("currentPage", page);
 
-        return "product/productDetail";
+        return "product/productDetail"; // "product/productDetail" 뷰를 반환합니다.
     }
 
-
-    @GetMapping("/current")
+    @GetMapping("/current") // HTTP GET 요청이 "/current"로 올 때 이 메서드가 호출됩니다.
     public ResponseEntity<ProductDto> getCurrentProduct(@RequestParam("proId") int proId) {
         ProductDto product = productService.getCurrentProduct(proId);
         if (product == null) {
-            return ResponseEntity.notFound().build();  // 404 응답으로 변경
+            return ResponseEntity.notFound().build();  // 404 응답을 반환합니다.
         }
-        return ResponseEntity.ok(product);  // 정상적으로 상품 정보를 반환
+        return ResponseEntity.ok(product);  // 정상적으로 상품 정보를 반환합니다.
     }
-    @PostMapping("/inquiry/write")
-    @ResponseBody
+
+    @PostMapping("/inquiry/write") // HTTP POST 요청이 "/inquiry/write"로 올 때 이 메서드가 호출됩니다.
+    @ResponseBody // 이 메서드의 반환값이 HTTP 응답 본문으로 직접 작성됨을 나타냅니다.
     public ResponseEntity<Map<String, Object>> writeInquiry(
             @RequestParam("proId") int proId,
             @RequestBody InquiryDto inquiryDto,
@@ -125,8 +125,8 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/inquiry/detail/{inquiryId}")
-    @ResponseBody
+    @GetMapping("/inquiry/detail/{inquiryId}") // HTTP GET 요청이 "/inquiry/detail/{inquiryId}"로 올 때 이 메서드가 호출됩니다.
+    @ResponseBody // 이 메서드의 반환값이 HTTP 응답 본문으로 직접 작성됨을 나타냅니다.
     public Map<String, Object> getInquiryDetail(@PathVariable("inquiryId") int inquiryId) {
         System.out.println("Received inquiryId: " + inquiryId); // 디버깅용 출력
         Map<String, Object> response = new HashMap<>();
@@ -142,7 +142,4 @@ public class ProductController {
 
         return response;
     }
-
-
-
 }
